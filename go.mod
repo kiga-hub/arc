@@ -1,4 +1,4 @@
-module common
+module github.com/kiga-hub/common
 
 go 1.20
 

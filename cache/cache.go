@@ -11,7 +11,7 @@ import (
 	linkedlist "github.com/emirpasic/gods/lists/singlylinkedlist"
 	"go.uber.org/atomic"
 
-	"common/logging"
+	"github.com/kiga-hub/common/logging"
 )
 
 // SeachRequest is a request for seach data in the DataCache

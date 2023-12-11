@@ -7,9 +7,9 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/opentracing/opentracing-go"
 
-	platformConf "common/conf"
-	"common/micro"
-	microConf "common/micro/conf"
+	platformConf "github.com/kiga-hub/common/conf"
+	"github.com/kiga-hub/common/micro"
+	microConf "github.com/kiga-hub/common/micro/conf"
 )
 
 // ElementKey is ElementKey for tracing

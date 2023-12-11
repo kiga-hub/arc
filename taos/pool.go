@@ -4,7 +4,7 @@ import (
 	"errors"
 	"sync"
 
-	"common/logging"
+	"github.com/kiga-hub/common/logging"
 )
 
 // Pool 定义一个结构体,这个实体类型可以作为整体单元被复制,可以作为参数或返回值,或被存储到数组

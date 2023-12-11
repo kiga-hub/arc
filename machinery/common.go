@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	"common/logging"
+	"github.com/kiga-hub/common/logging"
 )
 
 const (

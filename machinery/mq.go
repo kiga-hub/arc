@@ -9,8 +9,8 @@ import (
 	"github.com/RichardKnop/machinery/v1/tasks"
 	"github.com/opentracing/opentracing-go"
 
-	"common/logging"
-	"common/redis"
+	"github.com/kiga-hub/common/logging"
+	"github.com/kiga-hub/common/redis"
 )
 
 // Invoke 调用

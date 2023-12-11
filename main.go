@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 
-	"common/kafka"
-	"common/micro"
-	"common/micro/component"
-	"common/taos"
-	"common/tracing"
+	"github.com/kiga-hub/common/kafka"
+	"github.com/kiga-hub/common/micro"
+	"github.com/kiga-hub/common/micro/component"
+	"github.com/kiga-hub/common/taos"
+	"github.com/kiga-hub/common/tracing"
 )
 
 func main() {

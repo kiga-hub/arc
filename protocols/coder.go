@@ -5,7 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"common/utils"
+	"github.com/kiga-hub/common/utils"
 
 	"github.com/panjf2000/gnet"
 )

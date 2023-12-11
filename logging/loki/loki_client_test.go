@@ -6,7 +6,7 @@ import (
 	"testing"
 	time "time"
 
-	"common/logging/conf"
+	"github.com/kiga-hub/common/logging/conf"
 )
 
 func TestLokiClient_GetLogs(t *testing.T) {

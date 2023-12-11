@@ -3,7 +3,7 @@ package db
 import (
 	"context"
 
-	commonErrors "common/error"
+	commonErrors "github.com/kiga-hub/common/error"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/jinzhu/gorm"

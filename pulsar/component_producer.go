@@ -3,8 +3,8 @@ package pulsar
 import (
 	"context"
 
-	"common/logging"
-	"common/micro"
+	"github.com/kiga-hub/common/logging"
+	"github.com/kiga-hub/common/micro"
 )
 
 // ProducerElementKey pulsar消息队列生产者模块

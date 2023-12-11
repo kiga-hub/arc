@@ -3,7 +3,7 @@ package pulsar
 import (
 	"context"
 
-	"common/micro"
+	"github.com/kiga-hub/common/micro"
 )
 
 // ConsumerElementKey pulsar消息队列消费者模块

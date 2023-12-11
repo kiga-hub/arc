@@ -3,7 +3,7 @@ package mqtt
 import (
 	"encoding/json"
 
-	"common/protocols"
+	"github.com/kiga-hub/common/protocols"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 )

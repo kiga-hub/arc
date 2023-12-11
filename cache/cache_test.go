@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"common/logging"
-	"common/logging/conf"
-	microConf "common/micro/conf"
+	"github.com/kiga-hub/common/logging"
+	"github.com/kiga-hub/common/logging/conf"
+	microConf "github.com/kiga-hub/common/micro/conf"
 )
 
 func Test_test(t *testing.T) {

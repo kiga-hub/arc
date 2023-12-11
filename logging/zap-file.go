@@ -7,8 +7,8 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
-	"common/logging/conf"
-	microConf "common/micro/conf"
+	"github.com/kiga-hub/common/logging/conf"
+	microConf "github.com/kiga-hub/common/micro/conf"
 )
 
 // NewFileCore New is similar to Config.Build except that info and error logs are separated

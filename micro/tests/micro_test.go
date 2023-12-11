@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"common/micro"
-	"common/micro/component"
+	"github.com/kiga-hub/common/micro"
+	"github.com/kiga-hub/common/micro/component"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"

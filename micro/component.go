@@ -7,7 +7,7 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/model"
 	"github.com/pangpanglabs/echoswagger/v2"
 
-	platformConf "common/conf"
+	platformConf "github.com/kiga-hub/common/conf"
 )
 
 /*

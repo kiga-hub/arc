@@ -3,7 +3,7 @@ package taos
 import (
 	"fmt"
 
-	"common/logging"
+	"github.com/kiga-hub/common/logging"
 )
 
 // Client -

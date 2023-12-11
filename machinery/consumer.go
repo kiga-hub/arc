@@ -7,8 +7,8 @@ import (
 	"github.com/RichardKnop/machinery/v1"
 	"github.com/opentracing/opentracing-go"
 
-	"common/logging"
-	"common/redis"
+	"github.com/kiga-hub/common/logging"
+	"github.com/kiga-hub/common/redis"
 )
 
 // ConsumerUnit  消费者组件

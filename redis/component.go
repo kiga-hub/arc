@@ -3,7 +3,7 @@ package redis
 import (
 	"context"
 
-	"common/micro"
+	"github.com/kiga-hub/common/micro"
 
 	"github.com/go-redis/redis"
 )

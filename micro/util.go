@@ -7,7 +7,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"common/logging"
+	"github.com/kiga-hub/common/logging"
 )
 
 func zapLoggerEchoMiddleware(logFunc func() logging.ILogger, skipSuccess bool) echo.MiddlewareFunc {

@@ -29,12 +29,12 @@ import (
 	"golang.org/x/net/netutil"
 	"golang.org/x/time/rate"
 
-	platformConf "common/conf"
-	"common/configuration"
-	"common/constant"
-	"common/logging"
-	"common/micro/conf"
-	"common/utils"
+	platformConf "github.com/kiga-hub/common/conf"
+	"github.com/kiga-hub/common/configuration"
+	"github.com/kiga-hub/common/constant"
+	"github.com/kiga-hub/common/logging"
+	"github.com/kiga-hub/common/micro/conf"
+	"github.com/kiga-hub/common/utils"
 )
 
 const (

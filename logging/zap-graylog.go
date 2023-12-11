@@ -6,7 +6,7 @@ import (
 	gelf "github.com/snovichkov/zap-gelf"
 	"go.uber.org/zap/zapcore"
 
-	"common/logging/conf"
+	"github.com/kiga-hub/common/logging/conf"
 )
 
 func newGraylogCore(config *conf.LogConfig) (zapcore.Core, error) {

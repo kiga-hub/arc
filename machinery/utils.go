@@ -3,7 +3,7 @@ package machinery
 import (
 	"fmt"
 
-	"common/logging"
+	"github.com/kiga-hub/common/logging"
 )
 
 // GetQueueNameByCluster ...

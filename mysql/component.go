@@ -3,7 +3,7 @@ package mysql
 import (
 	"context"
 
-	"common/micro"
+	"github.com/kiga-hub/common/micro"
 
 	"github.com/jinzhu/gorm"
 )

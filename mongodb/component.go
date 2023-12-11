@@ -3,7 +3,7 @@ package mongodb
 import (
 	"context"
 
-	"common/micro"
+	"github.com/kiga-hub/common/micro"
 
 	"go.mongodb.org/mongo-driver/mongo"
 )

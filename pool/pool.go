@@ -6,9 +6,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"common/conf"
-	error2 "common/error"
-	"common/logging"
+	"github.com/kiga-hub/common/conf"
+	error2 "github.com/kiga-hub/common/error"
+	"github.com/kiga-hub/common/logging"
 )
 
 // ChannelPool 存放连接信息

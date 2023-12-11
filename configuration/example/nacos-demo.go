@@ -10,7 +10,7 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/vo"
 
-	"common/configuration"
+	"github.com/kiga-hub/common/configuration"
 )
 
 func main() {
