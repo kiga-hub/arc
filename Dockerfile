@@ -4,7 +4,6 @@ ENV GOPROXY=https://goproxy.io,direct
 
 WORKDIR /
 COPY . .
-# COPY plugins/taos /usr/local/taos
 EXPOSE  80
 
 SHELL ["/bin/bash","-c"]

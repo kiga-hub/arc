@@ -6,7 +6,6 @@ import (
 	"github.com/kiga-hub/common/kafka"
 	"github.com/kiga-hub/common/micro"
 	"github.com/kiga-hub/common/micro/component"
-	"github.com/kiga-hub/common/taos"
 	"github.com/kiga-hub/common/tracing"
 )
 
@@ -23,7 +22,6 @@ func main() {
 				InMachineMode: false,
 			},
 			&kafka.Component{},
-			&taos.Component{},
 		},
 	)
 	if err != nil {
