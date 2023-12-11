@@ -1,0 +1,41 @@
+package main
+
+import (
+	"fmt"
+
+	"common/kafka"
+	"common/micro"
+	"common/micro/component"
+	"common/taos"
+	"common/tracing"
+)
+
+func main() {
+	server, err := micro.NewServer(
+		"demo",
+		"v100",
+		[]micro.IComponent{
+			&component.LoggingComponent{},
+			&tracing.Component{},
+			&component.GossipKVCacheComponent{
+				ClusterName:   "platform-global",
+				Port:          6666,
+				InMachineMode: false,
+			},
+			&kafka.Component{},
+			&taos.Component{},
+		},
+	)
+	if err != nil {
+		panic(err)
+	}
+	err = server.Init()
+	if err != nil {
+		panic(err)
+	}
+
+	err = server.Run()
+	if err != nil {
+		fmt.Println(err)
+	}
+}

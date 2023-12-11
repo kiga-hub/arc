@@ -1,0 +1,283 @@
+package protocols
+
+import (
+	"encoding/binary"
+	"fmt"
+)
+
+const (
+	// STypeAudio 音频Type
+	STypeAudio byte = 10
+
+	// STypeAudioV2 改进的音频数据块结构 音频Type
+	STypeAudioV2 byte = 11
+
+	// STypeTemperature 温度Type
+	STypeTemperature byte = 20
+
+	// STypeVibrate 震动Type
+	STypeVibrate byte = 30
+
+	// STypeMultiAxisVibrate 震动Type
+	STypeMultiAxisVibrate byte = 40
+
+	// STypeNumericalTable  数据表Type
+	STypeNumericalTable byte = 90
+
+	// DataGroupMaxSegmentCount 数据类型个数
+	DataGroupMaxSegmentCount = 4
+)
+
+// ISegment -
+type ISegment interface {
+	Encode([]byte) (int, error)
+	Type() byte
+	Size() uint32
+	Dump()
+}
+
+//DataGroup Protocol=2   CType 1:GetCollector2Structure.Size()
+type DataGroup struct {
+	Count    byte       //1 数据类型个数
+	Sizes    []uint32   //4 每个类型数据大小
+	STypes   []byte     // 解析段类型记录
+	Segments []ISegment //n 数据
+}
+
+// NewDefaultDataGroup -
+func NewDefaultDataGroup() *DataGroup {
+	return &DataGroup{}
+}
+
+// Validate - 校验
+func (d *DataGroup) Validate() error {
+	if d.Count <= 0 || d.Count > DataGroupMaxSegmentCount {
+		return fmt.Errorf("count out of range %d", d.Count)
+	}
+	if uint8(len(d.Sizes)) != d.Count {
+		return fmt.Errorf("size count don't match %d != %d", len(d.Sizes), d.Count)
+	}
+	for _, size := range d.Sizes {
+		if size > MaxSize {
+			return fmt.Errorf("size Over the maximum %d", size)
+		}
+	}
+	return nil
+}
+
+// AppendSegment - 添加数据段
+func (d *DataGroup) AppendSegment(segment ISegment) {
+	d.Count++
+	d.Sizes = append(d.Sizes, segment.Size())
+	d.Segments = append(d.Segments, segment)
+}
+
+// GetSegment - 获取数据段
+func (d *DataGroup) GetSegment(SType byte) (ISegment, error) {
+	for _, s := range d.Segments {
+		if s.Type() == SType {
+			return s, nil
+		}
+	}
+	return nil, fmt.Errorf("not find type %d", SType)
+}
+
+// GetASegment - 获取音频数据段
+func (d *DataGroup) GetASegment() (*SegmentAudio, error) {
+	s, err := d.GetSegment(STypeAudio)
+	if err != nil {
+		return nil, fmt.Errorf("audio %s", err)
+	}
+	return s.(*SegmentAudio), nil
+}
+
+// GetVSegment - 获取震动数据段
+func (d *DataGroup) GetVSegment() (*SegmentVibrate, error) {
+	s, err := d.GetSegment(STypeVibrate)
+	if err != nil {
+		return nil, fmt.Errorf("vibrate %s", err)
+	}
+	return s.(*SegmentVibrate), nil
+}
+
+// GetMultiAxisVSegment - 获取震动数据段
+func (d *DataGroup) GetMultiAxisVSegment() (*SegmentMultiAxisVibrate, error) {
+	s, err := d.GetSegment(STypeMultiAxisVibrate)
+	if err != nil {
+		return nil, fmt.Errorf("multi axis vibrate %s", err)
+	}
+	return s.(*SegmentMultiAxisVibrate), nil
+}
+
+// GetTSegment - 获取温度数据段
+func (d *DataGroup) GetTSegment() (*SegmentTemperature, error) {
+	s, err := d.GetSegment(STypeTemperature)
+	if err != nil {
+		return nil, fmt.Errorf("temperature %s", err)
+	}
+	return s.(*SegmentTemperature), nil
+}
+
+// GetAV2Segment - 获取V2版本音频数据段
+func (d *DataGroup) GetAV2Segment() (*SegmentAudioV2, error) {
+	s, err := d.GetSegment(STypeAudioV2)
+	if err != nil {
+		return nil, fmt.Errorf("audioV2 %s", err)
+	}
+	return s.(*SegmentAudioV2), nil
+}
+
+// GetNumericalTableSegment - 获取数值表数据段
+func (d *DataGroup) GetNumericalTableSegment() (*SegmentNumericalTable, error) {
+	s, err := d.GetSegment(STypeNumericalTable)
+	if err != nil {
+		return nil, fmt.Errorf("numericalTable %s", err)
+	}
+	return s.(*SegmentNumericalTable), nil
+}
+
+// Decode - 解码
+func (d *DataGroup) Decode(data []byte) error {
+	idx := 0
+
+	// 获取数据段个数
+	d.Count = data[idx]
+	idx++
+	if d.Count <= 0 || d.Count > DataGroupMaxSegmentCount {
+		return fmt.Errorf("data group count %d", d.Count)
+	}
+
+	d.Sizes = make([]uint32, d.Count)
+	for i := 0; i < int(d.Count); i++ {
+		d.Sizes[i] = binary.BigEndian.Uint32(data[idx : idx+4])
+		idx += 4
+	}
+
+	// 校验
+	if err := d.Validate(); err != nil {
+		return err
+	}
+
+	// 解析各个数据段
+	var stype byte
+	for i := 0; i < int(d.Count); i++ {
+		if i >= len(d.STypes) {
+			d.STypes = append(d.STypes, 0)
+		}
+		switch data[idx] {
+		case STypeAudio:
+			sa, err := d.GetASegment()
+			if err != nil {
+				sa = NewDefaultSegmentAudio()
+				d.Segments = append(d.Segments, sa)
+			}
+			if err := sa.Decode(data[idx : idx+int(d.Sizes[i])]); err != nil {
+				return err
+			}
+			d.STypes[i] = STypeAudio
+		case STypeVibrate:
+			sv, err := d.GetVSegment()
+			if err != nil {
+				sv = NewDefaultSegmentVibrate()
+				d.Segments = append(d.Segments, sv)
+			}
+			if err := sv.Decode(data[idx : idx+int(d.Sizes[i])]); err != nil {
+				return err
+			}
+			d.STypes[i] = STypeVibrate
+		case STypeMultiAxisVibrate:
+			svv, err := d.GetMultiAxisVSegment()
+			if err != nil {
+				svv = NewDefaultSegmentMultiAxisVibrate()
+				d.Segments = append(d.Segments, svv)
+			}
+			if err := svv.Decode(data[idx : idx+int(d.Sizes[i])]); err != nil {
+				return err
+			}
+			d.STypes[i] = STypeMultiAxisVibrate
+		case STypeTemperature:
+			st, err := d.GetTSegment()
+			if err != nil {
+				st = NewDefaultSegmentTemperature()
+				d.Segments = append(d.Segments, st)
+			}
+			if err := st.Decode(data[idx : idx+int(d.Sizes[i])]); err != nil {
+				return err
+			}
+			d.STypes[i] = STypeTemperature
+		case STypeAudioV2:
+			sa, err := d.GetAV2Segment()
+			if err != nil {
+				sa = NewDefaultSegmentAudioV2()
+				d.Segments = append(d.Segments, sa)
+			}
+			if err := sa.Decode(data[idx : idx+int(d.Sizes[i])]); err != nil {
+				return err
+			}
+			d.STypes[i] = STypeAudioV2
+		case STypeNumericalTable:
+			st, err := d.GetNumericalTableSegment()
+			if err != nil {
+				st = NewDefaultSegmentNumericalTable()
+				st.Data = &ResultAndScore{}
+				d.Segments = append(d.Segments, st)
+			}
+			if err := st.Decode(data[idx : idx+int(d.Sizes[i])]); err != nil {
+				return err
+			}
+			d.STypes[i] = STypeNumericalTable
+		default:
+			return fmt.Errorf("no match stype %d", stype)
+		}
+		idx += int(d.Sizes[i])
+	}
+	return nil
+}
+
+// Encode - 编码
+func (d *DataGroup) Encode(buf []byte) (int, error) {
+	// 检查缓存大小
+	minsize := 1
+	for _, size := range d.Sizes {
+		minsize += int(size)
+		minsize += 4
+	}
+	if len(buf) < minsize {
+		return 0, fmt.Errorf("datagroup out of allocated memory")
+	}
+
+	idx := 0
+
+	// count(1)
+	buf[idx] = d.Count
+	idx++
+	// size
+	for _, size := range d.Sizes {
+		binary.BigEndian.PutUint32(buf[idx:idx+4], size)
+		idx += 4
+	}
+	// segments
+	for i, s := range d.Segments {
+		n, err := s.Encode(buf[idx:])
+		idx += n
+		if err != nil {
+			return idx, err
+		}
+		if n != int(d.Sizes[i]) {
+			return idx, fmt.Errorf("data segment sizes do not match")
+		}
+	}
+	return idx, nil
+}
+
+// Dump -
+func (d *DataGroup) Dump() {
+	fmt.Printf("DataGroup Count: %d\n", d.Count)
+	for _, tp := range d.STypes {
+		s, err := d.GetSegment(tp)
+		if err != nil {
+			fmt.Printf("|Not Found Segment Type: %d\n", tp)
+		}
+		s.Dump()
+	}
+}

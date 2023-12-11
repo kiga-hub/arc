@@ -1,0 +1,17 @@
+syntax = "proto3";
+package proto;
+
+option go_package = "pb";
+
+service FrameData {
+    rpc FrameDataCallback(stream FrameDataRequest) returns (FrameDataResponse){}
+}
+
+message FrameDataRequest {
+    bytes key = 2;
+    bytes value = 3;
+}
+
+message FrameDataResponse {
+    bool successed = 1;
+}
