@@ -17,14 +17,12 @@ package statemachine
 import (
 	"encoding/binary"
 	"fmt"
-	"io"
-	"io/ioutil"
-
 	sm "github.com/lni/dragonboat/v3/statemachine"
+	"io"
 )
 
 // ExampleStateMachine is the IStateMachine implementation used in the
-// helloworld example.
+// hello world example.
 // See https://github.com/lni/dragonboat/blob/master/statemachine/rsm.go for
 // more details of the IStateMachine interface.
 type ExampleStateMachine struct {
@@ -34,6 +32,8 @@ type ExampleStateMachine struct {
 }
 
 // NewExampleStateMachine creates and return a new ExampleStateMachine object.
+//
+//goland:noinspection GoUnusedExportedFunction
 func NewExampleStateMachine(clusterID uint64,
 	nodeID uint64) sm.IStateMachine {
 	return &ExampleStateMachine{
@@ -47,6 +47,7 @@ func NewExampleStateMachine(clusterID uint64,
 // we always return the Count value as a little endian binary encoded byte
 // slice.
 func (s *ExampleStateMachine) Lookup(query interface{}) (interface{}, error) {
+	_ = query
 	result := make([]byte, 8)
 	binary.LittleEndian.PutUint64(result, s.Count)
 	return result, nil
@@ -66,10 +67,11 @@ func (s *ExampleStateMachine) Update(data []byte) (sm.Result, error) {
 // SaveSnapshot saves the current IStateMachine state into a snapshot using the
 // specified io.Writer object.
 func (s *ExampleStateMachine) SaveSnapshot(w io.Writer,
-	fc sm.ISnapshotFileCollection, done <-chan struct{}) error {
+	fc sm.ISnapshotFileCollection, _ <-chan struct{}) error {
 	// as shown above, the only state that can be saved is the Count variable
 	// there is no external file in this IStateMachine example, we thus leave
 	// the fc untouched
+	_ = fc
 	data := make([]byte, 8)
 	binary.LittleEndian.PutUint64(data, s.Count)
 	_, err := w.Write(data)
@@ -78,11 +80,11 @@ func (s *ExampleStateMachine) SaveSnapshot(w io.Writer,
 
 // RecoverFromSnapshot recovers the state using the provided snapshot.
 func (s *ExampleStateMachine) RecoverFromSnapshot(r io.Reader,
-	files []sm.SnapshotFile,
-	done <-chan struct{}) error {
+	_ []sm.SnapshotFile,
+	_ <-chan struct{}) error {
 	// restore the Count variable, that is the only state we maintain in this
 	// example, the input files is expected to be empty
-	data, err := ioutil.ReadAll(r)
+	data, err := io.ReadAll(r)
 	if err != nil {
 		return err
 	}
@@ -91,7 +93,7 @@ func (s *ExampleStateMachine) RecoverFromSnapshot(r io.Reader,
 	return nil
 }
 
-// Close closes the IStateMachine instance. There is nothing for us to cleanup
+// Close closes the IStateMachine instance. There is nothing for us to clean up
 // or release as this is a pure in memory data store. Note that the Close
 // method is not guaranteed to be called as node can crash at any time.
 func (s *ExampleStateMachine) Close() error { return nil }

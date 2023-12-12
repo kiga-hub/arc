@@ -36,7 +36,7 @@ type ISegment interface {
 	Dump()
 }
 
-//DataGroup Protocol=2   CType 1:GetCollector2Structure.Size()
+// DataGroup Protocol=2   CType 1:GetCollector2Structure.Size()
 type DataGroup struct {
 	Count    byte       //1 数据类型个数
 	Sizes    []uint32   //4 每个类型数据大小
@@ -82,33 +82,6 @@ func (d *DataGroup) GetSegment(SType byte) (ISegment, error) {
 	return nil, fmt.Errorf("not find type %d", SType)
 }
 
-// GetASegment - 获取音频数据段
-func (d *DataGroup) GetASegment() (*SegmentAudio, error) {
-	s, err := d.GetSegment(STypeAudio)
-	if err != nil {
-		return nil, fmt.Errorf("audio %s", err)
-	}
-	return s.(*SegmentAudio), nil
-}
-
-// GetVSegment - 获取震动数据段
-func (d *DataGroup) GetVSegment() (*SegmentVibrate, error) {
-	s, err := d.GetSegment(STypeVibrate)
-	if err != nil {
-		return nil, fmt.Errorf("vibrate %s", err)
-	}
-	return s.(*SegmentVibrate), nil
-}
-
-// GetMultiAxisVSegment - 获取震动数据段
-func (d *DataGroup) GetMultiAxisVSegment() (*SegmentMultiAxisVibrate, error) {
-	s, err := d.GetSegment(STypeMultiAxisVibrate)
-	if err != nil {
-		return nil, fmt.Errorf("multi axis vibrate %s", err)
-	}
-	return s.(*SegmentMultiAxisVibrate), nil
-}
-
 // GetTSegment - 获取温度数据段
 func (d *DataGroup) GetTSegment() (*SegmentTemperature, error) {
 	s, err := d.GetSegment(STypeTemperature)
@@ -116,24 +89,6 @@ func (d *DataGroup) GetTSegment() (*SegmentTemperature, error) {
 		return nil, fmt.Errorf("temperature %s", err)
 	}
 	return s.(*SegmentTemperature), nil
-}
-
-// GetAV2Segment - 获取V2版本音频数据段
-func (d *DataGroup) GetAV2Segment() (*SegmentAudioV2, error) {
-	s, err := d.GetSegment(STypeAudioV2)
-	if err != nil {
-		return nil, fmt.Errorf("audioV2 %s", err)
-	}
-	return s.(*SegmentAudioV2), nil
-}
-
-// GetNumericalTableSegment - 获取数值表数据段
-func (d *DataGroup) GetNumericalTableSegment() (*SegmentNumericalTable, error) {
-	s, err := d.GetSegment(STypeNumericalTable)
-	if err != nil {
-		return nil, fmt.Errorf("numericalTable %s", err)
-	}
-	return s.(*SegmentNumericalTable), nil
 }
 
 // Decode - 解码
@@ -165,36 +120,6 @@ func (d *DataGroup) Decode(data []byte) error {
 			d.STypes = append(d.STypes, 0)
 		}
 		switch data[idx] {
-		case STypeAudio:
-			sa, err := d.GetASegment()
-			if err != nil {
-				sa = NewDefaultSegmentAudio()
-				d.Segments = append(d.Segments, sa)
-			}
-			if err := sa.Decode(data[idx : idx+int(d.Sizes[i])]); err != nil {
-				return err
-			}
-			d.STypes[i] = STypeAudio
-		case STypeVibrate:
-			sv, err := d.GetVSegment()
-			if err != nil {
-				sv = NewDefaultSegmentVibrate()
-				d.Segments = append(d.Segments, sv)
-			}
-			if err := sv.Decode(data[idx : idx+int(d.Sizes[i])]); err != nil {
-				return err
-			}
-			d.STypes[i] = STypeVibrate
-		case STypeMultiAxisVibrate:
-			svv, err := d.GetMultiAxisVSegment()
-			if err != nil {
-				svv = NewDefaultSegmentMultiAxisVibrate()
-				d.Segments = append(d.Segments, svv)
-			}
-			if err := svv.Decode(data[idx : idx+int(d.Sizes[i])]); err != nil {
-				return err
-			}
-			d.STypes[i] = STypeMultiAxisVibrate
 		case STypeTemperature:
 			st, err := d.GetTSegment()
 			if err != nil {
@@ -205,27 +130,6 @@ func (d *DataGroup) Decode(data []byte) error {
 				return err
 			}
 			d.STypes[i] = STypeTemperature
-		case STypeAudioV2:
-			sa, err := d.GetAV2Segment()
-			if err != nil {
-				sa = NewDefaultSegmentAudioV2()
-				d.Segments = append(d.Segments, sa)
-			}
-			if err := sa.Decode(data[idx : idx+int(d.Sizes[i])]); err != nil {
-				return err
-			}
-			d.STypes[i] = STypeAudioV2
-		case STypeNumericalTable:
-			st, err := d.GetNumericalTableSegment()
-			if err != nil {
-				st = NewDefaultSegmentNumericalTable()
-				st.Data = &ResultAndScore{}
-				d.Segments = append(d.Segments, st)
-			}
-			if err := st.Decode(data[idx : idx+int(d.Sizes[i])]); err != nil {
-				return err
-			}
-			d.STypes[i] = STypeNumericalTable
 		default:
 			return fmt.Errorf("no match stype %d", stype)
 		}

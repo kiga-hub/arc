@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"io"
-	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"net"
@@ -44,6 +43,8 @@ func createDefaultCookie() {
 }
 
 // SetDefaultSetting Overwrite default settings
+//
+//goland:noinspection GoUnusedExportedFunction
 func SetDefaultSetting(setting HTTPSettings) {
 	settingMutex.Lock()
 	defer settingMutex.Unlock()
@@ -51,11 +52,11 @@ func SetDefaultSetting(setting HTTPSettings) {
 }
 
 // NewRequest return *BeegoHttpRequest with specific method
-func NewRequest(rawurl, method string) *HTTPRequest {
+func NewRequest(rawURL, method string) *HTTPRequest {
 	var resp http.Response
-	u, err := url.Parse(rawurl)
+	u, err := url.Parse(rawURL)
 	if err != nil {
-		log.Println("Httplib:", err)
+		log.Println("HTTP lib:", err)
 	}
 	req := http.Request{
 		URL:        u,
@@ -66,7 +67,7 @@ func NewRequest(rawurl, method string) *HTTPRequest {
 		ProtoMinor: 1,
 	}
 	return &HTTPRequest{
-		url:     rawurl,
+		url:     rawURL,
 		req:     &req,
 		params:  map[string][]string{},
 		files:   map[string]string{},
@@ -76,26 +77,36 @@ func NewRequest(rawurl, method string) *HTTPRequest {
 }
 
 // Get returns *HttpRequest with GET method.
+//
+//goland:noinspection GoUnusedExportedFunction
 func Get(url string) *HTTPRequest {
 	return NewRequest(url, "GET")
 }
 
 // Post returns *HttpRequest with POST method.
+//
+//goland:noinspection GoUnusedExportedFunction
 func Post(url string) *HTTPRequest {
 	return NewRequest(url, "POST")
 }
 
 // Put returns *HttpRequest with PUT method.
+//
+//goland:noinspection GoUnusedExportedFunction
 func Put(url string) *HTTPRequest {
 	return NewRequest(url, "PUT")
 }
 
 // Delete returns *HttpRequest DELETE method.
+//
+//goland:noinspection GoUnusedExportedFunction
 func Delete(url string) *HTTPRequest {
 	return NewRequest(url, "DELETE")
 }
 
 // Head returns *HttpRequest with HEAD method.
+//
+//goland:noinspection GoUnusedExportedFunction
 func Head(url string) *HTTPRequest {
 	return NewRequest(url, "HEAD")
 }
@@ -159,15 +170,15 @@ func (b *HTTPRequest) SetUserAgent(useragent string) *HTTPRequest {
 }
 
 // Debug sets show debug or not when executing request.
-func (b *HTTPRequest) Debug(isdebug bool) *HTTPRequest {
-	b.setting.ShowDebug = isdebug
+func (b *HTTPRequest) Debug(isDebug bool) *HTTPRequest {
+	b.setting.ShowDebug = isDebug
 	return b
 }
 
 // Retries sets Retries times.
 // default is 0 means no retried.
 // -1 means retried forever.
-// others means retried times.
+// other means retried times.
 func (b *HTTPRequest) Retries(times int) *HTTPRequest {
 	b.setting.Retries = times
 	return b
@@ -179,9 +190,9 @@ func (b *HTTPRequest) RetryDelay(delay time.Duration) *HTTPRequest {
 	return b
 }
 
-// DumpBody setting whether need to Dump the Body.
-func (b *HTTPRequest) DumpBody(isdump bool) *HTTPRequest {
-	b.setting.DumpBody = isdump
+// DumpBody setting whether you need to Dump the Body.
+func (b *HTTPRequest) DumpBody(isDump bool) *HTTPRequest {
+	b.setting.DumpBody = isDump
 	return b
 }
 
@@ -217,14 +228,14 @@ func (b *HTTPRequest) SetHost(host string) *HTTPRequest {
 
 // SetProtocolVersion Set the protocol version for incoming requests.
 // Client requests always use HTTP/1.1.
-func (b *HTTPRequest) SetProtocolVersion(vers string) *HTTPRequest {
-	if len(vers) == 0 {
-		vers = "HTTP/1.1"
+func (b *HTTPRequest) SetProtocolVersion(version string) *HTTPRequest {
+	if len(version) == 0 {
+		version = "HTTP/1.1"
 	}
 
-	major, minor, ok := http.ParseHTTPVersion(vers)
+	major, minor, ok := http.ParseHTTPVersion(version)
 	if ok {
-		b.req.Proto = vers
+		b.req.Proto = version
 		b.req.ProtoMajor = major
 		b.req.ProtoMinor = minor
 	}
@@ -248,9 +259,9 @@ func (b *HTTPRequest) SetTransport(transport http.RoundTripper) *HTTPRequest {
 // example:
 //
 //	func(req *http.Request) (*url.URL, error) {
-// 		u, _ := url.ParseRequestURI("http://127.0.0.1:8118")
-// 		return u, nil
-// 	}
+//		u, _ := url.ParseRequestURI("http://127.0.0.1:8118")
+//		return u, nil
+//	}
 func (b *HTTPRequest) SetProxy(proxy func(*http.Request) (*url.URL, error)) *HTTPRequest {
 	b.setting.Proxy = proxy
 	return b
@@ -277,8 +288,8 @@ func (b *HTTPRequest) Param(key, value string) *HTTPRequest {
 }
 
 // PostFile add a post file to the request
-func (b *HTTPRequest) PostFile(formname, filename string) *HTTPRequest {
-	b.files[formname] = filename
+func (b *HTTPRequest) PostFile(formName, filename string) *HTTPRequest {
+	b.files[formName] = filename
 	return b
 }
 
@@ -288,11 +299,11 @@ func (b *HTTPRequest) Body(data interface{}) *HTTPRequest {
 	switch t := data.(type) {
 	case string:
 		bf := bytes.NewBufferString(t)
-		b.req.Body = ioutil.NopCloser(bf)
+		b.req.Body = io.NopCloser(bf)
 		b.req.ContentLength = int64(len(t))
 	case []byte:
 		bf := bytes.NewBuffer(t)
-		b.req.Body = ioutil.NopCloser(bf)
+		b.req.Body = io.NopCloser(bf)
 		b.req.ContentLength = int64(len(t))
 	}
 	return b
@@ -301,12 +312,12 @@ func (b *HTTPRequest) Body(data interface{}) *HTTPRequest {
 // XMLBody adds request raw body encoding by XML.
 func (b *HTTPRequest) XMLBody(obj interface{}) (*HTTPRequest, error) {
 	if b.req.Body == nil && obj != nil {
-		byts, err := xml.Marshal(obj)
+		data, err := xml.Marshal(obj)
 		if err != nil {
 			return b, err
 		}
-		b.req.Body = ioutil.NopCloser(bytes.NewReader(byts))
-		b.req.ContentLength = int64(len(byts))
+		b.req.Body = io.NopCloser(bytes.NewReader(data))
+		b.req.ContentLength = int64(len(data))
 		b.req.Header.Set("Content-Type", "application/xml")
 	}
 	return b, nil
@@ -315,12 +326,12 @@ func (b *HTTPRequest) XMLBody(obj interface{}) (*HTTPRequest, error) {
 // YAMLBody adds request raw body encoding by YAML.
 func (b *HTTPRequest) YAMLBody(obj interface{}) (*HTTPRequest, error) {
 	if b.req.Body == nil && obj != nil {
-		byts, err := yaml.Marshal(obj)
+		data, err := yaml.Marshal(obj)
 		if err != nil {
 			return b, err
 		}
-		b.req.Body = ioutil.NopCloser(bytes.NewReader(byts))
-		b.req.ContentLength = int64(len(byts))
+		b.req.Body = io.NopCloser(bytes.NewReader(data))
+		b.req.ContentLength = int64(len(data))
 		b.req.Header.Set("Content-Type", "application/x+yaml")
 	}
 	return b, nil
@@ -329,12 +340,12 @@ func (b *HTTPRequest) YAMLBody(obj interface{}) (*HTTPRequest, error) {
 // JSONBody adds request raw body encoding by JSON.
 func (b *HTTPRequest) JSONBody(obj interface{}) (*HTTPRequest, error) {
 	if b.req.Body == nil && obj != nil {
-		byts, err := json.Marshal(obj)
+		data, err := json.Marshal(obj)
 		if err != nil {
 			return b, err
 		}
-		b.req.Body = ioutil.NopCloser(bytes.NewReader(byts))
-		b.req.ContentLength = int64(len(byts))
+		b.req.Body = io.NopCloser(bytes.NewReader(data))
+		b.req.ContentLength = int64(len(data))
 		b.req.Header.Set("Content-Type", "application/json")
 	}
 	return b, nil
@@ -358,20 +369,23 @@ func (b *HTTPRequest) buildURL(paramBody string) {
 			pr, pw := io.Pipe()
 			bodyWriter := multipart.NewWriter(pw)
 			go func() {
-				for formname, filename := range b.files {
-					fileWriter, err := bodyWriter.CreateFormFile(formname, filename)
+				for formName, filename := range b.files {
+					fileWriter, err := bodyWriter.CreateFormFile(formName, filename)
 					if err != nil {
-						log.Println("Httplib:", err)
+						log.Println("HTTP lib:", err)
 					}
 					fh, err := os.Open(filename)
 					if err != nil {
-						log.Println("Httplib:", err)
+						log.Println("HTTP lib:", err)
 					}
-					//iocopy
+					// io copy
 					_, err = io.Copy(fileWriter, fh)
-					fh.Close()
 					if err != nil {
-						log.Println("Httplib:", err)
+						log.Println("HTTP lib:", err)
+					}
+					err = fh.Close()
+					if err != nil {
+						log.Println("HTTP lib:", err)
 					}
 				}
 				for k, v := range b.params {
@@ -381,11 +395,17 @@ func (b *HTTPRequest) buildURL(paramBody string) {
 						}
 					}
 				}
-				bodyWriter.Close()
-				pw.Close()
+				err := bodyWriter.Close()
+				if err != nil {
+					log.Println("bodyWriter:", err)
+				}
+				err = pw.Close()
+				if err != nil {
+					log.Println("pw close:", err)
+				}
 			}()
 			b.Header("Content-Type", bodyWriter.FormDataContentType())
-			b.req.Body = ioutil.NopCloser(pr)
+			b.req.Body = io.NopCloser(pr)
 			b.Header("Transfer-Encoding", "chunked")
 			return
 		}
@@ -490,8 +510,8 @@ func (b *HTTPRequest) DoRequest() (resp *http.Response, err error) {
 	}
 	// retries default value is 0, it will run once.
 	// retries equal to -1, it will run forever until success
-	// retries is setted, it will retries fixed times.
-	// Sleeps for a 400ms inbetween calls to reduce spam
+	// retries was set, it will retry fixed times.
+	// Sleeps for a 400ms in between calls to reduce spam
 	for i := 0; b.setting.Retries == -1 || i <= b.setting.Retries; i++ {
 		resp, err = client.Do(b.req)
 		if err == nil {
@@ -526,16 +546,20 @@ func (b *HTTPRequest) Bytes() ([]byte, error) {
 	if resp.Body == nil {
 		return nil, nil
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.Println("resp body close:", err)
+		}
+	}()
 	if b.setting.Gzip && resp.Header.Get("Content-Encoding") == "gzip" {
 		reader, err := gzip.NewReader(resp.Body)
 		if err != nil {
 			return nil, err
 		}
-		b.body, err = ioutil.ReadAll(reader)
+		b.body, err = io.ReadAll(reader)
 		return b.body, err
 	}
-	b.body, err = ioutil.ReadAll(resp.Body)
+	b.body, err = io.ReadAll(resp.Body)
 	return b.body, err
 }
 
@@ -549,7 +573,11 @@ func (b *HTTPRequest) ToFile(filename string) error {
 	if resp.Body == nil {
 		return nil
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.Println("resp body close:", err)
+		}
+	}()
 	err = pathExistAndMkdir(filename)
 	if err != nil {
 		return err
@@ -558,12 +586,16 @@ func (b *HTTPRequest) ToFile(filename string) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() {
+		if err := f.Close(); err != nil {
+			log.Println("file close:", err)
+		}
+	}()
 	_, err = io.Copy(f, resp.Body)
 	return err
 }
 
-//Check that the file directory exists, there is no automatically created
+// Check that the file directory exists, there is no automatically created
 func pathExistAndMkdir(filename string) (err error) {
 	filename = path.Dir(filename)
 	_, err = os.Stat(filename)
@@ -609,15 +641,16 @@ func (b *HTTPRequest) ToYAML(v interface{}) error {
 	return yaml.Unmarshal(data, v)
 }
 
-// Response executes request client gets response mannually.
+// Response executes request client gets response manually.
 func (b *HTTPRequest) Response() (*http.Response, error) {
 	return b.getResponse()
 }
 
 // TimeoutDialer returns functions of connection dialer with timeout settings for http.Transport Dial field.
 func TimeoutDialer(ctx context.Context, cTimeout time.Duration, rwTimeout time.Duration) func(ctx context.Context, net, addr string) (c net.Conn, err error) {
-	return func(ctx context.Context, netw, addr string) (net.Conn, error) {
-		conn, err := net.DialTimeout(netw, addr, cTimeout)
+	_ = ctx
+	return func(ctx context.Context, netParam, addr string) (net.Conn, error) {
+		conn, err := net.DialTimeout(netParam, addr, cTimeout)
 		if err != nil {
 			return nil, err
 		}

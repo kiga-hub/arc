@@ -189,7 +189,7 @@ var ErrWaitTimeout = errors.New("timed out waiting for the condition")
 // stops sending item and returns immediately.
 type WithContextFunc func(ctx context.Context) <-chan struct{}
 
-// Internally used, each of the the public 'Poll*' function defined in this
+// Internally used, each of the public 'Poll*' function defined in this
 // package should invoke this internal function with appropriate parameters.
 // ctx: the context specified by the caller, for infinite polling pass
 // a context that never gets cancelled or expired.
@@ -220,7 +220,7 @@ func poll(ctx context.Context, immediate bool, wait WithContextFunc, condition C
 
 // ForWithContext continually checks 'fn' as driven by 'wait'.
 //
-// ForWithContext gets a channel from 'wait()'', and then invokes 'fn'
+// ForWithContext gets a channel from 'wait()', and then invokes 'fn'
 // once for every value placed on the channel and once more when the
 // channel is closed. If the channel is closed and 'fn'
 // returns false without error, ForWithContext returns ErrWaitTimeout.
@@ -269,7 +269,7 @@ func ForWithContext(ctx context.Context, wait WithContextFunc, fn ConditionWithC
 // Output ticks are not buffered. If the channel is not ready to receive an
 // item, the tick is skipped.
 func poller(interval, timeout time.Duration) WithContextFunc {
-	return WithContextFunc(func(ctx context.Context) <-chan struct{} {
+	return func(ctx context.Context) <-chan struct{} {
 		ch := make(chan struct{})
 
 		go func() {
@@ -306,5 +306,5 @@ func poller(interval, timeout time.Duration) WithContextFunc {
 		}()
 
 		return ch
-	})
+	}
 }

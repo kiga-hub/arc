@@ -14,39 +14,39 @@ const (
 	// BasicInstance is key for Host name
 	BasicInstance = "basic.instance"
 	// BasicAppName is key for app name
-	BasicAppName = "basic.appname"
+	BasicAppName = "basic.appName"
 	// BasicAppVersion is key for app version
-	BasicAppVersion = "basic.appversion"
+	BasicAppVersion = "basic.appVersion"
 
-	basicDevMode       = "basic.devmode"
-	basicAPIRoot       = "basic.apiroot"
-	basicAPIPort       = "basic.apiport"
+	basicDevMode       = "basic.devMode"
+	basicAPIRoot       = "basic.apiRoot"
+	basicAPIPort       = "basic.apiPort"
 	basicProf          = "basic.prof"
-	basicDynamicConfig = "basic.dynamicconfig"
+	basicDynamicConfig = "basic.dynamicConfig"
 	basicCPUCount      = "basic.cpu"
 
-	basicIsAPIRate    = "basic.isapirate"
-	basicIsAPIBody    = "basic.isapibody"
-	basicIsAPITimeout = "basic.isapitimeout"
+	basicIsAPIRate    = "basic.isApiRate"
+	basicIsAPIBody    = "basic.isApiBody"
+	basicIsAPITimeout = "basic.isApiTimeout"
 
-	basicAPIRate      = "basic.apirate"
-	basicAPIBurst     = "basic.apiburst"
-	basicAPIExpiresIn = "basic.apiexpires"
-	basicAPIBodyLimit = "basic.apibodylimit"
-	basicAPITimeout   = "basic.apitimeout"
+	basicAPIRate      = "basic.apiRate"
+	basicAPIBurst     = "basic.apiBurst"
+	basicAPIExpiresIn = "basic.apiExpires"
+	basicAPIBodyLimit = "basic.apiBodyLimit"
+	basicAPITimeout   = "basic.apiTimeout"
 
-	basicInSwarm  = "basic.inswarm"
+	basicInSwarm  = "basic.inSwarm"
 	basicWorkLoad = "basic.workLoad"
 )
 
 var defaultBasicConfig = BasicConfig{
-	Zone:    "needsetthis",
-	Node:    "needsetthis",
-	Machine: "needsetthis",
-	Service: "needsetthis",
+	Zone:    "needSetThis",
+	Node:    "needSetThis",
+	Machine: "needSetThis",
+	Service: "needSetThis",
 
 	IsDevMode:       false,
-	APIRoot:         "/api/needsetthis/v1",
+	APIRoot:         "/api/need_set_this/v1",
 	APIPort:         80,
 	IsProf:          false,
 	IsDynamicConfig: false,
@@ -66,7 +66,7 @@ var defaultBasicConfig = BasicConfig{
 	WorkLoad: 0,
 }
 
-//BasicConfig 基本配置
+// BasicConfig 基本配置
 type BasicConfig struct {
 	Zone    string `toml:"zone" json:"zone,omitempty"`       // 部署环境编码
 	Node    string `toml:"node" json:"node,omitempty"`       // 节点编码
@@ -82,27 +82,27 @@ type BasicConfig struct {
 	// GitBranch    string `json:"git_branch"`
 	// GoVersion    string `json:"go_version"`
 
-	IsDevMode       bool   `toml:"devmode" json:"is_dev_mode,omitempty"`             // 是否开发模式
-	APIRoot         string `toml:"apiroot" json:"api_root,omitempty"`                // restful api根路径
-	APIPort         int    `toml:"apiport" json:"api_port,omitempty"`                // api暴露端口
+	IsDevMode       bool   `toml:"devMode" json:"is_dev_mode,omitempty"`             // 是否开发模式
+	APIRoot         string `toml:"apiRoot" json:"api_root,omitempty"`                // restful api根路径
+	APIPort         int    `toml:"apiPort" json:"api_port,omitempty"`                // api暴露端口
 	IsProf          bool   `toml:"prof" json:"is_prof,omitempty"`                    // 是否调试性能
-	IsDynamicConfig bool   `toml:"dynamicconfig" json:"is_dynamic_config,omitempty"` // 是否响应动态配置
+	IsDynamicConfig bool   `toml:"dynamicConfig" json:"is_dynamic_config,omitempty"` // 是否响应动态配置
 	CPUCount        int    `toml:"cpu" json:"cpu_count,omitempty"`                   // 线程限制
 
-	IsAPIRate    bool    `toml:"isapirate" json:"is_api_rate,omitempty"`       // 是否启用限速
-	IsAPIBody    bool    `toml:"isapibody" json:"is_api_body,omitempty"`       // 是否启用限制Body大小
-	IsAPITimeout bool    `toml:"isapitimeout" json:"is_api_timeout,omitempty"` // 是否启用超时
-	APIRate      float64 `toml:"apirate" json:"rate,omitempty"`                // 速率
-	APIBurst     int     `toml:"apiburst" json:"burst,omitempty"`              // 突发值,请求队列达到速率限制时,增加的次数
-	APIExpiresIn int     `toml:"apiexpires" json:"expires_in,omitempty"`       // 过期时间,单位秒
-	APIBodyLimit string  `toml:"bapiodylimit" json:"body_limit,omitempty"`     // 请求body大小限制,单位MB
-	APITimeout   int     `toml:"apitimeout" json:"timeout,omitempty"`          // 服务端超时,单位毫秒
+	IsAPIRate    bool    `toml:"isApiRate" json:"is_api_rate,omitempty"`       // 是否启用限速
+	IsAPIBody    bool    `toml:"isApiBody" json:"is_api_body,omitempty"`       // 是否启用限制Body大小
+	IsAPITimeout bool    `toml:"isApiTimeout" json:"is_api_timeout,omitempty"` // 是否启用超时
+	APIRate      float64 `toml:"apiRate" json:"rate,omitempty"`                // 速率
+	APIBurst     int     `toml:"apiBurst" json:"burst,omitempty"`              // 突发值,请求队列达到速率限制时,增加的次数
+	APIExpiresIn int     `toml:"apiExpires" json:"expires_in,omitempty"`       // 过期时间,单位秒
+	APIBodyLimit string  `toml:"apiBodyLimit" json:"body_limit,omitempty"`     // 请求body大小限制,单位MB
+	APITimeout   int     `toml:"apiTimeout" json:"timeout,omitempty"`          // 服务端超时,单位毫秒
 
-	InSwarm  bool `toml:"inswarm" json:"inswarm,omitempty"`    // 是否在Swarm内
+	InSwarm  bool `toml:"inSwarm" json:"inSwarm,omitempty"`    // 是否在Swarm内
 	WorkLoad int  `toml:"workLoad" json:"work_load,omitempty"` // 对外工作负载数量
 }
 
-//SetDefaultBasicConfig 设置默认基本配置
+// SetDefaultBasicConfig 设置默认基本配置
 func SetDefaultBasicConfig() {
 	viper.SetDefault(basicZone, defaultBasicConfig.Zone)
 	viper.SetDefault(basicNode, defaultBasicConfig.Node)
@@ -130,7 +130,7 @@ func SetDefaultBasicConfig() {
 	viper.SetDefault(basicWorkLoad, defaultBasicConfig.WorkLoad)
 }
 
-//GetBasicConfig 获取基本配置
+// GetBasicConfig 获取基本配置
 func GetBasicConfig() *BasicConfig {
 	return &BasicConfig{
 		Zone:            viper.GetString(basicZone),

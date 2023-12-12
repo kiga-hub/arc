@@ -24,9 +24,11 @@ type ComputationPool struct {
 }
 
 // TODO move this
-var getVoiceLock *sync.Mutex = new(sync.Mutex)
+var getVoiceLock = new(sync.Mutex)
 
 // InitComputationPool 初始化计算连接池
+//
+//goland:noinspection GoUnusedExportedFunction
 func InitComputationPool(poolConfig *conf.PoolConfig, computationFactory func() IComputation, initFunc func() error, logger logging.ILogger) (*ComputationPool, error) {
 	logger.Info("InitWorkerPool")
 	err := initFunc()
@@ -34,7 +36,7 @@ func InitComputationPool(poolConfig *conf.PoolConfig, computationFactory func() 
 		return nil, err
 	}
 
-	newpool, err := NewPool(poolConfig, computationFactory, logger)
+	newPool, err := NewPool(poolConfig, computationFactory, logger)
 
 	if err != nil {
 		return nil, err
@@ -42,7 +44,7 @@ func InitComputationPool(poolConfig *conf.PoolConfig, computationFactory func() 
 
 	return &ComputationPool{
 		logger:     logger,
-		ObjectPool: newpool,
+		ObjectPool: newPool,
 	}, nil
 }
 

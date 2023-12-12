@@ -84,6 +84,7 @@ func (c *EmptyComponent) Status() *ComponentStatus {
 
 // PreInit called before Init()
 func (c *EmptyComponent) PreInit(ctx context.Context) error {
+	_ = ctx
 	if c.IsPrint {
 		fmt.Println("PreInit")
 	}
@@ -92,6 +93,7 @@ func (c *EmptyComponent) PreInit(ctx context.Context) error {
 
 // Init the component
 func (c *EmptyComponent) Init(server *Server) error {
+	_ = server
 	if c.IsPrint {
 		fmt.Println("Init")
 	}
@@ -100,6 +102,7 @@ func (c *EmptyComponent) Init(server *Server) error {
 
 // PostInit called after Init()
 func (c *EmptyComponent) PostInit(ctx context.Context) error {
+	_ = ctx
 	if c.IsPrint {
 		fmt.Println("PostInit")
 	}
@@ -119,10 +122,14 @@ func (c *EmptyComponent) GetSubscribeServiceList() []string {
 
 // OnServiceChanged called when subscribe service changed
 func (c *EmptyComponent) OnServiceChanged(services []model.SubscribeService, err error) {
+	_ = services
+	_ = err
 }
 
 // SetupHandler of echo if the component need
 func (c *EmptyComponent) SetupHandler(root echoswagger.ApiRoot, base string) error {
+	_ = root
+	_ = base
 	if c.IsPrint {
 		fmt.Println("GetHandle")
 	}
@@ -131,6 +138,7 @@ func (c *EmptyComponent) SetupHandler(root echoswagger.ApiRoot, base string) err
 
 // PreStart called before Start()
 func (c *EmptyComponent) PreStart(ctx context.Context) error {
+	_ = ctx
 	if c.IsPrint {
 		fmt.Println("PreStart")
 	}
@@ -139,6 +147,7 @@ func (c *EmptyComponent) PreStart(ctx context.Context) error {
 
 // Start the component
 func (c *EmptyComponent) Start(ctx context.Context) error {
+	_ = ctx
 	if c.IsPrint {
 		fmt.Println("Start")
 	}
@@ -147,6 +156,7 @@ func (c *EmptyComponent) Start(ctx context.Context) error {
 
 // PostStart called after Start()
 func (c *EmptyComponent) PostStart(ctx context.Context) error {
+	_ = ctx
 	if c.IsPrint {
 		fmt.Println("PostStart")
 	}
@@ -155,6 +165,7 @@ func (c *EmptyComponent) PostStart(ctx context.Context) error {
 
 // PreStop called before Stop()
 func (c *EmptyComponent) PreStop(ctx context.Context) error {
+	_ = ctx
 	if c.IsPrint {
 		fmt.Println("PreStop")
 	}
@@ -163,6 +174,7 @@ func (c *EmptyComponent) PreStop(ctx context.Context) error {
 
 // Stop the component
 func (c *EmptyComponent) Stop(ctx context.Context) error {
+	_ = ctx
 	if c.IsPrint {
 		fmt.Println("Stop")
 	}
@@ -171,6 +183,7 @@ func (c *EmptyComponent) Stop(ctx context.Context) error {
 
 // PostStop called after Stop()
 func (c *EmptyComponent) PostStop(ctx context.Context) error {
+	_ = ctx
 	if c.IsPrint {
 		fmt.Println("PostStop")
 	}

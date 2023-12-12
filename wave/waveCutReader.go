@@ -28,6 +28,8 @@ type CutReader struct {
 }
 
 // NewCutReaderByMsec -
+//
+//goland:noinspection GoUnusedExportedFunction
 func NewCutReaderByMsec(fileName string, offsetMs, durationMs int, channels []int) (*CutReader, error) {
 	// 打开文件
 	f, err := os.Open(fileName)
@@ -118,6 +120,8 @@ func NewCutReaderByMsec(fileName string, offsetMs, durationMs int, channels []in
 }
 
 // NewCutReaderByTime -
+//
+//goland:noinspection GoUnusedExportedFunction
 func NewCutReaderByTime(fileName string, offset, duration time.Duration, channels []int) (*CutReader, error) {
 	// 打开文件
 	f, err := os.Open(fileName)
@@ -182,7 +186,7 @@ func NewCutReaderByTime(fileName string, offset, duration time.Duration, channel
 	size := uint32((duration.Milliseconds()*int64(samplerate))/1000) * bits * uint32(len(channels))
 
 	// 定位
-	if _, err := f.Seek(int64(foffset), 0); err != nil {
+	if _, err := f.Seek(foffset, 0); err != nil {
 		return nil, errors.WithStack(err)
 	}
 
@@ -205,6 +209,8 @@ func NewCutReaderByTime(fileName string, offset, duration time.Duration, channel
 }
 
 // NewCutReader -
+//
+//goland:noinspection GoUnusedExportedFunction
 func NewCutReader(fileName string, offset, size int64) (*CutReader, error) {
 	f, err := os.Open(fileName)
 	if err != nil {

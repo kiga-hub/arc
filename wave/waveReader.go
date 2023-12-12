@@ -5,7 +5,6 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 )
 
@@ -36,6 +35,8 @@ type Reader struct {
 }
 
 // NewReader -
+//
+//goland:noinspection GoUnusedExportedFunction
 func NewReader(fileName string) (*Reader, error) {
 	// check file size
 	fi, err := os.Stat(fileName)
@@ -51,9 +52,13 @@ func NewReader(fileName string) (*Reader, error) {
 	if err != nil {
 		return &Reader{}, err
 	}
-	defer f.Close()
+	defer func() {
+		if err := f.Close(); err != nil {
+			fmt.Println(err)
+		}
+	}()
 
-	waveData, err := ioutil.ReadAll(f)
+	waveData, err := io.ReadAll(f)
 	if err != nil {
 		return &Reader{}, err
 	}
@@ -62,6 +67,8 @@ func NewReader(fileName string) (*Reader, error) {
 }
 
 // NewReaderByFile -
+//
+//goland:noinspection GoUnusedExportedFunction
 func NewReaderByFile(fileName string) (*Reader, error) {
 	// check file size
 	fi, err := os.Stat(fileName)
@@ -77,7 +84,11 @@ func NewReaderByFile(fileName string) (*Reader, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer func() {
+		if err := f.Close(); err != nil {
+			fmt.Println(err)
+		}
+	}()
 
 	reader := new(Reader)
 	reader.size = fi.Size()

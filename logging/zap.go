@@ -45,10 +45,10 @@ func CreateLogger(basicConfig *microConf.BasicConfig, logConfig *conf.LogConfig)
 	level := zap.NewAtomicLevel()
 	err := level.UnmarshalText([]byte(logConfig.Level))
 	if err != nil {
-		return nil, fmt.Errorf("Fatal to parse logger level: %s", err)
+		return nil, fmt.Errorf("fatal to parse logger level: %s", err)
 	}
 
-	cores := []zapcore.Core{}
+	var cores []zapcore.Core
 
 	// graylog -
 	if logConfig.GraylogAddr != "" {
@@ -71,38 +71,38 @@ func CreateLogger(basicConfig *microConf.BasicConfig, logConfig *conf.LogConfig)
 	// file -
 	if logConfig.Path != "" {
 		if basicConfig.IsDevMode {
-			fcores, err := newFileDevCore(basicConfig, logConfig, level)
+			fCores, err := newFileDevCore(basicConfig, logConfig, level)
 			if err != nil {
 				return nil, err
 			}
-			cores = append(cores, fcores...)
+			cores = append(cores, fCores...)
 		} else {
-			fcores, err := newFileProdCore(basicConfig, logConfig, level)
+			fCores, err := newFileProdCore(basicConfig, logConfig, level)
 			if err != nil {
 				return nil, err
 			}
-			cores = append(cores, fcores...)
+			cores = append(cores, fCores...)
 		}
 	}
 
 	// console -
 	if logConfig.Console {
 		if basicConfig.IsDevMode {
-			ccores, err := newConsoleDevCore(level)
+			cCores, err := newConsoleDevCore(level)
 			if err != nil {
 				return nil, err
 			}
-			cores = append(cores, ccores...)
+			cores = append(cores, cCores...)
 		} else {
-			ccores, err := newConsoleProdCore(level)
+			cCores, err := newConsoleProdCore(level)
 			if err != nil {
 				return nil, err
 			}
-			cores = append(cores, ccores...)
+			cores = append(cores, cCores...)
 		}
 	}
 
-	logFields := []zapcore.Field{}
+	var logFields []zapcore.Field
 	for _, key := range strings.Split(logConfig.Fields, ",") {
 		switch key {
 		case "zone":
@@ -115,15 +115,15 @@ func CreateLogger(basicConfig *microConf.BasicConfig, logConfig *conf.LogConfig)
 			logFields = append(logFields, zapcore.Field{Key: key, Type: zapcore.StringType, String: basicConfig.Instance})
 		case "service":
 			logFields = append(logFields, zapcore.Field{Key: key, Type: zapcore.StringType, String: basicConfig.Service})
-		case "appname":
+		case "appName":
 			logFields = append(logFields, zapcore.Field{Key: key, Type: zapcore.StringType, String: basicConfig.AppName})
-		case "appversion":
+		case "appVersion":
 			logFields = append(logFields, zapcore.Field{Key: key, Type: zapcore.StringType, String: basicConfig.AppVersion})
 		}
 	}
 
 	tee := zapcore.NewTee(cores...)
-	zlog := zap.New(
+	zLog := zap.New(
 		tee,
 		zap.AddCaller(),
 		zap.AddStacktrace(zap.LevelEnablerFunc(func(l zapcore.Level) bool {
@@ -131,7 +131,7 @@ func CreateLogger(basicConfig *microConf.BasicConfig, logConfig *conf.LogConfig)
 		})),
 		zap.Fields(logFields...),
 	)
-	return zlog, err
+	return zLog, err
 }
 
 // LoggerGroup is a group of logger, which provide loggers w/ different levels for modules

@@ -21,6 +21,8 @@ type RXRedisCache struct {
 // var RedisCache RXRedisCache
 
 // InitRedisPool  初始化redis链接池
+//
+//goland:noinspection GoUnusedExportedFunction
 func InitRedisPool(config Config) (*RXRedisCache, error) {
 	var err error
 	redisPool := &redis.Pool{
@@ -293,6 +295,7 @@ func (rc *RXRedisCache) LOCK(key, requestID string, timeOut time.Duration) error
 
 // UNLOCK redis 取消锁
 func (rc *RXRedisCache) UNLOCK(key, requestID string, timeOut time.Duration) error {
+	_ = timeOut
 	var delScript = redis.NewScript(1, `if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end`)
 	conn := rc.pool.Get()
 

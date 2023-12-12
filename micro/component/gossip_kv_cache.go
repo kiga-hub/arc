@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"runtime"
@@ -29,7 +29,7 @@ import (
 	_ "go.uber.org/automaxprocs" // 用于获取容器内实际cpu数量
 )
 
-// GossipKVCacheNodeMeta is meta for node, MetaMaxSize of memberlist is 512
+// GossipKVCacheNodeMeta is meta for node, MetaMaxSize of member list is 512
 type GossipKVCacheNodeMeta struct {
 	Name           string `json:"n,omitempty"`    //50
 	InClusterIP    string `json:"inip,omitempty"` //15
@@ -55,7 +55,7 @@ type GossipKVCacheComponent struct {
 	opsLock       sync.Mutex
 	broadcasts    *memberlist.TransmitLimitedQueue
 
-	// OnJoinCluster will be called when find a new leader or/and join a cluster, it might called multiple times.
+	// OnJoinCluster will be called when find a new leader or/and join a cluster, it might be called multiple times.
 	OnJoinCluster func()
 	// OnNodeJoin will be called when a node join the cluster
 	OnNodeJoin func(*GossipKVCacheNodeMeta)
@@ -70,7 +70,7 @@ type GossipKVCacheComponent struct {
 	metadata []byte
 	meta     *GossipKVCacheNodeMeta
 	metas    map[string]*GossipKVCacheNodeMeta
-	items    map[string]string //key-value e.g. sensorid-cluster
+	items    map[string]string //key-value e.g. sensor id-cluster
 }
 
 // Name of the component
@@ -137,7 +137,7 @@ func (c *GossipKVCacheComponent) Init(server *micro.Server) error {
 	config.PushPullInterval = 10 * time.Second
 
 	if !basicConf.IsDevMode {
-		config.LogOutput = ioutil.Discard // Drop all memberlist output in non-dev mode
+		config.LogOutput = io.Discard // Drop all member list output in non-dev mode
 	}
 
 	c.list, err = memberlist.Create(config)
@@ -158,12 +158,13 @@ func (c *GossipKVCacheComponent) Init(server *micro.Server) error {
 
 // PostStart called after Start()
 func (c *GossipKVCacheComponent) PostStart(ctx context.Context) error {
+	_ = ctx
 	basicConf := microConf.GetBasicConfig()
 	if !basicConf.InSwarm {
 		return nil
 	}
 	var err error
-	//leadship test
+	//lead ship test
 	c.leaderElector, err = leadelection.NewLeaderElector(leadelection.LeaderElectionConfig{
 		Lock: leadelection.NewNacosLock(micro.PlatformConfigGroup, fmt.Sprintf("lead-%s", c.ClusterName), c.inClusterIP, c.nacosClient),
 		Callbacks: leadelection.LeaderCallbacks{
@@ -232,6 +233,7 @@ func (c *GossipKVCacheComponent) PostStart(ctx context.Context) error {
 
 // PreStop called before Stop()
 func (c *GossipKVCacheComponent) PreStop(ctx context.Context) error {
+	_ = ctx
 	// post stop
 	basicConf := microConf.GetBasicConfig()
 	if !basicConf.InSwarm {
@@ -248,6 +250,7 @@ type broadcast struct {
 }
 
 func (b *broadcast) Invalidates(other memberlist.Broadcast) bool {
+	_ = other
 	return false
 }
 
@@ -280,6 +283,7 @@ const (
 
 // SetupHandler of echo if the component need
 func (c *GossipKVCacheComponent) SetupHandler(root echoswagger.ApiRoot, base string) error {
+	_ = base
 	basicConf := microConf.GetBasicConfig()
 
 	g := root.Group(urlGroupGossip, urlKVCache)
@@ -333,7 +337,7 @@ func (c *GossipKVCacheComponent) demoHandler(ctx echo.Context) error {
 	}
 	sensorids := ctx.QueryParam("sensorids")
 	c.l().Infof("the real response", "sensorid", sensorid, "privateip", c.meta.PrivateIP, "globalip", c.meta.GlobalIP)
-	data := []string{}
+	var data []string
 	for _, v := range strings.Split(sensorids, idSeparater) {
 		data = append(data, fmt.Sprintf("data for %s, from %s / %s ", v, c.meta.PrivateIP, c.meta.GlobalIP))
 	}
@@ -507,7 +511,7 @@ func (c *GossipKVCacheComponent) GetMembers() []*memberlist.Node {
 // memberlist.Delegate interface
 
 // NodeMeta is used to retrieve meta-data about the current node
-// when broadcasting an alive message. It's length is limited to
+// when broadcasting an alive message. Its length is limited to
 // the given byte size. This metadata is available in the Node structure.
 func (c *GossipKVCacheComponent) NodeMeta(limit int) []byte {
 	if len(c.metadata) > limit {
@@ -562,6 +566,7 @@ func (c *GossipKVCacheComponent) GetBroadcasts(overhead, limit int) [][]byte {
 // data can be sent here. See MergeRemoteState as well. The `join`
 // boolean indicates this is for a join instead of a push/pull.
 func (c *GossipKVCacheComponent) LocalState(join bool) []byte {
+	_ = join
 	c.opsLock.Lock()
 	b, _ := json.Marshal(c.items)
 	c.opsLock.Unlock()
@@ -649,7 +654,7 @@ func (c *GossipKVCacheComponent) NotifyLeave(node *memberlist.Node) {
 }
 
 // NotifyUpdate is invoked when a node is detected to have
-// updated, usually involving the meta data. The Node argument
+// updated, usually involving the metadata. The Node argument
 // must not be modified.
 func (c *GossipKVCacheComponent) NotifyUpdate(node *memberlist.Node) {
 	c.l().Debugf("A node was updated: " + node.String())
@@ -699,7 +704,7 @@ func (c *GossipKVCacheComponent) FindNodeMetasByPrefix(cluster, servicePrefix st
 	return nodes
 }
 
-// HaveSensorID add a item with sensorid as key and c.ClusterName as value
+// HaveSensorID add an item with sensor id as key and c.ClusterName as value
 func (c *GossipKVCacheComponent) HaveSensorID(sensorid string) error {
 	return c.Add(sensorid, c.meta.PrivateCluster)
 }
@@ -709,7 +714,7 @@ func (c *GossipKVCacheComponent) HaveSensorIDs(sensorids []string) error {
 	return c.AddKeys(sensorids, c.meta.PrivateCluster)
 }
 
-// SensorIDHandlerWrapper return a echo.HandlerFunc that will forward/redirect request to the instance which serve with the sensorid if need
+// SensorIDHandlerWrapper return an echo.HandlerFunc that will forward/redirect request to the instance which serve with the sensor id if you need
 // v2 version, if permitSelfHandlerFunc is true, use self handler func when no sensorID
 func (c *GossipKVCacheComponent) SensorIDHandlerWrapper(selfServiceName string, f echo.HandlerFunc, permitSelfHandlerFunc bool) echo.HandlerFunc {
 	return func(ctx echo.Context) error {
@@ -819,7 +824,7 @@ func (c *GossipKVCacheComponent) buildTargetsFromSensorIDs(selfServiceName, sens
 	return targets, nil
 }
 
-// SensorIDsHandlerWrapper return a echo.HandlerFunc that will forward/redirect request to the instances which serve with the sensorids
+// SensorIDsHandlerWrapper return an echo.HandlerFunc that will forward/redirect request to the instances which serve with the sensorids
 func (c *GossipKVCacheComponent) SensorIDsHandlerWrapper(selfServiceName string, fhttp echo.HandlerFunc, fws func(*websocket.Conn, int, []byte) error) echo.HandlerFunc {
 	return func(ctx echo.Context) error {
 		// handle websocket
@@ -869,7 +874,7 @@ func (c *GossipKVCacheComponent) wrapperHTTP(selfServiceName string, ctx echo.Co
 	}
 
 	// build urls
-	addresses := []*url.URL{}
+	var addresses []*url.URL
 	for ip, ids := range targets {
 		sensorids := strings.Join(ids, idSeparater)
 		u, _ := url.Parse(ctx.Request().URL.String())
@@ -881,7 +886,7 @@ func (c *GossipKVCacheComponent) wrapperHTTP(selfServiceName string, ctx echo.Co
 		addresses = append(addresses, u)
 	}
 
-	data := []interface{}{}
+	var data []interface{}
 	for _, u := range addresses {
 		u.Scheme = "http"
 		addr := u.String()
@@ -890,8 +895,12 @@ func (c *GossipKVCacheComponent) wrapperHTTP(selfServiceName string, ctx echo.Co
 		if err != nil {
 			return utils.GetJSONResponse(ctx, err, "")
 		}
-		defer resp.Body.Close()
-		body, err := ioutil.ReadAll(resp.Body)
+		func() {
+			if err := resp.Body.Close(); err != nil {
+				c.l().Error(err)
+			}
+		}()
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return utils.GetJSONResponse(ctx, err, "")
 		}
@@ -930,7 +939,11 @@ func (c *GossipKVCacheComponent) wrapperWebsocket(selfServiceName string, ctx ec
 		c.l().Error(err)
 		return utils.GetJSONResponse(ctx, err, "")
 	}
-	defer mainConn.Close()
+	defer func() {
+		if err := mainConn.Close(); err != nil {
+			c.l().Error(err)
+		}
+	}()
 	conns := map[string]chan wsmsg{} // ip-conn
 
 	// c.l().Debugf("websocket %s", mainConn.RemoteAddr().String())
@@ -1060,9 +1073,17 @@ func (c *GossipKVCacheComponent) wrapperWebsocket(selfServiceName string, ctx ec
 						cancelFunc()
 						return
 					}
-					defer subconn.Close()
+					go func() {
+						defer func() {
+							if err := subconn.Close(); err != nil {
+								c.l().Error(err)
+							}
+						}()
+					}()
 					subInChan := make(chan wsmsg, 1024)
-					defer close(subInChan)
+					go func() {
+						close(subInChan)
+					}()
 					// write loop
 					wg.Add(1)
 					go func(done context.Context, cc *websocket.Conn, wg *sync.WaitGroup) {

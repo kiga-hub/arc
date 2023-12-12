@@ -37,13 +37,13 @@ func (suite *ServerTestSuite) SetupTest() {
 }
 
 func (suite *ServerTestSuite) TestExample() {
-	appname := "test"
-	appversion := "v1.0.0"
-	s, err := micro.NewServer(appname, appversion, []micro.IComponent{suite.component})
+	appName := "test"
+	appVersion := "v1.0.0"
+	s, err := micro.NewServer(appName, appVersion, []micro.IComponent{suite.component})
 	assert.NotNil(suite.T(), s)
 	assert.Nil(suite.T(), err)
-	assert.Equal(suite.T(), appname, s.AppName)
-	assert.Equal(suite.T(), appversion, s.AppVersion)
+	assert.Equal(suite.T(), appName, s.AppName)
+	assert.Equal(suite.T(), appVersion, s.AppVersion)
 	err = s.Init()
 	assert.NotNil(suite.T(), err)
 }

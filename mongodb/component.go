@@ -24,6 +24,7 @@ func (c *MongoComponent) Name() string {
 
 // PreInit called before Init()
 func (c *MongoComponent) PreInit(ctx context.Context) error {
+	_ = ctx
 	return nil
 }
 

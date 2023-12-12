@@ -61,7 +61,7 @@ func zapLoggerEchoMiddleware(logFunc func() logging.ILogger, skipSuccess bool) e
 // MonitorStat is the state of the runtime
 type MonitorStat struct {
 	runtime.MemStats
-	LiveObjects  uint64 `json:"live_objects,omitempty"`  // Live objects = Mallocs - Frees
+	LiveObjects  uint64 `json:"live_objects,omitempty"`  // Live objects = malloc - Frees
 	NumGoroutine int    `json:"num_goroutine,omitempty"` // Number of goroutines
 }
 

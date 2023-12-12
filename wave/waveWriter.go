@@ -30,6 +30,8 @@ type Writer struct {
 }
 
 // New builds a new OGG Opus writer
+//
+//goland:noinspection GoUnusedExportedFunction
 func New(fileName string, sampleRate int, channelCount int) (*Writer, error) {
 	f, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY, os.ModePerm)
 	if err != nil {
@@ -86,7 +88,7 @@ func NewWriter(param WriterParam) (*Writer, error) {
 		Channel:        uint16(param.Channel),
 		SamplesPerSec:  uint32(param.SampleRate),
 		BytesPerSec:    samplesPerSec,
-		BlockSize:      uint16(blockSize),
+		BlockSize:      blockSize,
 		BitsPerSamples: uint16(param.BitsPerSample),
 	}
 	// data chunk
@@ -128,6 +130,7 @@ func (w *Writer) WriteSample16(samples []int16) (int, error) {
 
 // WriteSample24 -
 func (w *Writer) WriteSample24(samples []byte) (int, error) {
+	_ = samples
 	return 0, fmt.Errorf("WriteSample24 is not implemented")
 }
 
@@ -271,6 +274,8 @@ func CreateWaveHeader(samplerate int, channelCount int, dataSize uint32) ([]byte
 }
 
 // PCMToWave -
+//
+//goland:noinspection GoUnusedExportedFunction
 func PCMToWave(samplerate int, channelCount int, pcm []byte) ([]byte, error) {
 	hd, err := CreateWaveHeader(samplerate, channelCount, uint32(len(pcm)))
 	if err != nil {

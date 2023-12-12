@@ -37,12 +37,17 @@ func TestTraceLoggingToLoki(t *testing.T) {
 		return
 	}
 
-	tracer, close, err := CreateTracer(config, *traceConfig, logger)
+	tracer, needClose, err := CreateTracer(config, *traceConfig, logger)
 	if err != nil {
 		t.Errorf("%v", err)
 		return
 	}
-	defer close.Close()
+	defer func() {
+		if err := needClose.Close(); err != nil {
+			t.Errorf("%v", err)
+		}
+	}()
+
 	span := tracer.StartSpan("main")
 	traceID := GetTraceIDFromSpan(span)
 	taskID := "task-" + traceID

@@ -136,7 +136,7 @@ func Test_test(t *testing.T) {
 			timeFrom := startT
 			timeTo := timeFrom.Add(time.Duration(interval*int64(test.daPointCount)) * time.Microsecond)
 
-			dataPoints, err := cacheContainer.Search(&SeachRequest{
+			dataPoints, err := cacheContainer.Search(&SearchRequest{
 				ID:       test.id,
 				TimeFrom: timeFrom.UnixMicro(),
 				TimeTo:   timeTo.UnixMicro(),

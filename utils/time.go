@@ -2,7 +2,9 @@ package utils
 
 import "time"
 
-//ParseDateTimeString  解析日期时间字符串 2020-05-05 => unix nano
+// ParseDateTimeString  解析日期时间字符串 2020-05-05 => unix nano
+//
+//goland:noinspection GoUnusedExportedFunction
 func ParseDateTimeString(str string, include bool) (int64, error) {
 	if str == "" {
 		return 0, nil

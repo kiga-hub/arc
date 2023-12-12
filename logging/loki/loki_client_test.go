@@ -1,10 +1,10 @@
 package loki
 
 import (
-	context "context"
-	fmt "fmt"
+	"context"
+	"fmt"
 	"testing"
-	time "time"
+	"time"
 
 	"github.com/kiga-hub/arc/logging/conf"
 )

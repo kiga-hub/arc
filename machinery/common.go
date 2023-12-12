@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/RichardKnop/machinery/v1/log"
-	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
+	grpcPrometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/silenceper/pool"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -16,13 +16,19 @@ import (
 )
 
 const (
-	//POOLCOUNT 连接池数量
-	POOLCOUNT = 2
-	//POOLTYPEBIZZ 连接池类型昵称
-	POOLTYPEBIZZ = 0
-	//POOLTYPEHEALTH 连接池类型健康状态
-	POOLTYPEHEALTH = 1
+	// PoolCount 连接池数量
+	PoolCount int = 2
+	// PoolTypeName 连接池类型昵称
+	PoolTypeName = 0
+	// PoolTypeHealth 连接池类型健康状态
+	PoolTypeHealth = 1
 )
+
+func _() {
+	fmt.Println("Pool count: ", PoolCount)
+	fmt.Println("Pool type name: ", PoolTypeName)
+	fmt.Println("Pool type health: ", PoolTypeHealth)
+}
 
 /*
 // If it returns false, the given request will not be traced.
@@ -36,12 +42,14 @@ func filter(ctx context.Context, fullMethodName string) bool {
 */
 
 // GetPool 获取连接池
+//
+//goland:noinspection GoUnusedExportedFunction
 func GetPool(target string, min, max int) (pool.Pool, error) {
 	opts := []grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithBlock(),
-		grpc.WithUnaryInterceptor(grpc_prometheus.UnaryClientInterceptor),
-		grpc.WithStreamInterceptor(grpc_prometheus.StreamClientInterceptor),
+		grpc.WithUnaryInterceptor(grpcPrometheus.UnaryClientInterceptor),
+		grpc.WithStreamInterceptor(grpcPrometheus.StreamClientInterceptor),
 	}
 
 	//factory 创建连接的方法
@@ -69,6 +77,8 @@ func GetPool(target string, min, max int) (pool.Pool, error) {
 }
 
 // GetConn 获取链接
+//
+//goland:noinspection GoUnusedExportedFunction
 func GetConn(p pool.Pool, timeout int) (*grpc.ClientConn, error) {
 	skipTime := time.Now().Add(time.Second * time.Duration(timeout))
 
@@ -76,7 +86,7 @@ func GetConn(p pool.Pool, timeout int) (*grpc.ClientConn, error) {
 		if time.Now().After(skipTime) {
 			return nil, errors.New("get connection timeout")
 		}
-		iface, err := p.Get()
+		iFace, err := p.Get()
 		if err == pool.ErrMaxActiveConnReached {
 			fmt.Println(200)
 			time.Sleep(time.Millisecond * 50)
@@ -87,12 +97,14 @@ func GetConn(p pool.Pool, timeout int) (*grpc.ClientConn, error) {
 			return nil, err
 		}
 
-		conn := iface.(*grpc.ClientConn)
+		conn := iFace.(*grpc.ClientConn)
 		return conn, nil
 	}
 }
 
 // ReturnConn 返回链接
+//
+//goland:noinspection GoUnusedExportedFunction
 func ReturnConn(p pool.Pool, conn *grpc.ClientConn, err error) error {
 	if p == nil || conn == nil {
 		return nil
@@ -108,10 +120,11 @@ func ReturnConn(p pool.Pool, conn *grpc.ClientConn, err error) error {
 
 // SetLoggerLevel 设置日志级别
 /* e.g.
-if level.Level() > zapcore.DebugLevel {
+if level.Level() > zapCore.DebugLevel {
 	machinery.SetLoggerLevel(false)
 }
 */
+//goland:noinspection GoUnusedExportedFunction
 func SetLoggerLevel(logger logging.ILogger) {
 	l := NewMachineryLogger(logger)
 	log.Set(l)

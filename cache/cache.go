@@ -3,19 +3,20 @@ package cache
 /*
 所有时间相关参数，统一使用us精度
 */
+
 import (
 	"fmt"
 	"sync"
 	"time"
 
-	linkedlist "github.com/emirpasic/gods/lists/singlylinkedlist"
+	linkedList "github.com/emirpasic/gods/lists/singlylinkedlist"
 	"go.uber.org/atomic"
 
 	"github.com/kiga-hub/arc/logging"
 )
 
-// SeachRequest is a request for seach data in the DataCache
-type SeachRequest struct {
+// SearchRequest is a request for search data in the DataCache
+type SearchRequest struct {
 	ID       uint64
 	TimeFrom int64 // us
 	TimeTo   int64 // us
@@ -27,7 +28,7 @@ type DataCache struct {
 	lock       *sync.Mutex
 	from       int64 //us
 	to         int64 //us
-	data       *linkedlist.List
+	data       *linkedList.List
 	totalSize  uint64
 	expire     int64 //us
 	lastSearch int64 //us
@@ -40,7 +41,7 @@ func NewDataCache(id uint64, expire int64) *DataCache {
 		lock:   new(sync.Mutex),
 		from:   time.Now().UnixMicro(),
 		to:     time.Now().UnixMicro(),
-		data:   linkedlist.New(),
+		data:   linkedList.New(),
 		expire: expire, //us
 	}
 }
@@ -53,7 +54,7 @@ func (c *DataCache) input(dp IDataPoint) {
 	c.to = dp.GetTime()
 }
 
-func (c *DataCache) search(request *SeachRequest) []IDataPoint {
+func (c *DataCache) search(request *SearchRequest) []IDataPoint {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 	c.lastSearch = time.Now().UnixMicro()
@@ -198,7 +199,7 @@ func (cc *DataCacheContainer) Input(dp IDataPoint) {
 }
 
 // Search data in the container
-func (cc *DataCacheContainer) Search(request *SeachRequest) ([]IDataPoint, error) {
+func (cc *DataCacheContainer) Search(request *SearchRequest) ([]IDataPoint, error) {
 	if !cc.running.Load() {
 		return nil, fmt.Errorf("cache not run")
 	}
@@ -221,11 +222,11 @@ func (cc *DataCacheContainer) daemon() {
 		}
 		cc.caches.Range(func(key, value interface{}) bool {
 			nc := value.(*DataCache)
-			timeoutus := cc.idleTimeout * 60 * 1e6
+			timeouts := cc.idleTimeout * 60 * 1e6
 			if !cc.isSearchCache {
-				timeoutus = 0
+				timeouts = 0
 			}
-			if ok := nc.cleanTimeout(timeoutus); ok {
+			if ok := nc.cleanTimeout(timeouts); ok {
 				cc.logger.Debugf("DataCacheContainer stopping cache for id %d...\n", key.(uint64))
 				cc.caches.Delete(key)
 			}
@@ -257,7 +258,7 @@ func (cc *DataCacheContainer) PrintStat() {
 		ft := time.UnixMicro(v.From).Format("15:04:05")
 		tt := time.UnixMicro(v.To).Format("15:04:05")
 		output += fmt.Sprintf("%012X: [%s.%03d-%s.%03d][%s]\n", k, ft, v.From%1e6, tt, v.To%1e6, cc.printSize(v.Size))
-		totalSize += uint64(v.Size)
+		totalSize += v.Size
 		totalCount++
 	}
 	output += fmt.Sprintf("Total: [%d][%s]\n", totalCount, cc.printSize(totalSize))
@@ -266,7 +267,7 @@ func (cc *DataCacheContainer) PrintStat() {
 }
 
 func (cc *DataCacheContainer) printSize(size uint64) string {
-	var s float64 = float64(size)
+	var s = float64(size)
 	var g float64 = 1024 * 1024 * 1024
 	var m float64 = 1024 * 1024
 	var k float64 = 1024

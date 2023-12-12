@@ -377,25 +377,11 @@ func FrameValidate(srcdata []byte) error {
 		}
 		switch data[SegmentIdx] {
 		case STypeAudio:
-			if err := AudioValidate(data[SegmentIdx : SegmentIdx+int(Size)]); err != nil {
-				return fmt.Errorf("[%s][%d]%s", clientid, seq, err.Error())
-			}
-		case STypeVibrate:
-			if err := VibrateValidate(data[SegmentIdx : SegmentIdx+int(Size)]); err != nil {
-				return fmt.Errorf("[%s][%d]%s", clientid, seq, err.Error())
-			}
 		case STypeTemperature:
 			if err := TemperatureValidate(data[SegmentIdx : SegmentIdx+int(Size)]); err != nil {
 				return fmt.Errorf("[%s][%d]%s", clientid, seq, err.Error())
 			}
-		case STypeAudioV2:
-			if err := AudioV2Validate(data[SegmentIdx : SegmentIdx+int(Size)]); err != nil {
-				return fmt.Errorf("[%s][%d]%s", clientid, seq, err.Error())
-			}
 		case STypeNumericalTable:
-			if err := NumericalTableValidate(data[SegmentIdx : SegmentIdx+int(Size)]); err != nil {
-				return fmt.Errorf("[%s][%d]%s", clientid, seq, err.Error())
-			}
 		default:
 			return fmt.Errorf("[%s][%d]datagroup invalid segment stype(%d:%d)", clientid, seq, i+1, data[SegmentIdx])
 		}

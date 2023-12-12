@@ -26,7 +26,7 @@ var busyCount int32 = 0
 var vObjFactory func() IComputation
 var total = 0
 
-// IdleConn Idel的链接
+// IdleConn Idle的链接
 type IdleConn struct {
 	conn IComputation
 	t    time.Time
@@ -103,15 +103,15 @@ func (c *ChannelPool) Get() (IComputation, error) {
 			return wrapConn.conn, nil
 		default:
 			if c.active < 1 {
-				time.Sleep(time.Duration(1 * time.Millisecond))
+				time.Sleep(1 * time.Millisecond)
 				continue
 			}
 			c.mu.Lock()
-			defer c.mu.Unlock()
 			conn := vObjFactory()
 			id := atomic.AddUint32(&ids, 1)
 			err := conn.InitWorker(id)
 			if err != nil {
+				c.mu.Unlock()
 				return conn, err
 			}
 			total++
@@ -119,6 +119,7 @@ func (c *ChannelPool) Get() (IComputation, error) {
 			conn.OnBusy()
 			x := atomic.AddInt32(&busyCount, 1)
 			c.logger.Infow("info", "get", conn.GetID(), "busy", x, "total", total)
+			c.mu.Unlock()
 			return conn, nil
 		}
 	}

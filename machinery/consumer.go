@@ -90,6 +90,8 @@ type Consumer struct {
 }
 
 // NewConsumer 创建消费者对象
+//
+//goland:noinspection GoUnusedExportedFunction
 func NewConsumer(redis *redis.Config, errorsChan chan<- error, tracer opentracing.Tracer, logger logging.ILogger) *Consumer {
 	return &Consumer{
 		units:       []*ConsumerUnit{},

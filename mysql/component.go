@@ -24,6 +24,7 @@ func (c *Component) Name() string {
 
 // PreInit called before Init()
 func (c *Component) PreInit(ctx context.Context) error {
+	_ = ctx
 	// load config
 	SetDefaultMysqlConfig()
 	return nil
@@ -45,6 +46,7 @@ func (c *Component) Init(server *micro.Server) error {
 
 // PostStop called after Stop()
 func (c *Component) PostStop(ctx context.Context) error {
+	_ = ctx
 	// post stop
 	return c.db.Close()
 }

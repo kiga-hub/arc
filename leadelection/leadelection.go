@@ -101,7 +101,7 @@ type LeaderElectionConfig struct {
 	// the record before it can attempt to take over. When all clients are
 	// shutdown and a new set of clients are started with different names against
 	// the same leader record, they must wait the full LeaseDuration before
-	// attempting to acquire the lease. Thus LeaseDuration should be as short as
+	// attempting to acquire the lease,Thus LeaseDuration should be as short as
 	// possible (within your tolerance for clock skew rate) to avoid a possible
 	// long waits in the scenario.
 	//
@@ -168,7 +168,7 @@ type LeaderElector struct {
 }
 
 // Run starts the leader election loop. Run will not return
-// before leader election loop is stopped by ctx or it has
+// before leader election loop is stopped by ctx, or it has
 // stopped holding the leader lease
 func (le *LeaderElector) Run(ctx context.Context) {
 	fmt.Println("=== START LEADER ELECTION LOOP ===")
@@ -189,7 +189,9 @@ func (le *LeaderElector) Run(ctx context.Context) {
 
 // RunOrDie starts a client with the provided config or panics if the config
 // fails to validate. RunOrDie blocks until leader election loop is
-// stopped by ctx or it has stopped holding the leader lease
+// stopped by ctx ,or it has stopped holding the leader lease
+//
+//goland:noinspection GoUnusedExportedFunction
 func RunOrDie(ctx context.Context, lec LeaderElectionConfig, logger logging.ILogger) {
 	le, err := NewLeaderElector(lec, logger)
 	if err != nil {
@@ -222,7 +224,7 @@ func (le *LeaderElector) acquire(ctx context.Context) bool {
 		succeeded = le.tryAcquireOrRenew(ctx)
 		le.maybeReportTransition()
 		if !succeeded {
-			// le.logger.Debugf("failed to acquire lease %v", desc)
+			le.logger.Debugf("failed to acquire lease %v", desc)
 			return
 		}
 		le.config.Lock.RecordEvent("became leader")
@@ -322,7 +324,7 @@ func (le *LeaderElector) tryAcquireOrRenew(ctx context.Context) bool {
 	if len(oldLeaderElectionRecord.HolderIdentity) > 0 &&
 		time.Unix(oldLeaderElectionRecord.RenewTime, 0).Add(le.config.LeaseDuration).After(now) &&
 		!le.IsLeader() {
-		// le.logger.Debugf("lock is held by %v and has not yet expired", oldLeaderElectionRecord.HolderIdentity)
+		le.logger.Debugf("lock is held by %v and has not yet expired", oldLeaderElectionRecord.HolderIdentity)
 		return false
 	}
 

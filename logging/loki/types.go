@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"sort"
-	strings "strings"
+	"strings"
 	"time"
 
 	"github.com/grafana/loki/pkg/logproto"
@@ -17,21 +17,22 @@ type EntryWithLabels struct {
 	logproto.Entry
 }
 
-// StreamWithLables is a log stream with labels.
-type StreamWithLables struct {
+// StreamWithLabels is a log stream with labels.
+type StreamWithLabels struct {
 	LabelSet model.LabelSet
 	logproto.Stream
 }
 
-func getStreamWithLables(stream logproto.Stream) StreamWithLables {
-	return StreamWithLables{
+// goland:noinspection GoUnusedFunction
+func getStreamWithLabels(stream logproto.Stream) StreamWithLabels {
+	return StreamWithLabels{
 		Stream:   stream,
 		LabelSet: stringToLabelsSet(stream.Labels),
 	}
 }
 
 func labelsMapToString(ls model.LabelSet, without ...model.LabelName) string {
-	lstrs := make([]string, 0, len(ls))
+	lsString := make([]string, 0, len(ls))
 Outer:
 	for l, v := range ls {
 		for _, w := range without {
@@ -39,11 +40,11 @@ Outer:
 				continue Outer
 			}
 		}
-		lstrs = append(lstrs, fmt.Sprintf("%s=%q", l, v))
+		lsString = append(lsString, fmt.Sprintf("%s=%q", l, v))
 	}
 
-	sort.Strings(lstrs)
-	return fmt.Sprintf("{%s}", strings.Join(lstrs, ", "))
+	sort.Strings(lsString)
+	return fmt.Sprintf("{%s}", strings.Join(lsString, ", "))
 }
 
 func stringToLabelsSet(str string) model.LabelSet {
@@ -51,8 +52,8 @@ func stringToLabelsSet(str string) model.LabelSet {
 	if len(str) < 2 {
 		return m
 	}
-	strs := strings.Split(str[1:len(str)-1], ",") // k="v"
-	for _, v := range strs {
+	strSlice := strings.Split(str[1:len(str)-1], ",") // k="v"
+	for _, v := range strSlice {
 		vv := strings.Split(v, "=")
 		if len(vv) == 2 && len(vv[1]) >= 2 { //[]{k,v}
 			m[model.LabelName(strings.TrimSpace(vv[0]))] = model.LabelValue(strings.TrimSpace(vv[1][1 : len(vv[1])-1]))
@@ -63,17 +64,17 @@ func stringToLabelsSet(str string) model.LabelSet {
 
 // batch holds pending log streams waiting to be sent to Loki, and it's used
 // to reduce the number of push requests to Loki aggregating multiple log streams
-// and entries in a single batch request. In case of multi-tenant Promtail, log
+// and entries in a single batch request. In case of multi-tenant Prom tail, log
 // streams for each tenant are stored in a dedicated batch.
 type batch struct {
-	Streams   map[string]*StreamWithLables `json:"streams,omitempty"`
+	Streams   map[string]*StreamWithLabels `json:"streams,omitempty"`
 	bytes     int
 	createdAt time.Time
 }
 
 func newBatch(entries ...EntryWithLabels) *batch {
 	b := &batch{
-		Streams:   map[string]*StreamWithLables{},
+		Streams:   map[string]*StreamWithLabels{},
 		bytes:     0,
 		createdAt: time.Now(),
 	}
@@ -98,7 +99,7 @@ func (b *batch) add(entry EntryWithLabels) {
 	}
 
 	// Add the entry as a new stream
-	b.Streams[labels] = &StreamWithLables{
+	b.Streams[labels] = &StreamWithLabels{
 		LabelSet: entry.Labels,
 		Stream: logproto.Stream{
 			Labels:  labels,
@@ -167,9 +168,9 @@ type JSONRequestValueItem []string
 
 // EncodeJSON encode a batch to a JSON object
 func (b *batch) EncodeJSON() ([]byte, error) {
-	streams := []JSONRequestStream{}
+	var streams []JSONRequestStream
 	for _, stream := range b.Streams {
-		values := []JSONRequestValueItem{}
+		var values []JSONRequestValueItem
 		for _, entry := range stream.Entries {
 			values = append(values, []string{
 				fmt.Sprintf("%d", entry.Timestamp.UnixNano()),

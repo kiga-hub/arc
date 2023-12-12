@@ -34,7 +34,7 @@ import (
 usage:
 	&RaftClusterComponent{
 		ClusterID: 10000,
-		CreateFun: statemachine.NewExampleStateMachine,
+		CreateFun: state machine.NewExampleStateMachine,
 	},
 */
 
@@ -62,6 +62,7 @@ func (c *RaftClusterComponent) Name() string {
 
 // PreInit called before Init()
 func (c *RaftClusterComponent) PreInit(ctx context.Context) error {
+	_ = ctx
 	// load config
 	//conf.SetDefaultLogConfig()
 	return nil
@@ -90,9 +91,10 @@ func (c *RaftClusterComponent) Init(server *micro.Server) error {
 
 // PostStart called after Start()
 func (c *RaftClusterComponent) PostStart(ctx context.Context) error {
+	_ = ctx
 	var err error
 	basicConf := microConf.GetBasicConfig()
-	//leadship test
+	//lead ship test
 	c.leaderElector, err = leadelection.NewLeaderElector(leadelection.LeaderElectionConfig{
 		Lock: leadelection.NewNacosLock("DEFAULT_GROUP", fmt.Sprintf("lead-%d", c.ClusterID), c.ip.String(), c.nacosClient),
 		Callbacks: leadelection.LeaderCallbacks{
@@ -176,11 +178,11 @@ func (c *RaftClusterComponent) startOneRaftCluster(nodeID uint64) {
 		SnapshotEntries:    10,
 		CompactionOverhead: 5,
 	}
-	datadir := filepath.Join("/raft", fmt.Sprintf("node%d", nodeID))
+	dataDir := filepath.Join("/raft", fmt.Sprintf("node%d", nodeID))
 	// raft node
 	nhc := config.NodeHostConfig{
-		WALDir:         datadir,
-		NodeHostDir:    datadir,
+		WALDir:         dataDir,
+		NodeHostDir:    dataDir,
 		RTTMillisecond: 200,
 		RaftAddress:    c.raftAddress[nodeID],
 	}
@@ -196,7 +198,7 @@ func (c *RaftClusterComponent) startOneRaftCluster(nodeID uint64) {
 }
 
 /*
-func inet_ntoa(ipnr uint64) net.IP {
+func inetNtoA(ipnr uint64) net.IP {
 	var bytes [4]byte
 	bytes[0] = byte(ipnr & 0xFF)
 	bytes[1] = byte((ipnr >> 8) & 0xFF)
@@ -225,7 +227,7 @@ func inetToUint64(ipnr net.IP) uint64 {
 	return sum
 }
 
-func (c *RaftClusterComponent) submitRequest(nodeID uint64, leadip string, add bool) error {
+func (c *RaftClusterComponent) submitRequest(nodeID uint64, leadIP string, add bool) error {
 	client := resty.New()
 	req := joinRequest{
 		NodeID:   nodeID,
@@ -239,7 +241,7 @@ func (c *RaftClusterComponent) submitRequest(nodeID uint64, leadip string, add b
 
 	resp, err := client.SetTimeout(time.Second * 3).R().
 		SetBody(req).
-		Post(fmt.Sprintf("http://%s%s", leadip, urlRequest))
+		Post(fmt.Sprintf("http://%s%s", leadIP, urlRequest))
 	if err != nil {
 		return err
 	}
@@ -250,16 +252,16 @@ func (c *RaftClusterComponent) submitRequest(nodeID uint64, leadip string, add b
 	return nil
 }
 
-func (c *RaftClusterComponent) joinRaftCluster(leadip string) {
+func (c *RaftClusterComponent) joinRaftCluster(leadIP string) {
 	c.opsLock.Lock()
 	defer c.opsLock.Unlock()
 	for _, nodeID := range c.raftNodeID {
 		time.Sleep(time.Second)
-		c.joinOneRaftCluster(nodeID, leadip)
+		c.joinOneRaftCluster(nodeID, leadIP)
 	}
 }
 
-func (c *RaftClusterComponent) joinOneRaftCluster(nodeID uint64, leadip string) {
+func (c *RaftClusterComponent) joinOneRaftCluster(nodeID uint64, leadIP string) {
 	_, ok := c.raftNode[nodeID]
 	if ok {
 		return
@@ -268,7 +270,7 @@ func (c *RaftClusterComponent) joinOneRaftCluster(nodeID uint64, leadip string) 
 	fmt.Printf("join raft node %d\n", nodeID)
 
 	var err error
-	datadir := filepath.Join("/raft", fmt.Sprintf("node%d", nodeID))
+	dataDir := filepath.Join("/raft", fmt.Sprintf("node%d", nodeID))
 	rc := config.Config{
 		// ClusterID and NodeID of the raft node
 		NodeID:             nodeID,
@@ -281,8 +283,8 @@ func (c *RaftClusterComponent) joinOneRaftCluster(nodeID uint64, leadip string) 
 	}
 	// raft node
 	nhc := config.NodeHostConfig{
-		WALDir:         datadir,
-		NodeHostDir:    datadir,
+		WALDir:         dataDir,
+		NodeHostDir:    dataDir,
 		RTTMillisecond: 200,
 		RaftAddress:    c.raftAddress[nodeID],
 	}
@@ -297,7 +299,7 @@ func (c *RaftClusterComponent) joinOneRaftCluster(nodeID uint64, leadip string) 
 	}
 
 	// ask to join if fall means lead down?
-	err = c.submitRequest(nodeID, leadip, true)
+	err = c.submitRequest(nodeID, leadIP, true)
 	if err != nil {
 		c.logger.Error(err)
 		c.raftNode[nodeID].Stop()
@@ -313,6 +315,7 @@ const (
 
 // SetupHandler of echo if the component need
 func (c *RaftClusterComponent) SetupHandler(root echoswagger.ApiRoot, base string) error {
+	_ = base
 	g := root.Group(urlGroupCluster, urlRequest)
 	g.POST("", c.handleRequest).
 		AddParamBody(joinRequest{}, "request", "request to fulfil", true).
@@ -380,6 +383,7 @@ func (c *RaftClusterComponent) handleRequest(ctx echo.Context) error {
 
 // PreStop called before Stop()
 func (c *RaftClusterComponent) PreStop(ctx context.Context) error {
+	_ = ctx
 	c.ctxCancel()
 	for _, nodeID := range c.raftNodeID {
 		if c.raftNode[nodeID] == nil {

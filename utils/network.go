@@ -7,15 +7,15 @@ import (
 
 // GetAllIPv4Address 获取所有IP v4地址
 func GetAllIPv4Address() ([]net.IP, error) {
-	result := []net.IP{}
-	addrs, err := net.InterfaceAddrs()
+	var result []net.IP
+	address, err := net.InterfaceAddrs()
 	if err != nil {
 		return nil, err
 	}
-	for _, value := range addrs {
-		if ipnet, ok := value.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
-			if ipnet.IP.To4() != nil {
-				result = append(result, ipnet.IP)
+	for _, value := range address {
+		if ipNet, ok := value.(*net.IPNet); ok && !ipNet.IP.IsLoopback() {
+			if ipNet.IP.To4() != nil {
+				result = append(result, ipNet.IP)
 			}
 		}
 	}
@@ -29,6 +29,8 @@ func IsKigaOverlayIP(ip net.IP) bool {
 }
 
 // FindNearestIP 找到最近的ip
+//
+//goland:noinspection GoUnusedExportedFunction
 func FindNearestIP(source []net.IP, target net.IP) net.IP {
 	if len(source) == 0 {
 		return net.ParseIP("127.0.0.1")

@@ -178,7 +178,7 @@ func (l *LoggerWithSpan) Info(args ...interface{}) {
 	}
 }
 
-// Warn Warn
+// Warn Warning
 func (l *LoggerWithSpan) Warn(args ...interface{}) {
 	if l.Span != nil {
 		l.Span.LogKV("level", "warn", "msg", fmt.Sprint(args...))
@@ -209,7 +209,7 @@ func (l *LoggerWithSpan) Debugf(template string, args ...interface{}) {
 	}
 }
 
-// Infof Infof
+// Infof Info
 func (l *LoggerWithSpan) Infof(template string, args ...interface{}) {
 	if l.Span != nil {
 		l.Span.LogKV("level", "info", "msg", fmt.Sprintf(template, args...))
@@ -219,7 +219,7 @@ func (l *LoggerWithSpan) Infof(template string, args ...interface{}) {
 	}
 }
 
-// Warnf Warnf
+// Warnf Warn
 func (l *LoggerWithSpan) Warnf(template string, args ...interface{}) {
 	if l.Span != nil {
 		l.Span.LogKV("level", "warn", "msg", fmt.Sprintf(template, args...))
@@ -229,7 +229,7 @@ func (l *LoggerWithSpan) Warnf(template string, args ...interface{}) {
 	}
 }
 
-// Fatalf Fatalf
+// Fatalf Fatal
 func (l *LoggerWithSpan) Fatalf(template string, args ...interface{}) {
 	if l.Span != nil {
 		l.Span.LogKV("level", "fatal", "msg", fmt.Sprintf(template, args...))
@@ -239,7 +239,7 @@ func (l *LoggerWithSpan) Fatalf(template string, args ...interface{}) {
 	}
 }
 
-// Panicf Panicf
+// Panicf Panic
 func (l *LoggerWithSpan) Panicf(template string, args ...interface{}) {
 	if l.Span != nil {
 		l.Span.LogKV("level", "panic", "msg", fmt.Sprintf(template, args...))

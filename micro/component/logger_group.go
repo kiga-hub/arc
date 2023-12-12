@@ -32,6 +32,7 @@ func (c *LoggerGroupComponent) Name() string {
 
 // PreInit called before Init()
 func (c *LoggerGroupComponent) PreInit(ctx context.Context) error {
+	_ = ctx
 	// load config
 	conf.SetDefaultLogGroupConfig()
 	return nil
@@ -96,6 +97,7 @@ const (
 
 // SetupHandler of echo if the component need
 func (c *LoggerGroupComponent) SetupHandler(root echoswagger.ApiRoot, base string) error {
+	_ = base
 	g := root.Group(urlGroupLog, urlLogLevel)
 	g.POST("", c.setHandler).
 		AddParamQuery("", "module", "module", true).
@@ -130,6 +132,7 @@ func (c *LoggerGroupComponent) getHandler(ctx echo.Context) error {
 
 // PostStop called after Stop()
 func (c *LoggerGroupComponent) PostStop(ctx context.Context) error {
+	_ = ctx
 	// post stop
 	return c.group.Sync()
 }

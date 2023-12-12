@@ -13,26 +13,20 @@ import (
 )
 
 const (
-	// contentTypeProtobuf = "application/x-protobuf"
-	// contentTypeJSON     = "application/json"
-	// maxErrMsgLen        = 1024
-	// userAgent           = "zap-loki/1.0"
-
 	clientBatchSize = 1024
 	clientBatchWait = 200 * time.Millisecond
-	// clientMaxRetries = 3
 )
 
 // NewLokiCore create a new LokiCore
-func NewLokiCore(logconfig *conf.LogConfig) (zapcore.Core, error) {
-	lokiClient, err := NewLokiClient(logconfig.LokiAddr)
+func NewLokiCore(logConfig *conf.LogConfig) (zapcore.Core, error) {
+	lokiClient, err := NewLokiClient(logConfig.LokiAddr)
 	if err != nil {
 		return nil, err
 	}
 	c := &Core{
-		SendLevel:     logLevelToZapLevel(logconfig.Level),
+		SendLevel:     logLevelToZapLevel(logConfig.Level),
 		ContextFields: []zapcore.Field{},
-		URL:           logconfig.LokiAddr,
+		URL:           logConfig.LokiAddr,
 		client:        lokiClient,
 		entryChan:     make(chan EntryWithLabels),
 	}
@@ -57,7 +51,7 @@ func logLevelToZapLevel(level string) zapcore.Level {
 
 // Core is a zap core for logging to loki
 type Core struct {
-	SendLevel     zapcore.Level // default: zapcore.InfoLevel
+	SendLevel     zapcore.Level // default: zapCore.InfoLevel
 	ContextFields []zapcore.Field
 	URL           string
 	client        *Client
@@ -142,11 +136,12 @@ func (c *Core) run() {
 	// maximum delay we have sending batches is 10% of the max waiting time.
 	// We apply a cap of 10ms to the ticker, to avoid too frequent checks in
 	// case the BatchWait is very low.
-	minWaitCheckFrequency := 10 * time.Millisecond
+	//minWaitCheckFrequency := 10 * time.Millisecond
 	maxWaitCheckFrequency := clientBatchWait / 10
-	if maxWaitCheckFrequency < minWaitCheckFrequency {
-		maxWaitCheckFrequency = minWaitCheckFrequency
-	}
+	// Condition 'maxWaitCheckFrequency < minWaitCheckFrequency' is always 'false'
+	//if maxWaitCheckFrequency < minWaitCheckFrequency {
+	//	maxWaitCheckFrequency = minWaitCheckFrequency
+	//}
 
 	maxWaitCheck := time.NewTicker(maxWaitCheckFrequency)
 

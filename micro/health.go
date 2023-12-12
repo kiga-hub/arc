@@ -14,6 +14,8 @@ type Health struct {
 }
 
 // GetHealth 获取Health
+//
+//goland:noinspection GoUnusedExportedFunction
 func GetHealth(address string) (*Health, error) {
 	client := resty.New()
 	health := &Health{}
@@ -32,6 +34,8 @@ func GetHealth(address string) (*Health, error) {
 }
 
 // GetStatus 获取Status
+//
+//goland:noinspection GoUnusedExportedFunction
 func GetStatus(address string) (*Status, error) {
 	client := resty.New()
 	status := &Status{}

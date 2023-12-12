@@ -116,7 +116,7 @@ type IComponent interface {
 	PostStop(ctx context.Context) error
 }
 
-var regkey int = 0
+var regkey = 0
 
 // Server serve as a server composed by components
 type Server struct {
@@ -723,7 +723,7 @@ func (m *Server) postStart() error {
 	roP := vo.RegisterInstanceParam{
 		Ip:          m.PrivateIP.String(), //required
 		Port:        80,                   //required
-		Weight:      100,                  //required,it must be lager than 0
+		Weight:      100,                  //required,it must be larger than 0
 		Enable:      true,                 //required,the instance can be access or not
 		Healthy:     true,                 //required,the instance is health or not
 		Ephemeral:   true,
@@ -740,7 +740,7 @@ func (m *Server) postStart() error {
 	roG := vo.RegisterInstanceParam{
 		Ip:          m.GlobalIP.String(), //required
 		Port:        80,                  //required
-		Weight:      10,                  //required,it must be lager than 0
+		Weight:      10,                  //required,it must be larger than 0
 		Enable:      true,                //required,the instance can be access or not
 		Healthy:     true,                //required,the instance is health or not
 		Ephemeral:   true,

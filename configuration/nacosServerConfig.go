@@ -7,11 +7,11 @@ import (
 
 const (
 	//nacosServerPrefix nacos服务端字段
-	nacosServerPrefix = "nacosserver"
+	nacosServerPrefix = "nacosServer"
 	//nacosServerIPAddr nacos服务的ip地址
 	nacosServerIPAddr = nacosServerPrefix + ".ipaddr"
 	//nacosServerContextPath  nacos服务的请求路径
-	nacosServerContextPath = nacosServerPrefix + ".contextpath"
+	nacosServerContextPath = nacosServerPrefix + ".contextPath"
 	//nacosServerPort nacos服务的端口
 	nacosServerPort = nacosServerPrefix + ".port"
 )
@@ -19,7 +19,7 @@ const (
 //NacosServerConfig nacos服务的配置
 // type NacosServerConfig struct {
 // 	IPAddr      string `toml:"ipaddr"`
-// 	ContextPath string `toml:"contextpath"`
+// 	ContextPath string `toml:"contextPath"`
 // 	Port        uint64 `toml:"port"`
 // }
 
@@ -29,7 +29,7 @@ var defaultNacosServerConfig = constant.ServerConfig{
 	Port:        8848,
 }
 
-//SetDefaultNacosServerConfig 设置默认nacos服务的配置
+// SetDefaultNacosServerConfig 设置默认nacos服务的配置
 func SetDefaultNacosServerConfig() {
 	viper.SetDefault(nacosServerIPAddr, defaultNacosServerConfig.IpAddr)
 	viper.SetDefault(nacosServerContextPath, defaultNacosServerConfig.ContextPath)
@@ -37,7 +37,7 @@ func SetDefaultNacosServerConfig() {
 
 }
 
-//GetNacosServerConfig 获取nacos服务的基本配置
+// GetNacosServerConfig 获取nacos服务的基本配置
 func GetNacosServerConfig() *constant.ServerConfig {
 	return &constant.ServerConfig{
 		IpAddr:      viper.GetString(nacosServerIPAddr),

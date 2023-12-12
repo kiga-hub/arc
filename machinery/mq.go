@@ -36,7 +36,7 @@ func InitMQInitMachineryServerWorker(
 		return nil, err
 	}
 
-	taskmaps := map[string]interface{}{
+	taskMaps := map[string]interface{}{
 		"WorkerInvoke": func(ctx context.Context, taskType, taskData string) (string, error) {
 			// NOTE machinery will bring a noopSpan in the context if no other span set
 			if tracer == nil {
@@ -60,7 +60,7 @@ func InitMQInitMachineryServerWorker(
 			return invoke(ctx, taskType, taskData)
 		},
 	}
-	err = server.RegisterTasks(taskmaps)
+	err = server.RegisterTasks(taskMaps)
 	if err != nil {
 		return nil, err
 	}
@@ -118,6 +118,8 @@ func InitMachineryServer(queueName string, redis *redis.Config) (*machinery.Serv
 }
 
 // GetQueueName GetQueueName获取队列名称
+//
+//goland:noinspection GoUnusedExportedFunction
 func GetQueueName(workerID, taskType string, reserved int) string {
 	queue := fmt.Sprintf("%s_%s", taskType, workerID)
 	if reserved == 23123 {

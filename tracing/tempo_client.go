@@ -66,7 +66,7 @@ func (c *TempoClient) FindTraceByID(ctx context.Context, traceID string) ([]*v1.
 
 // GetTraceIDFromLog get traceIDs from logs query by selector
 func GetTraceIDFromLog(ctx context.Context, lokiClient *loki.Client, selector string) ([]string, error) {
-	result := []string{}
+	var result []string
 	resp, err := lokiClient.GetLogs(ctx, selector, time.Unix(0, 0), time.Now().UTC(), 1)
 	if err != nil {
 		return result, err

@@ -41,7 +41,7 @@ func main() {
 	err := nacosClient.Register(vo.RegisterInstanceParam{
 		Ip:          "127.0.0.1",                          //required
 		Port:        10081,                                //required
-		Weight:      10,                                   //required,it must be lager than 0
+		Weight:      10,                                   //required,it must be larger than 0
 		Enable:      true,                                 //required,the instance can be access or not
 		Healthy:     true,                                 //required,the instance is health or not
 		Ephemeral:   true,                                 //optional

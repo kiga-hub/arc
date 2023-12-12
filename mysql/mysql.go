@@ -27,7 +27,10 @@ func CreateDB(config Config) (*gorm.DB, error) {
 }
 
 // CheckDB 检查数据库链接
+//
+//goland:noinspection GoUnusedExportedFunction
 func CheckDB(db *gorm.DB, config Config) error {
+	_ = config
 	if db == nil {
 		fmt.Println("DB instance is nil!")
 		return error2.ErrDbConnection
@@ -37,6 +40,8 @@ func CheckDB(db *gorm.DB, config Config) error {
 }
 
 // DropDatabase 删除数据库
+//
+//goland:noinspection GoUnusedExportedFunction
 func DropDatabase(config Config) error {
 	dropNacosConfig := fmt.Sprintf("DROP DATABASE IF EXISTS %s;",
 		config.DB)
@@ -65,6 +70,8 @@ func DropDatabase(config Config) error {
 }
 
 // CreateDatabase 创建数据库
+//
+//goland:noinspection GoUnusedExportedFunction
 func CreateDatabase(config Config) error {
 	createNacosConfig := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s CHARACTER SET utf8mb4  COLLATE utf8mb4_general_ci;",
 		config.DB)

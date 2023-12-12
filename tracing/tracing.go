@@ -14,8 +14,8 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
-	jaeger_config "github.com/uber/jaeger-client-go/config"
-	jaeger_zap "github.com/uber/jaeger-client-go/log/zap"
+	jaegerConfig "github.com/uber/jaeger-client-go/config"
+	jaegerZap "github.com/uber/jaeger-client-go/log/zap"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/metadata"
 
@@ -27,8 +27,10 @@ const (
 	skipSpanType = "opentracing.noopSpan"
 )
 
-// SetupGlobaleTracer 设置这个整体示踪剂
-func SetupGlobaleTracer(basic microConf.BasicConfig, trace TraceConfig, zlog *zap.Logger) (opentracing.Tracer, io.Closer, error) {
+// SetupGlobleTracer 设置这个整体示踪剂
+//
+//goland:noinspection GoUnusedExportedFunction
+func SetupGlobleTracer(basic microConf.BasicConfig, trace TraceConfig, zlog *zap.Logger) (opentracing.Tracer, io.Closer, error) {
 	tracer, closer, err := CreateTracer(basic, trace, zlog)
 	if err == nil {
 		opentracing.SetGlobalTracer(tracer)
@@ -39,34 +41,36 @@ func SetupGlobaleTracer(basic microConf.BasicConfig, trace TraceConfig, zlog *za
 // CreateTracer 创建 tracer
 func CreateTracer(basic microConf.BasicConfig, trace TraceConfig, zlog *zap.Logger) (opentracing.Tracer, io.Closer, error) {
 	// tracing
-	traceCfg := jaeger_config.Configuration{
+	traceCfg := jaegerConfig.Configuration{
 		ServiceName: basic.Service,
-		Sampler: &jaeger_config.SamplerConfig{
+		Sampler: &jaegerConfig.SamplerConfig{
 			Type:  "const",
 			Param: 1,
 		},
-		Reporter: &jaeger_config.ReporterConfig{
+		Reporter: &jaegerConfig.ReporterConfig{
 			CollectorEndpoint:   fmt.Sprintf("%s/api/traces", trace.JaegerCollectorAddr),
 			LogSpans:            true,
 			BufferFlushInterval: 1 * time.Second,
 		},
 	}
-	opts := []jaeger_config.Option{
-		jaeger_config.Tag("zone", basic.Zone),
-		jaeger_config.Tag("node", basic.Node),
-		jaeger_config.Tag("machine", basic.Machine),
-		jaeger_config.Tag("instance", basic.Instance),
-		jaeger_config.Tag("service", basic.Service),
-		jaeger_config.Tag("appname", basic.AppName),
-		jaeger_config.Tag("appversion", basic.AppVersion),
+	opts := []jaegerConfig.Option{
+		jaegerConfig.Tag("zone", basic.Zone),
+		jaegerConfig.Tag("node", basic.Node),
+		jaegerConfig.Tag("machine", basic.Machine),
+		jaegerConfig.Tag("instance", basic.Instance),
+		jaegerConfig.Tag("service", basic.Service),
+		jaegerConfig.Tag("appname", basic.AppName),
+		jaegerConfig.Tag("appversion", basic.AppVersion),
 	}
 	if zlog != nil {
-		opts = append(opts, jaeger_config.Logger(jaeger_zap.NewLogger(zlog)))
+		opts = append(opts, jaegerConfig.Logger(jaegerZap.NewLogger(zlog)))
 	}
 	return traceCfg.NewTracer(opts...)
 }
 
 // MarshalSpanToJSON  解码span 到json
+//
+//goland:noinspection GoUnusedExportedFunction
 func MarshalSpanToJSON(span opentracing.Span) (string, error) {
 	if span == nil {
 		return "", errors.New("nil span")
@@ -83,7 +87,7 @@ func MarshalSpanToJSON(span opentracing.Span) (string, error) {
 	return string(b[:]), nil
 }
 
-// UnmarshalJSONToCarrier unmarshal a JSON string to a opentracing.TextMapCarrier object
+// UnmarshalJSONToCarrier unmarshal a JSON string to an opentracing.TextMapCarrier object
 func UnmarshalJSONToCarrier(marshaled string) (opentracing.TextMapCarrier, error) {
 	tc := opentracing.TextMapCarrier{}
 	err := json.Unmarshal([]byte(marshaled), &tc)
@@ -91,6 +95,8 @@ func UnmarshalJSONToCarrier(marshaled string) (opentracing.TextMapCarrier, error
 }
 
 // StartChildSpanFromJSON   开启子任务 Span 来自 json
+//
+//goland:noinspection GoUnusedExportedFunction
 func StartChildSpanFromJSON(tracer opentracing.Tracer, operaterName, marshaled string) (opentracing.Span, error) {
 	if tracer == nil {
 		return nil, errors.New("tracer not set")
@@ -110,7 +116,9 @@ func StartChildSpanFromJSON(tracer opentracing.Tracer, operaterName, marshaled s
 	return span, nil
 }
 
-// ContinueSpanFromJSON ContinueSpanFromJson
+// ContinueSpanFromJSON ContinueSpanFromJsons
+//
+//goland:noinspection GoUnusedExportedFunction
 func ContinueSpanFromJSON(tracer opentracing.Tracer, operaterName, marshaled string) (opentracing.Span, error) {
 	if tracer == nil {
 		return nil, errors.New("tracer not set")
@@ -143,6 +151,8 @@ func GetTraceIDFromSpan(span opentracing.Span) string {
 }
 
 // GetTraceIDFromJSON get traceID from a JSON string
+//
+//goland:noinspection GoUnusedExportedFunction
 func GetTraceIDFromJSON(marshaled string) string {
 	tc, err := UnmarshalJSONToCarrier(marshaled)
 	if err != nil {
@@ -156,7 +166,9 @@ func GetTraceIDFromJSON(marshaled string) string {
 	return strs[0]
 }
 
-// ErrorToSpan  ErrorToSpan
+// ErrorToSpan  ErrorTo Span
+//
+//goland:noinspection GoUnusedExportedFunction
 func ErrorToSpan(span opentracing.Span, err error) {
 	if span == nil || err == nil {
 		return
@@ -169,7 +181,7 @@ var (
 	emptyFinishSpan = func() {}
 )
 
-// StartChildSpan StartChildSpan
+// StartChildSpan Start ChildSpan
 func StartChildSpan(
 	ctx context.Context,
 	logger logging.ILogger,
@@ -225,6 +237,8 @@ var (
 type clientSpanTagKey struct{}
 
 // GetGRPCClientSpan 获取grpc客户端span
+//
+//goland:noinspection GoUnusedExportedFunction
 func GetGRPCClientSpan(
 	ctx context.Context,
 	logger logging.ILogger,
@@ -273,7 +287,7 @@ func GetGRPCClientSpan(
 }
 
 /*
-//MicroServerTraceWrapper MicroServerTraceWrapper
+// MicroServerTraceWrapper MicroServer TraceWrapper
 func MicroServerTraceWrapper(fn server.HandlerFunc) server.HandlerFunc {
 	return func(ctx context.Context, req server.Request, rsp interface{}) error {
 		tracer := opentracing.GlobalTracer()
@@ -318,16 +332,16 @@ const (
 // metadataTextMap extends a metadata.MD to be an opentracing textmap
 type metadataTextMap metadata.MD
 
-// Set is a opentracing.TextMapReader interface that extracts values.
+// Set is an opentracing.TextMapReader interface that extracts values.
 func (m metadataTextMap) Set(key, val string) {
 	// gRPC allows for complex binary values to be written.
 	encodedKey, encodedVal := encodeKeyValue(key, val)
-	// The metadata object is a multimap, and previous values may exist, but for opentracing headers, we do not append
+	// The metadata object is a mul-map, and previous values may exist, but for opentracing headers, we do not append
 	// we just override.
 	m[encodedKey] = []string{encodedVal}
 }
 
-// ForeachKey is a opentracing.TextMapReader interface that extracts values.
+// ForeachKey is an opentracing.TextMapReader interface that extracts values.
 func (m metadataTextMap) ForeachKey(callback func(key, val string) error) error {
 	for k, vv := range m {
 		for _, v := range vv {
@@ -340,12 +354,12 @@ func (m metadataTextMap) ForeachKey(callback func(key, val string) error) error 
 }
 
 // encodeKeyValue encodes key and value qualified for transmission via gRPC.
-// note: copy pasted from private values of grpc.metadata
+// note: copied pasted from private values of grpc.metadata
 func encodeKeyValue(k, v string) (string, string) {
 	k = strings.ToLower(k)
 	if strings.HasSuffix(k, binHdrSuffix) {
-		val := base64.StdEncoding.EncodeToString([]byte(v))
-		v = string(val)
+		v = base64.StdEncoding.EncodeToString([]byte(v))
+
 	}
 	return k, v
 }

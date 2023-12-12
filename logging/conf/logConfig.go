@@ -17,7 +17,7 @@ var defaultLogConfig = LogConfig{
 	Level:   "INFO",
 	Path:    "",
 	Console: true,
-	Fields:  "zone,node,machine,instance,service,appname,appversion",
+	Fields:  "zone,node,machine,instance,service,appName,appVersion",
 }
 
 // LogConfig  日志配置

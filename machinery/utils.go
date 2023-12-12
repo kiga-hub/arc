@@ -7,6 +7,8 @@ import (
 )
 
 // GetQueueNameByCluster ...
+//
+//goland:noinspection GoUnusedExportedFunction
 func GetQueueNameByCluster(taskType, cluster string) string {
 	return fmt.Sprintf("%s_%s", taskType, cluster)
 }

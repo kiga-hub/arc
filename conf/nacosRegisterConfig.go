@@ -15,7 +15,7 @@ const (
 	//NacosRegisterWeight 注册服务的权重
 	NacosRegisterWeight = NacosRegister + ".weight"
 	//NacosRegisterClusterName 群组的名字 default:DEFAULT
-	NacosRegisterClusterName = NacosRegister + ".clustername"
+	NacosRegisterClusterName = NacosRegister + ".clusterName"
 	//NacosRegisterEnable 是否开启
 	NacosRegisterEnable = NacosRegister + ".enable"
 	//NacosRegisterHealthy 是否健康
@@ -34,7 +34,9 @@ var defaultNacosRegisterConfig = vo.RegisterInstanceParam{
 	Ephemeral:   true,
 }
 
-//SetDefaultNacosRegisterConfig 设置默认基本配置
+// SetDefaultNacosRegisterConfig 设置默认基本配置
+//
+//goland:noinspection GoUnusedExportedFunction
 func SetDefaultNacosRegisterConfig() {
 	viper.SetDefault(NacosRegisterServiceIP, defaultNacosRegisterConfig.Weight)
 	viper.SetDefault(NacosRegisterServicePort, defaultNacosRegisterConfig.Weight)
@@ -46,7 +48,9 @@ func SetDefaultNacosRegisterConfig() {
 
 }
 
-//GetNacosRegisterConfig 获取基本配置
+// GetNacosRegisterConfig 获取基本配置
+//
+//goland:noinspection GoUnusedExportedFunction
 func GetNacosRegisterConfig() *vo.RegisterInstanceParam {
 
 	return &vo.RegisterInstanceParam{

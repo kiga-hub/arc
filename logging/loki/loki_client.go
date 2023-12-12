@@ -2,7 +2,7 @@ package loki
 
 import (
 	"context"
-	io "io"
+	"io"
 	"time"
 
 	"github.com/grafana/loki/pkg/logproto"
@@ -49,7 +49,7 @@ func (c Client) SendLogs(ctx context.Context, request *logproto.PushRequest) err
 }
 
 // GetLogs get logs from loki
-func (c Client) GetLogs(ctx context.Context, selector string, start, end time.Time, limit uint32) ([]StreamWithLables, error) {
+func (c Client) GetLogs(ctx context.Context, selector string, start, end time.Time, limit uint32) ([]StreamWithLabels, error) {
 	client, err := c.queryClient.Query(ctx, &logproto.QueryRequest{
 		Selector: selector,
 		Start:    start,
@@ -59,7 +59,7 @@ func (c Client) GetLogs(ctx context.Context, selector string, start, end time.Ti
 	if err != nil {
 		return nil, err
 	}
-	streams := []StreamWithLables{}
+	var streams []StreamWithLabels
 	for {
 		resp, err := client.Recv()
 		if err == io.EOF { // EOF if finish
@@ -68,7 +68,7 @@ func (c Client) GetLogs(ctx context.Context, selector string, start, end time.Ti
 			return nil, err
 		}
 		for _, v := range resp.Streams {
-			streams = append(streams, getStreamWithLables(v))
+			streams = append(streams, getStreamWithLabels(v))
 		}
 	}
 	return streams, nil

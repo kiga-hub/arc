@@ -28,6 +28,7 @@ func NewNacosLock(group, dataID, identity string, client *configuration.NacosCli
 
 // Get returns the LeaderElectionRecord
 func (lock NacosLock) Get(ctx context.Context) (*LeaderElectionRecord, []byte, error) {
+	_ = ctx
 	var record LeaderElectionRecord
 	var err error
 	recordStr, err := lock.client.Get(lock.dataID, lock.group)
@@ -46,6 +47,7 @@ func (lock NacosLock) Get(ctx context.Context) (*LeaderElectionRecord, []byte, e
 
 // Create attempts to create a LeaderElectionRecord
 func (lock NacosLock) Create(ctx context.Context, ler LeaderElectionRecord) error {
+	_ = ctx
 	recordBytes, err := json.Marshal(ler)
 	if err != nil {
 		return err

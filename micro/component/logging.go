@@ -28,6 +28,7 @@ func (c *LoggingComponent) Name() string {
 
 // PreInit called before Init()
 func (c *LoggingComponent) PreInit(ctx context.Context) error {
+	_ = ctx
 	// load config
 	conf.SetDefaultLogConfig()
 	c.enable = true
@@ -70,6 +71,7 @@ func (c *LoggingComponent) Init(server *micro.Server) error {
 
 // PostStop called after Stop()
 func (c *LoggingComponent) PostStop(ctx context.Context) error {
+	_ = ctx
 	// post stop
 	err := c.zlog.Sync()
 	time.Sleep(time.Second * 3)
