@@ -1,7 +1,7 @@
 package kafka
 
 import (
-	"github.com/kiga-hub/common/logging"
+	"github.com/kiga-hub/arc/logging"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"go.uber.org/atomic"

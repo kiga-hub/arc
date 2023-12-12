@@ -3,8 +3,8 @@ package kafka
 import (
 	"context"
 
-	"github.com/kiga-hub/common/logging"
-	"github.com/kiga-hub/common/micro"
+	"github.com/kiga-hub/arc/logging"
+	"github.com/kiga-hub/arc/micro"
 )
 
 // ElementKey is ElementKey for kafka

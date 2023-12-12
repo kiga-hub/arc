@@ -6,7 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql" //_ 导入所需要的驱动
 	"github.com/jinzhu/gorm"
 
-	error2 "github.com/kiga-hub/common/error"
+	error2 "github.com/kiga-hub/arc/error"
 )
 
 // CreateDB 创建数据库对象

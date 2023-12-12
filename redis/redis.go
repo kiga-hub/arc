@@ -8,7 +8,7 @@ import (
 
 	"github.com/gomodule/redigo/redis"
 
-	error2 "github.com/kiga-hub/common/error"
+	error2 "github.com/kiga-hub/arc/error"
 )
 
 // RXRedisCache  实现了RXCache

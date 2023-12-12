@@ -3,8 +3,8 @@ package pool
 import (
 	"sync"
 
-	"github.com/kiga-hub/common/conf"
-	"github.com/kiga-hub/common/logging"
+	"github.com/kiga-hub/arc/conf"
+	"github.com/kiga-hub/arc/logging"
 )
 
 // IComputation 计算

@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/kiga-hub/common/logging"
-	"github.com/kiga-hub/common/utils/wait"
+	"github.com/kiga-hub/arc/logging"
+	"github.com/kiga-hub/arc/utils/wait"
 )
 
 // ErrNotFound means item not found in nacos

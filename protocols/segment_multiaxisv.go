@@ -4,7 +4,7 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"github.com/kiga-hub/common/utils"
+	"github.com/kiga-hub/arc/utils"
 )
 
 // SegmentMultiAxisVibrate Vibrate

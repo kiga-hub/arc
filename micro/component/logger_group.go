@@ -10,12 +10,12 @@ import (
 	"github.com/pangpanglabs/echoswagger/v2"
 	"github.com/spf13/viper"
 
-	platformConf "github.com/kiga-hub/common/conf"
-	"github.com/kiga-hub/common/logging"
-	"github.com/kiga-hub/common/logging/conf"
-	"github.com/kiga-hub/common/micro"
-	microConf "github.com/kiga-hub/common/micro/conf"
-	"github.com/kiga-hub/common/utils"
+	platformConf "github.com/kiga-hub/arc/conf"
+	"github.com/kiga-hub/arc/logging"
+	"github.com/kiga-hub/arc/logging/conf"
+	"github.com/kiga-hub/arc/micro"
+	microConf "github.com/kiga-hub/arc/micro/conf"
+	"github.com/kiga-hub/arc/utils"
 )
 
 // LoggerGroupComponent is Component for logging

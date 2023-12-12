@@ -8,9 +8,9 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
-	"github.com/kiga-hub/common/logging/conf"
-	"github.com/kiga-hub/common/logging/loki"
-	microConf "github.com/kiga-hub/common/micro/conf"
+	"github.com/kiga-hub/arc/logging/conf"
+	"github.com/kiga-hub/arc/logging/loki"
+	microConf "github.com/kiga-hub/arc/micro/conf"
 )
 
 // ILogger log类

@@ -9,7 +9,7 @@ import (
 	"github.com/prometheus/common/model"
 	"go.uber.org/zap/zapcore"
 
-	"github.com/kiga-hub/common/logging/conf"
+	"github.com/kiga-hub/arc/logging/conf"
 )
 
 const (

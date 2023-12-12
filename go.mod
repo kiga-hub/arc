@@ -1,4 +1,4 @@
-module github.com/kiga-hub/common
+module github.com/kiga-hub/arc
 
 go 1.20
 

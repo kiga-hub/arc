@@ -19,8 +19,8 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc/metadata"
 
-	"github.com/kiga-hub/common/logging"
-	microConf "github.com/kiga-hub/common/micro/conf"
+	"github.com/kiga-hub/arc/logging"
+	microConf "github.com/kiga-hub/arc/micro/conf"
 )
 
 const (

@@ -6,7 +6,7 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
 
-	"github.com/kiga-hub/common/logging"
+	"github.com/kiga-hub/arc/logging"
 )
 
 // TraceIDKey is a constant value for trace id

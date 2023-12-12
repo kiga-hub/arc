@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/kiga-hub/common/configuration"
+	"github.com/kiga-hub/arc/configuration"
 )
 
 // NacosLock is a lock using nacos as backend

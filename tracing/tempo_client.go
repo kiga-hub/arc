@@ -13,7 +13,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/keepalive"
 
-	"github.com/kiga-hub/common/logging/loki"
+	"github.com/kiga-hub/arc/logging/loki"
 )
 
 // TempoClient is a client for Tempo

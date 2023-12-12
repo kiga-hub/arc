@@ -7,11 +7,11 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"go.uber.org/zap"
 
-	platformConf "github.com/kiga-hub/common/conf"
-	"github.com/kiga-hub/common/logging"
-	"github.com/kiga-hub/common/logging/conf"
-	"github.com/kiga-hub/common/micro"
-	microConf "github.com/kiga-hub/common/micro/conf"
+	platformConf "github.com/kiga-hub/arc/conf"
+	"github.com/kiga-hub/arc/logging"
+	"github.com/kiga-hub/arc/logging/conf"
+	"github.com/kiga-hub/arc/micro"
+	microConf "github.com/kiga-hub/arc/micro/conf"
 )
 
 // LoggingComponent is Component for logging

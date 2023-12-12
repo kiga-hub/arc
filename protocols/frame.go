@@ -6,7 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/kiga-hub/common/utils"
+	"github.com/kiga-hub/arc/utils"
 )
 
 // DefaultHeadLength head + version + size

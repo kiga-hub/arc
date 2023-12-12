@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	logConf "github.com/kiga-hub/common/logging/conf"
-	microConf "github.com/kiga-hub/common/micro/conf"
+	logConf "github.com/kiga-hub/arc/logging/conf"
+	microConf "github.com/kiga-hub/arc/micro/conf"
 )
 
 func TestGraylog(t *testing.T) {

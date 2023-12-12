@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/kiga-hub/common/utils"
+	"github.com/kiga-hub/arc/utils"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 )

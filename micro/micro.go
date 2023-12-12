@@ -29,12 +29,12 @@ import (
 	"golang.org/x/net/netutil"
 	"golang.org/x/time/rate"
 
-	platformConf "github.com/kiga-hub/common/conf"
-	"github.com/kiga-hub/common/configuration"
-	"github.com/kiga-hub/common/constant"
-	"github.com/kiga-hub/common/logging"
-	"github.com/kiga-hub/common/micro/conf"
-	"github.com/kiga-hub/common/utils"
+	platformConf "github.com/kiga-hub/arc/conf"
+	"github.com/kiga-hub/arc/configuration"
+	"github.com/kiga-hub/arc/constant"
+	"github.com/kiga-hub/arc/logging"
+	"github.com/kiga-hub/arc/micro/conf"
+	"github.com/kiga-hub/arc/utils"
 )
 
 const (

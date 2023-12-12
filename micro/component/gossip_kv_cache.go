@@ -19,12 +19,12 @@ import (
 	"github.com/pangpanglabs/echoswagger/v2"
 	"github.com/vulcand/oxy/forward"
 
-	"github.com/kiga-hub/common/configuration"
-	"github.com/kiga-hub/common/leadelection"
-	"github.com/kiga-hub/common/logging"
-	"github.com/kiga-hub/common/micro"
-	microConf "github.com/kiga-hub/common/micro/conf"
-	"github.com/kiga-hub/common/utils"
+	"github.com/kiga-hub/arc/configuration"
+	"github.com/kiga-hub/arc/leadelection"
+	"github.com/kiga-hub/arc/logging"
+	"github.com/kiga-hub/arc/micro"
+	microConf "github.com/kiga-hub/arc/micro/conf"
+	"github.com/kiga-hub/arc/utils"
 
 	_ "go.uber.org/automaxprocs" // 用于获取容器内实际cpu数量
 )

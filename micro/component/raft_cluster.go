@@ -13,12 +13,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/kiga-hub/common/configuration"
-	"github.com/kiga-hub/common/leadelection"
-	"github.com/kiga-hub/common/logging"
-	"github.com/kiga-hub/common/micro"
-	microConf "github.com/kiga-hub/common/micro/conf"
-	"github.com/kiga-hub/common/utils"
+	"github.com/kiga-hub/arc/configuration"
+	"github.com/kiga-hub/arc/leadelection"
+	"github.com/kiga-hub/arc/logging"
+	"github.com/kiga-hub/arc/micro"
+	microConf "github.com/kiga-hub/arc/micro/conf"
+	"github.com/kiga-hub/arc/utils"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/labstack/echo/v4"

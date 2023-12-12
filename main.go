@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 
-	"github.com/kiga-hub/common/kafka"
-	"github.com/kiga-hub/common/micro"
-	"github.com/kiga-hub/common/micro/component"
-	"github.com/kiga-hub/common/tracing"
+	"github.com/kiga-hub/arc/kafka"
+	"github.com/kiga-hub/arc/micro"
+	"github.com/kiga-hub/arc/micro/component"
+	"github.com/kiga-hub/arc/tracing"
 )
 
 func main() {

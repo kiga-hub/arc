@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/kiga-hub/common/logging"
+	"github.com/kiga-hub/arc/logging"
 
 	"github.com/apache/pulsar-client-go/pulsar"
 	"github.com/pkg/errors"

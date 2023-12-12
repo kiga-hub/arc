@@ -9,10 +9,10 @@ import (
 
 	"github.com/opentracing/opentracing-go"
 
-	"github.com/kiga-hub/common/logging"
-	logConf "github.com/kiga-hub/common/logging/conf"
-	"github.com/kiga-hub/common/logging/loki"
-	microConf "github.com/kiga-hub/common/micro/conf"
+	"github.com/kiga-hub/arc/logging"
+	logConf "github.com/kiga-hub/arc/logging/conf"
+	"github.com/kiga-hub/arc/logging/loki"
+	microConf "github.com/kiga-hub/arc/micro/conf"
 )
 
 func TestTraceLoggingToLoki(t *testing.T) {
