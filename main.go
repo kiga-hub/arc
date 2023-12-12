@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 
-	"github.com/kiga-hub/arc/kafka"
 	"github.com/kiga-hub/arc/micro"
 	"github.com/kiga-hub/arc/micro/component"
 	"github.com/kiga-hub/arc/tracing"
@@ -21,7 +20,6 @@ func main() {
 				Port:          6666,
 				InMachineMode: false,
 			},
-			&kafka.Component{},
 		},
 	)
 	if err != nil {
