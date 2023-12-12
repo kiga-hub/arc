@@ -54,7 +54,7 @@ func InitRedisPool(config Config) (*RXRedisCache, error) {
 	return &redisCache, err
 }
 
-// IncrBy reids 设置key 存储上线  超时时间
+// IncrBy redis 设置key 存储上线  超时时间
 func (rc *RXRedisCache) IncrBy(key string, num int64, timeOut int) (interface{}, error) {
 	conn := rc.pool.Get()
 	defer func() {
@@ -188,7 +188,7 @@ func (rc *RXRedisCache) PutWithExpire(key string, value interface{}, expire inte
 
 }
 
-// PutNX Redis Setnx（SET if Not eXists） 命令在指定的 key 不存在时，为 key 设置指定的值。
+// PutNX Redis Setnx（SET if Not exist） 命令在指定的 key 不存在时，为 key 设置指定的值。
 func (rc *RXRedisCache) PutNX(key string, value interface{}) (bool, error) {
 	bytes, err := json.Marshal(value)
 
@@ -272,7 +272,7 @@ func (rc *RXRedisCache) IsExist(key string) bool {
 	return v
 }
 
-// LOCK reids 锁的回复
+// LOCK redis 锁的回复
 func (rc *RXRedisCache) LOCK(key, requestID string, timeOut time.Duration) error {
 	conn := rc.pool.Get()
 	defer func() {

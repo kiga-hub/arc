@@ -71,8 +71,6 @@ func (c *DataCache) search(request *SearchRequest) []IDataPoint {
 		}
 		if dp == nil {
 			dp = item
-		} else if dp.IsAppendable(item) {
-			dp.Append(item)
 		} else {
 			result = append(result, dp)
 			dp = item

@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-//GetStoreDir  获存储文件夹
+// GetStoreDir  获存储文件夹
 func GetStoreDir(rootDir string) (string, error) {
 	subStoreDir := time.Now().Local().Format("2006-01-02/15")
 
@@ -26,24 +26,35 @@ func GetStoreDir(rootDir string) (string, error) {
 	return fullDir, nil
 }
 
-//CopyFile 复制文件
+// CopyFile 复制文件
 func CopyFile(dstName, srcName string) (int64, error) {
 	src, err := os.Open(srcName)
 	if err != nil {
 		return 0, err
 	}
-	defer src.Close()
+	defer func() {
+		if err := src.Close(); err != nil {
+			fmt.Println("CopyFile src.Close() err:", err)
+		}
+	}()
 
 	dst, err := os.OpenFile(dstName, os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		return 0, err
 	}
-	defer dst.Close()
+
+	defer func() {
+		if err := dst.Close(); err != nil {
+			fmt.Println("CopyFile src.Close() err:", err)
+		}
+	}()
 
 	return io.Copy(dst, src)
 }
 
-//MoveFile 删除文件
+// MoveFile 删除文件
+//
+//goland:noinspection GoUnusedExportedFunction
 func MoveFile(fileName string, rootDir string) (string, error) {
 	index := strings.LastIndex(fileName, "/")
 	file := ""
@@ -79,7 +90,9 @@ func MoveFile(fileName string, rootDir string) (string, error) {
 	return storePath[len(rootDir)+1:], nil
 }
 
-//StoreFile 存储文件
+// StoreFile 存储文件
+//
+//goland:noinspection GoUnusedExportedFunction
 func StoreFile(srcFile multipart.File, rootDir string, fileName string) (string, error) {
 	timeStr := time.Now().Local().Format("20060102150405")
 	dstFileName := fmt.Sprintf("%s_%s", timeStr, fileName)

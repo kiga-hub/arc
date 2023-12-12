@@ -49,6 +49,8 @@ type Frame struct {
 }
 
 // ConfigFrame -
+//
+//goland:noinspection GoUnusedExportedFunction
 func ConfigFrame(maxSize uint32) error {
 	MaxSize = maxSize
 	return nil
@@ -83,12 +85,12 @@ func (f *Frame) SetID(id uint64) *Frame {
 
 // GetID - 获取传感器ID
 func (f *Frame) GetID() uint64 {
-	var sensorid uint64
+	var sensorID uint64
 	for _, b := range f.ID {
-		sensorid <<= 8
-		sensorid += uint64(b)
+		sensorID <<= 8
+		sensorID += uint64(b)
 	}
-	return sensorid
+	return sensorID
 }
 
 // SetProto -
@@ -199,7 +201,7 @@ func (f *Frame) Encode(buf []byte) (int, error) {
 	// timestamp(8)
 	binary.BigEndian.PutUint64(buf[idx:idx+8], uint64(f.Timestamp))
 	idx += 8
-	// basicinfo(6)
+	// basicInfo(6)
 	for i := 0; i < 6; i++ {
 		buf[idx] = f.BasicInfo[i]
 		idx++
@@ -225,7 +227,7 @@ func (f *Frame) Encode(buf []byte) (int, error) {
 		buf[idx] = f.Flag[i]
 		idx++
 	}
-	// datagroup
+	// dataGroup
 	n, err := f.DataGroup.Encode(buf[idx:])
 	idx += n
 	if err != nil {
@@ -243,11 +245,11 @@ func (f *Frame) Encode(buf []byte) (int, error) {
 }
 
 // Decode 当前流中读取字节
-func (f *Frame) Decode(srcdata []byte) error {
+func (f *Frame) Decode(srcData []byte) error {
 	idx := 0
 
-	data := make([]byte, len(srcdata))
-	copy(data, srcdata)
+	data := make([]byte, len(srcData))
+	copy(data, srcData)
 
 	// head(4)
 	for i := 0; i < 4; i++ {
@@ -263,7 +265,7 @@ func (f *Frame) Decode(srcdata []byte) error {
 	// timestamp(8)
 	f.Timestamp = int64(binary.BigEndian.Uint64(data[idx : idx+8]))
 	idx += 8
-	// basicinfo(6)
+	// basicInfo(6)
 	for i := 0; i < 6; i++ {
 		f.BasicInfo[i] = data[idx]
 		idx++
@@ -300,10 +302,10 @@ func (f *Frame) Decode(srcdata []byte) error {
 }
 
 // FrameValidate -  包格式检查
-func FrameValidate(srcdata []byte) error {
+func FrameValidate(srcData []byte) error {
 
-	data := make([]byte, len(srcdata))
-	copy(data, srcdata)
+	data := make([]byte, len(srcData))
+	copy(data, srcData)
 
 	idx := 0
 
@@ -331,13 +333,13 @@ func FrameValidate(srcdata []byte) error {
 	// TODO: check timestamp
 	idx += 8
 
-	// basicinfo(6)
-	// TODO: check basicinfo
+	// basicInfo(6)
+	// TODO: check basicInfo
 	idx += 6
 
 	// ID(6)
 	// TODO: check id
-	clientid := hex.EncodeToString(data[idx : idx+6])
+	clientID := hex.EncodeToString(data[idx : idx+6])
 	idx += 6
 
 	// Firmware(3)
@@ -351,7 +353,7 @@ func FrameValidate(srcdata []byte) error {
 	// Protocol(2)
 	protocol := binary.BigEndian.Uint16(data[idx : idx+2])
 	if protocol != 2 {
-		return fmt.Errorf("[%s][%d]invalid protocol(%d)", clientid, seq, protocol)
+		return fmt.Errorf("[%s][%d]invalid protocol(%d)", clientID, seq, protocol)
 	}
 	idx += 2
 
@@ -361,8 +363,8 @@ func FrameValidate(srcdata []byte) error {
 
 	// DataGroup.Count, 新增SegmentAudioV2 和SegmentNumericalTable
 	SegmentCount := data[idx]
-	if SegmentCount > DataGroupMaxSegmentCount {
-		return fmt.Errorf("[%s][%d]invalid datagroup count(%d)", clientid, seq, SegmentCount)
+	if SegmentCount > 255 {
+		return fmt.Errorf("[%s][%d]invalid datagroup count(%d)", clientID, seq, SegmentCount)
 	}
 	idx++
 	// DataGroup.Segments
@@ -373,17 +375,15 @@ func FrameValidate(srcdata []byte) error {
 		// Segments
 		SegmentIdx := idx + ((int(SegmentCount) - i) * 4) + SegmentSize
 		if SegmentIdx+int(Size) > len(data) {
-			return fmt.Errorf("[%s][%d]datagroup valid size(%d:%d)", clientid, seq, i+1, Size)
+			return fmt.Errorf("[%s][%d]datagroup valid size(%d:%d)", clientID, seq, i+1, Size)
 		}
 		switch data[SegmentIdx] {
-		case STypeAudio:
 		case STypeTemperature:
 			if err := TemperatureValidate(data[SegmentIdx : SegmentIdx+int(Size)]); err != nil {
-				return fmt.Errorf("[%s][%d]%s", clientid, seq, err.Error())
+				return fmt.Errorf("[%s][%d]%s", clientID, seq, err.Error())
 			}
-		case STypeNumericalTable:
 		default:
-			return fmt.Errorf("[%s][%d]datagroup invalid segment stype(%d:%d)", clientid, seq, i+1, data[SegmentIdx])
+			return fmt.Errorf("[%s][%d]datagroup invalid segment stype(%d:%d)", clientID, seq, i+1, data[SegmentIdx])
 		}
 		idx += 4
 		SegmentSize += int(Size)
@@ -393,13 +393,13 @@ func FrameValidate(srcdata []byte) error {
 	// Crc(2)
 	Crc := binary.BigEndian.Uint16(data[idx : idx+2])
 	if Crc != utils.CheckSum(data[DefaultHeadLength:idx]) {
-		return fmt.Errorf("[%s][%d]invalid frame crc(%d)", clientid, seq, Crc)
+		return fmt.Errorf("[%s][%d]invalid frame crc(%d)", clientID, seq, Crc)
 	}
 	idx += 2
 
 	// End(1)
 	if data[idx] != End {
-		return fmt.Errorf("[%s][%d]invalid frame end(%02x)", clientid, seq, data[idx])
+		return fmt.Errorf("[%s][%d]invalid frame end(%02x)", clientID, seq, data[idx])
 	}
 
 	return nil

@@ -3,6 +3,7 @@ package utils
 import (
 	"archive/zip"
 	"bytes"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -13,14 +14,22 @@ import (
 //
 //goland:noinspection GoUnusedExportedFunction
 func Zip(srcFile string, destZip string) error {
-	zipfile, err := os.Create(destZip)
+	zipFile, err := os.Create(destZip)
 	if err != nil {
 		return err
 	}
-	defer zipfile.Close()
+	defer func() {
+		if err := zipFile.Close(); err != nil {
+			fmt.Println(err)
+		}
+	}()
 
-	archive := zip.NewWriter(zipfile)
-	defer archive.Close()
+	archive := zip.NewWriter(zipFile)
+	defer func() {
+		if err := archive.Close(); err != nil {
+			fmt.Println(err)
+		}
+	}()
 
 	err = filepath.Walk(srcFile, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -50,7 +59,11 @@ func Zip(srcFile string, destZip string) error {
 			if err0 != nil {
 				return err0
 			}
-			defer file.Close()
+			defer func() {
+				if err := file.Close(); err != nil {
+					fmt.Println(err)
+				}
+			}()
 			_, err = io.Copy(writer, file)
 		}
 		return err
@@ -69,33 +82,48 @@ func Unzip(fileBuffer []byte, destDir string) error {
 	}
 
 	for _, f := range zipReader.File {
-		fpath := filepath.Join(destDir, f.Name)
-		if f.FileInfo().IsDir() {
-			err = os.MkdirAll(fpath, os.ModePerm)
-			if err != nil {
-				return err
-			}
-		} else {
-			if err = os.MkdirAll(filepath.Dir(fpath), os.ModePerm); err != nil {
-				return err
-			}
+		err := func() error {
+			fPath := filepath.Join(destDir, f.Name)
+			if f.FileInfo().IsDir() {
+				err = os.MkdirAll(fPath, os.ModePerm)
+				if err != nil {
+					return err
+				}
+			} else {
+				if err = os.MkdirAll(filepath.Dir(fPath), os.ModePerm); err != nil {
+					return err
+				}
 
-			inFile, err := f.Open()
-			if err != nil {
-				return err
-			}
-			defer inFile.Close()
+				inFile, err := f.Open()
+				if err != nil {
+					return err
+				}
+				defer func() {
+					if err := inFile.Close(); err != nil {
+						fmt.Println(err)
+					}
+				}()
 
-			outFile, err := os.OpenFile(fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
-			if err != nil {
-				return err
-			}
-			defer outFile.Close()
+				outFile, err := os.OpenFile(fPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+				if err != nil {
+					return err
+				}
+				defer func(outFile *os.File) {
+					err := outFile.Close()
+					if err != nil {
+						fmt.Println(err)
+					}
+				}(outFile)
 
-			_, err = io.Copy(outFile, inFile)
-			if err != nil {
-				return err
+				_, err = io.Copy(outFile, inFile)
+				if err != nil {
+					return err
+				}
 			}
+			return nil
+		}()
+		if err != nil {
+			return err
 		}
 	}
 	return nil
@@ -104,7 +132,7 @@ func Unzip(fileBuffer []byte, destDir string) error {
 // UnzipBuffer 解压
 //
 //goland:noinspection GoUnusedExportedFunction
-func UnzipBuffer(fileBuffer []byte, fileMap map[string]([]byte)) error {
+func UnzipBuffer(fileBuffer []byte, fileMap map[string][]byte) error {
 	reader := bytes.NewReader(fileBuffer)
 	zipReader, err := zip.NewReader(reader, reader.Size())
 	if err != nil {
@@ -112,20 +140,31 @@ func UnzipBuffer(fileBuffer []byte, fileMap map[string]([]byte)) error {
 	}
 
 	for _, f := range zipReader.File {
-		if !f.FileInfo().IsDir() {
+		err := func() error {
+			if !f.FileInfo().IsDir() {
 
-			inFile, err := f.Open()
-			if err != nil {
-				return err
-			}
-			defer inFile.Close()
+				inFile, err := f.Open()
+				if err != nil {
+					return err
+				}
+				defer func(inFile io.ReadCloser) {
+					err := inFile.Close()
+					if err != nil {
+						fmt.Println(err)
+					}
+				}(inFile)
 
-			buf := new(bytes.Buffer)
-			_, err = buf.ReadFrom(inFile)
-			if err != nil {
-				return err
+				buf := new(bytes.Buffer)
+				_, err = buf.ReadFrom(inFile)
+				if err != nil {
+					return err
+				}
+				fileMap[f.Name] = buf.Bytes()
 			}
-			fileMap[f.Name] = buf.Bytes()
+			return nil
+		}()
+		if err != nil {
+			return err
 		}
 	}
 	return nil

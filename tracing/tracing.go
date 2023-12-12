@@ -27,10 +27,10 @@ const (
 	skipSpanType = "opentracing.noopSpan"
 )
 
-// SetupGlobleTracer 设置这个整体示踪剂
+// SetupGlobalTracer 设置这个整体示踪剂
 //
 //goland:noinspection GoUnusedExportedFunction
-func SetupGlobleTracer(basic microConf.BasicConfig, trace TraceConfig, zlog *zap.Logger) (opentracing.Tracer, io.Closer, error) {
+func SetupGlobalTracer(basic microConf.BasicConfig, trace TraceConfig, zlog *zap.Logger) (opentracing.Tracer, io.Closer, error) {
 	tracer, closer, err := CreateTracer(basic, trace, zlog)
 	if err == nil {
 		opentracing.SetGlobalTracer(tracer)
@@ -59,8 +59,8 @@ func CreateTracer(basic microConf.BasicConfig, trace TraceConfig, zlog *zap.Logg
 		jaegerConfig.Tag("machine", basic.Machine),
 		jaegerConfig.Tag("instance", basic.Instance),
 		jaegerConfig.Tag("service", basic.Service),
-		jaegerConfig.Tag("appname", basic.AppName),
-		jaegerConfig.Tag("appversion", basic.AppVersion),
+		jaegerConfig.Tag("appName", basic.AppName),
+		jaegerConfig.Tag("appVersion", basic.AppVersion),
 	}
 	if zlog != nil {
 		opts = append(opts, jaegerConfig.Logger(jaegerZap.NewLogger(zlog)))
@@ -97,7 +97,7 @@ func UnmarshalJSONToCarrier(marshaled string) (opentracing.TextMapCarrier, error
 // StartChildSpanFromJSON   开启子任务 Span 来自 json
 //
 //goland:noinspection GoUnusedExportedFunction
-func StartChildSpanFromJSON(tracer opentracing.Tracer, operaterName, marshaled string) (opentracing.Span, error) {
+func StartChildSpanFromJSON(tracer opentracing.Tracer, operatorName, marshaled string) (opentracing.Span, error) {
 	if tracer == nil {
 		return nil, errors.New("tracer not set")
 	}
@@ -110,7 +110,7 @@ func StartChildSpanFromJSON(tracer opentracing.Tracer, operaterName, marshaled s
 		return nil, err
 	}
 	span := tracer.StartSpan(
-		operaterName,
+		operatorName,
 		opentracing.ChildOf(ctx),
 	)
 	return span, nil
@@ -119,7 +119,7 @@ func StartChildSpanFromJSON(tracer opentracing.Tracer, operaterName, marshaled s
 // ContinueSpanFromJSON ContinueSpanFromJsons
 //
 //goland:noinspection GoUnusedExportedFunction
-func ContinueSpanFromJSON(tracer opentracing.Tracer, operaterName, marshaled string) (opentracing.Span, error) {
+func ContinueSpanFromJSON(tracer opentracing.Tracer, operateName, marshaled string) (opentracing.Span, error) {
 	if tracer == nil {
 		return nil, errors.New("tracer not set")
 	}
@@ -135,7 +135,7 @@ func ContinueSpanFromJSON(tracer opentracing.Tracer, operaterName, marshaled str
 		return nil, errors.New("no ctx found")
 	}
 	span := tracer.StartSpan(
-		operaterName,
+		operateName,
 		opentracing.FollowsFrom(ctx),
 	)
 	return span, nil
@@ -146,8 +146,8 @@ func GetTraceIDFromSpan(span opentracing.Span) string {
 	if span == nil {
 		return ""
 	}
-	strs := strings.Split(fmt.Sprintf("%+v", span), ":")
-	return strs[0]
+	strSlice := strings.Split(fmt.Sprintf("%+v", span), ":")
+	return strSlice[0]
 }
 
 // GetTraceIDFromJSON get traceID from a JSON string
@@ -162,8 +162,8 @@ func GetTraceIDFromJSON(marshaled string) string {
 	if !ok {
 		return ""
 	}
-	strs := strings.Split(fmt.Sprintf("%+v", span), ":")
-	return strs[0]
+	strSlice := strings.Split(fmt.Sprintf("%+v", span), ":")
+	return strSlice[0]
 }
 
 // ErrorToSpan  ErrorTo Span
@@ -186,7 +186,7 @@ func StartChildSpan(
 	ctx context.Context,
 	logger logging.ILogger,
 	tracer opentracing.Tracer,
-	operaterName string,
+	operateName string,
 	tags ...opentracing.StartSpanOption,
 ) (context.Context, func(), logging.ILogger) { // ctx, finish(), logger
 	if tracer == nil {
@@ -202,7 +202,7 @@ func StartChildSpan(
 		return ctx, emptyFinishSpan, logger
 	}
 
-	span, ctx := opentracing.StartSpanFromContextWithTracer(ctx, tracer, operaterName, tags...)
+	span, ctx := opentracing.StartSpanFromContextWithTracer(ctx, tracer, operateName, tags...)
 	return ctx, span.Finish, &LoggerWithSpan{
 		Span:           span,
 		OriginalLogger: logger,
@@ -217,21 +217,21 @@ var (
 	//grpcTag
 	grpcTag = opentracing.Tag{Key: TraceKeyComponent, Value: "gRPC"}
 	//SpanKindClient  客户端
-	SpanKindClient = opentracing.Tag{Key: SpanKind, Value: "client"}
+	_ = opentracing.Tag{Key: SpanKind, Value: "client"}
 	//SpanKindServer 服务端
-	SpanKindServer = opentracing.Tag{Key: SpanKind, Value: "server"}
+	_ = opentracing.Tag{Key: SpanKind, Value: "server"}
 	//SpanKindPortal  接口
-	SpanKindPortal = opentracing.Tag{Key: SpanKind, Value: "portal"}
+	_ = opentracing.Tag{Key: SpanKind, Value: "portal"}
 	//SpanKindProducer 生产者
-	SpanKindProducer = opentracing.Tag{Key: SpanKind, Value: "producer"}
+	_ = opentracing.Tag{Key: SpanKind, Value: "producer"}
 	//SpanKindConsumer 消费者
-	SpanKindConsumer = opentracing.Tag{Key: SpanKind, Value: "consumer"}
+	_ = opentracing.Tag{Key: SpanKind, Value: "consumer"}
 	//SpanKindWorker 工作
-	SpanKindWorker = opentracing.Tag{Key: SpanKind, Value: "worker"}
+	_ = opentracing.Tag{Key: SpanKind, Value: "worker"}
 	//SpanKindComputation 计算
-	SpanKindComputation = opentracing.Tag{Key: SpanKind, Value: "computation"}
+	_ = opentracing.Tag{Key: SpanKind, Value: "computation"}
 	//SpanKindDB 数据库
-	SpanKindDB = opentracing.Tag{Key: SpanKind, Value: "database"}
+	_ = opentracing.Tag{Key: SpanKind, Value: "database"}
 )
 
 type clientSpanTagKey struct{}
@@ -267,8 +267,8 @@ func GetGRPCClientSpan(
 	if parent != nil {
 		opts = append(opts, opentracing.ChildOf(parent.Context()))
 	}
-	if tagx := ctx.Value(clientSpanTagKey{}); tagx != nil {
-		if opt, ok := tagx.(opentracing.StartSpanOption); ok {
+	if tagX := ctx.Value(clientSpanTagKey{}); tagX != nil {
+		if opt, ok := tagX.(opentracing.StartSpanOption); ok {
 			opts = append(opts, opt)
 		}
 	}
@@ -286,50 +286,11 @@ func GetGRPCClientSpan(
 	}
 }
 
-/*
-// MicroServerTraceWrapper MicroServer TraceWrapper
-func MicroServerTraceWrapper(fn server.HandlerFunc) server.HandlerFunc {
-	return func(ctx context.Context, req server.Request, rsp interface{}) error {
-		tracer := opentracing.GlobalTracer()
-		operationName := req.Method()
-
-		if tracer == nil || req.Stream() || operationName == "Health.Check" {
-			return fn(ctx, req, rsp)
-		}
-
-		//extract metadata to context
-		md := metautils.ExtractIncoming(ctx).Clone()
-		parentSpanContext, err := tracer.Extract(opentracing.HTTPHeaders, metadataTextMap(md))
-		if err != nil {
-			if err == opentracing.ErrSpanContextNotFound {
-				return fn(ctx, req, rsp)
-			}
-			grpclog.Infof("grpc_opentracing: failed parsing trace information: %v", err)
-
-		}
-		if parentSpanContext == nil {
-			return fn(ctx, req, rsp)
-		}
-		span := tracer.StartSpan(
-			operationName,
-			opentracing.ChildOf(parentSpanContext),
-			SpanKindServer,
-			grpcTag,
-		)
-		defer span.Finish()
-
-		ctx = opentracing.ContextWithSpan(ctx, span)
-		// ctx = context.WithValue(ctx, NeedSample, true)
-		return fn(ctx, req, rsp)
-	}
-}
-*/
-
 const (
 	binHdrSuffix = "-bin"
 )
 
-// metadataTextMap extends a metadata.MD to be an opentracing textmap
+// metadataTextMap extends a metadata.MD to be an opentracing text-map
 type metadataTextMap metadata.MD
 
 // Set is an opentracing.TextMapReader interface that extracts values.

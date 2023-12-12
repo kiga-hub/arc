@@ -4,7 +4,7 @@ import (
 	"encoding/binary"
 )
 
-//MbTable ...
+// MbTable ...
 var MbTable = []uint16{
 	0x0000, 0xC0C1, 0xC181, 0x0140, 0xC301, 0x03C0, 0x0280, 0xC241,
 	0xC601, 0x06C0, 0x0780, 0xC741, 0x0500, 0xC5C1, 0xC481, 0x0440,
@@ -39,7 +39,7 @@ var MbTable = []uint16{
 	0x4400, 0x84C1, 0x8581, 0x4540, 0x8701, 0x47C0, 0x4680, 0x8641,
 	0x8201, 0x42C0, 0x4380, 0x8341, 0x4100, 0x81C1, 0x8081, 0x4040}
 
-//CheckSum ...
+// CheckSum ...
 func CheckSum(data []byte) uint16 {
 	var crc16 uint16
 	crc16 = 0xffff
@@ -51,7 +51,9 @@ func CheckSum(data []byte) uint16 {
 	return crc16
 }
 
-//Uint16ToBytes ...
+// Uint16ToBytes ...
+//
+//goland:noinspection GoUnusedExportedFunction
 func Uint16ToBytes(n uint16) []byte {
 	return []byte{
 		byte(n),
@@ -60,6 +62,8 @@ func Uint16ToBytes(n uint16) []byte {
 }
 
 // Uint32ToBytes 使用BigEndian方式将uint32转为Bytes
+//
+//goland:noinspection GoUnusedExportedFunction
 func Uint32ToBytes(i uint32) []byte {
 	var buf = make([]byte, 4)
 	binary.BigEndian.PutUint32(buf, i)
@@ -67,12 +71,14 @@ func Uint32ToBytes(i uint32) []byte {
 }
 
 // Int16ToUint16 ...
+//
+//goland:noinspection GoUnusedExportedFunction
 func Int16ToUint16(i int16) uint16 {
 	var ui uint16
 	if 0 < i {
 		ui = uint16(i)
 	} else {
-		ui = (^uint16(-i) + 1)
+		ui = ^uint16(-i) + 1
 	}
 	return ui
 }

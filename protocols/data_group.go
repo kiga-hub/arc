@@ -6,26 +6,11 @@ import (
 )
 
 const (
-	// STypeAudio 音频Type
-	STypeAudio byte = 10
-
-	// STypeAudioV2 改进的音频数据块结构 音频Type
-	STypeAudioV2 byte = 11
-
 	// STypeTemperature 温度Type
-	STypeTemperature byte = 20
+	STypeTemperature byte = 10
 
-	// STypeVibrate 震动Type
-	STypeVibrate byte = 30
-
-	// STypeMultiAxisVibrate 震动Type
-	STypeMultiAxisVibrate byte = 40
-
-	// STypeNumericalTable  数据表Type
-	STypeNumericalTable byte = 90
-
-	// DataGroupMaxSegmentCount 数据类型个数
-	DataGroupMaxSegmentCount = 4
+	// ItemSampleRate  -
+	ItemSampleRate = 1
 )
 
 // ISegment -
@@ -51,7 +36,7 @@ func NewDefaultDataGroup() *DataGroup {
 
 // Validate - 校验
 func (d *DataGroup) Validate() error {
-	if d.Count <= 0 || d.Count > DataGroupMaxSegmentCount {
+	if d.Count <= 0 {
 		return fmt.Errorf("count out of range %d", d.Count)
 	}
 	if uint8(len(d.Sizes)) != d.Count {
@@ -98,7 +83,7 @@ func (d *DataGroup) Decode(data []byte) error {
 	// 获取数据段个数
 	d.Count = data[idx]
 	idx++
-	if d.Count <= 0 || d.Count > DataGroupMaxSegmentCount {
+	if d.Count <= 0 {
 		return fmt.Errorf("data group count %d", d.Count)
 	}
 
@@ -113,8 +98,7 @@ func (d *DataGroup) Decode(data []byte) error {
 		return err
 	}
 
-	// 解析各个数据段
-	var stype byte
+	// 解析数据段
 	for i := 0; i < int(d.Count); i++ {
 		if i >= len(d.STypes) {
 			d.STypes = append(d.STypes, 0)
@@ -131,7 +115,7 @@ func (d *DataGroup) Decode(data []byte) error {
 			}
 			d.STypes[i] = STypeTemperature
 		default:
-			return fmt.Errorf("no match stype %d", stype)
+			return fmt.Errorf("no match stype")
 		}
 		idx += int(d.Sizes[i])
 	}
@@ -141,12 +125,12 @@ func (d *DataGroup) Decode(data []byte) error {
 // Encode - 编码
 func (d *DataGroup) Encode(buf []byte) (int, error) {
 	// 检查缓存大小
-	minsize := 1
+	minSize := 1
 	for _, size := range d.Sizes {
-		minsize += int(size)
-		minsize += 4
+		minSize += int(size)
+		minSize += 4
 	}
-	if len(buf) < minsize {
+	if len(buf) < minSize {
 		return 0, fmt.Errorf("datagroup out of allocated memory")
 	}
 

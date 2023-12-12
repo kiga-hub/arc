@@ -7,17 +7,10 @@ type TemperatureArray struct {
 	Items         []TemperatureItem
 }
 
-// TemperatureItem is the temperature at a timepoint
+// TemperatureItem is the temperature at a time point
 type TemperatureItem struct {
 	Ts   int64
 	Data float32
-}
-
-// VibrateArray -
-type VibrateArray struct {
-	CollectorID   []byte
-	CollectorType string
-	Items         []VibrateValues
 }
 
 // TemperatureRaw include raw data of temperature value
@@ -35,12 +28,4 @@ type CountItem struct {
 	Ts            int64
 	Count         int
 	Size          int
-}
-
-// VibrateValues -
-type VibrateValues struct {
-	Ts int64
-	X  int16
-	Y  int16
-	Z  int16
 }

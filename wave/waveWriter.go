@@ -184,12 +184,12 @@ func (w *Writer) flush() error {
 		w.dataChunk.Size = dataSize
 
 		// 写wave头信息
-		hdata, err := w.HeaderBytes()
+		hData, err := w.HeaderBytes()
 		if err != nil {
 			return err
 		}
 
-		if _, err := w.out.Write(hdata); err != nil {
+		if _, err := w.out.Write(hData); err != nil {
 			return err
 		}
 	} else {
@@ -263,8 +263,8 @@ func (w *Writer) Close() error {
 }
 
 // CreateWaveHeader -
-func CreateWaveHeader(samplerate int, channelCount int, dataSize uint32) ([]byte, error) {
-	w, err := NewBuffer(samplerate, channelCount)
+func CreateWaveHeader(sampleRate int, channelCount int, dataSize uint32) ([]byte, error) {
+	w, err := NewBuffer(sampleRate, channelCount)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -276,8 +276,8 @@ func CreateWaveHeader(samplerate int, channelCount int, dataSize uint32) ([]byte
 // PCMToWave -
 //
 //goland:noinspection GoUnusedExportedFunction
-func PCMToWave(samplerate int, channelCount int, pcm []byte) ([]byte, error) {
-	hd, err := CreateWaveHeader(samplerate, channelCount, uint32(len(pcm)))
+func PCMToWave(sampleRate int, channelCount int, pcm []byte) ([]byte, error) {
+	hd, err := CreateWaveHeader(sampleRate, channelCount, uint32(len(pcm)))
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

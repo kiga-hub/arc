@@ -1073,15 +1073,14 @@ func (c *GossipKVCacheComponent) wrapperWebsocket(selfServiceName string, ctx ec
 						cancelFunc()
 						return
 					}
-					go func() {
-						defer func() {
-							if err := subconn.Close(); err != nil {
-								c.l().Error(err)
-							}
-						}()
+
+					defer func() {
+						if err := subconn.Close(); err != nil {
+							c.l().Error(err)
+						}
 					}()
 					subInChan := make(chan wsmsg, 1024)
-					go func() {
+					defer func() {
 						close(subInChan)
 					}()
 					// write loop

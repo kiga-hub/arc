@@ -23,6 +23,7 @@ func (c *ProducerComponent) Name() string {
 
 // PreInit called before Init()
 func (c *ProducerComponent) PreInit(ctx context.Context) error {
+	_ = ctx
 	// load config
 	SetDefaultConfig()
 	return nil
@@ -44,6 +45,7 @@ func (c *ProducerComponent) Init(server *micro.Server) error {
 
 // PostStop called after Stop()
 func (c *ProducerComponent) PostStop(ctx context.Context) error {
+	_ = ctx
 	// post stop
 	return c.client.Close()
 }

@@ -30,13 +30,12 @@ func NewDefaultSegmentTemperature() *SegmentTemperature {
 }
 
 // TemperatureValidate - 解码
-func TemperatureValidate(srcdata []byte) error {
-	data := make([]byte, len(srcdata))
-	copy(data, srcdata)
+func TemperatureValidate(srcData []byte) error {
+	data := make([]byte, len(srcData))
+	copy(data, srcData)
 
 	idx := 0
 
-	// stype(1)
 	if data[idx] != STypeTemperature {
 		return fmt.Errorf("temperature segment stype invalid(%d)", data[idx])
 	}
@@ -50,13 +49,13 @@ func TemperatureValidate(srcdata []byte) error {
 }
 
 // Decode - 解码
-func (s *SegmentTemperature) Decode(srcdata []byte) error {
+func (s *SegmentTemperature) Decode(srcData []byte) error {
 
-	data := make([]byte, len(srcdata))
-	copy(data, srcdata)
+	data := make([]byte, len(srcData))
+	copy(data, srcData)
 
 	idx := 0
-	// stype(1)
+	// sType(1)
 	s.SType = data[idx]
 	idx++
 	// data(2)
@@ -87,7 +86,7 @@ func (s *SegmentTemperature) Encode(buf []byte) (int, error) {
 	}
 	idx := 0
 
-	// stype(1)
+	// sType(1)
 	buf[idx] = s.SType
 	idx++
 

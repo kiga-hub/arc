@@ -23,7 +23,6 @@ func (l *LoggerWithSpan) getTraceIDKVArgs(keysAndValues []interface{}) []interfa
 		return keysAndValues
 	}
 	traceID := GetTraceIDFromSpan(l.Span)
-	//spew.Dump(strs)
 	newArgs := make([]interface{}, 0, len(keysAndValues)+2)
 	newArgs = append(newArgs, TraceIDKey)
 	newArgs = append(newArgs, traceID)
@@ -36,11 +35,10 @@ func (l *LoggerWithSpan) patchMsgBySpan(msg string) string {
 		return msg
 	}
 	traceID := GetTraceIDFromSpan(l.Span)
-	//spew.Dump(strs)
 	return fmt.Sprintf("%s=%s | %s", TraceIDKey, traceID, msg)
 }
 
-func (l *LoggerWithSpan) patchTamplateBySpan(template string) string {
+func (l *LoggerWithSpan) patchTemplateBySpan(template string) string {
 	return l.patchMsgBySpan(template)
 }
 
@@ -49,7 +47,7 @@ func (l *LoggerWithSpan) patchArgsBySpan(args []interface{}) []interface{} {
 		return args
 	}
 	traceID := GetTraceIDFromSpan(l.Span)
-	//spew.Dump(strs)
+	//spew.Dump(strSlice)
 	newArgs := make([]interface{}, 0, len(args)+1)
 	newArgs = append(newArgs, fmt.Sprintf("%s=%s | ", TraceIDKey, traceID))
 	newArgs = append(newArgs, args...)
@@ -89,7 +87,7 @@ func (l *LoggerWithSpan) Warnw(msg string, keysAndValues ...interface{}) {
 	}
 }
 
-// Errorw  wrror级别写入
+// Errorw  wrong error级别写入
 func (l *LoggerWithSpan) Errorw(msg string, keysAndValues ...interface{}) {
 	if l.Span != nil {
 		ext.Error.Set(l.Span, true)
@@ -195,7 +193,7 @@ func (l *LoggerWithSpan) Errorf(template string, args ...interface{}) {
 		l.Span.LogKV("level", "error", "msg", fmt.Sprintf(template, args...))
 	}
 	if l.OriginalLogger != nil {
-		l.OriginalLogger.Errorf(l.patchTamplateBySpan(template), args...)
+		l.OriginalLogger.Errorf(l.patchTemplateBySpan(template), args...)
 	}
 }
 
@@ -205,7 +203,7 @@ func (l *LoggerWithSpan) Debugf(template string, args ...interface{}) {
 		l.Span.LogKV("level", "debug", "msg", fmt.Sprintf(template, args...))
 	}
 	if l.OriginalLogger != nil {
-		l.OriginalLogger.Debugf(l.patchTamplateBySpan(template), args...)
+		l.OriginalLogger.Debugf(l.patchTemplateBySpan(template), args...)
 	}
 }
 
@@ -215,7 +213,7 @@ func (l *LoggerWithSpan) Infof(template string, args ...interface{}) {
 		l.Span.LogKV("level", "info", "msg", fmt.Sprintf(template, args...))
 	}
 	if l.OriginalLogger != nil {
-		l.OriginalLogger.Infof(l.patchTamplateBySpan(template), args...)
+		l.OriginalLogger.Infof(l.patchTemplateBySpan(template), args...)
 	}
 }
 
@@ -225,7 +223,7 @@ func (l *LoggerWithSpan) Warnf(template string, args ...interface{}) {
 		l.Span.LogKV("level", "warn", "msg", fmt.Sprintf(template, args...))
 	}
 	if l.OriginalLogger != nil {
-		l.OriginalLogger.Warnf(l.patchTamplateBySpan(template), args...)
+		l.OriginalLogger.Warnf(l.patchTemplateBySpan(template), args...)
 	}
 }
 
@@ -235,7 +233,7 @@ func (l *LoggerWithSpan) Fatalf(template string, args ...interface{}) {
 		l.Span.LogKV("level", "fatal", "msg", fmt.Sprintf(template, args...))
 	}
 	if l.OriginalLogger != nil {
-		l.OriginalLogger.Fatalf(l.patchTamplateBySpan(template), args...)
+		l.OriginalLogger.Fatalf(l.patchTemplateBySpan(template), args...)
 	}
 }
 
@@ -245,6 +243,6 @@ func (l *LoggerWithSpan) Panicf(template string, args ...interface{}) {
 		l.Span.LogKV("level", "panic", "msg", fmt.Sprintf(template, args...))
 	}
 	if l.OriginalLogger != nil {
-		l.OriginalLogger.Panicf(l.patchTamplateBySpan(template), args...)
+		l.OriginalLogger.Panicf(l.patchTemplateBySpan(template), args...)
 	}
 }

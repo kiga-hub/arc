@@ -19,6 +19,8 @@ type JaegerClient struct {
 }
 
 // NewJaegerClient create a new JaegerClient
+//
+//goland:noinspection GoUnusedExportedFunction
 func NewJaegerClient(jaegerQueryAddr string) (*JaegerClient, error) {
 	conn, err := grpc.DialContext(context.Background(), jaegerQueryAddr,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
@@ -46,7 +48,7 @@ func (c *JaegerClient) QuerySpans(ctx context.Context, query *proto.TraceQueryPa
 	if err != nil {
 		return nil, err
 	}
-	spans := []model.Span{}
+	var spans []model.Span
 	for {
 		spanChunk, err := findTraceClient.Recv()
 		if err == io.EOF { // EOF if finish

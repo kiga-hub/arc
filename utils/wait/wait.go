@@ -31,8 +31,8 @@ func Jitter(duration time.Duration, maxFactor float64) time.Duration {
 
 // JitterUntil loops until stop channel is closed, running f every period.
 //
-// If jitterFactor is positive, the period is jittered before every run of f.
-// If jitterFactor is not positive, the period is unchanged and not jittered.
+// If jitterFactor is positive, the period is jitter before every run of f.
+// If jitterFactor is not positive, the period is unchanged and not jitter.
 //
 // If sliding is true, the period is computed after f runs. If it is false then
 // period includes the runtime for f.
@@ -94,7 +94,7 @@ type jitteredBackoffManagerImpl struct {
 	backoffTimer *time.Timer
 }
 
-// newJitteredBackoffManager returns a BackoffManager that backoffs with given duration plus given jitter. If the jitter
+// newJitteredBackoffManager returns a BackoffManager that back-offs with given duration plus given jitter. If the jitter
 // is negative, backoff will not be jittered.
 func newJitteredBackoffManager(duration time.Duration, jitter float64) backoffManager {
 	return &jitteredBackoffManagerImpl{

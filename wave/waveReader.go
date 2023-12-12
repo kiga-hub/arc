@@ -138,22 +138,22 @@ func NewReaderByData(waveData []byte, size int64) (*Reader, error) {
 	return reader, nil
 }
 
-type csize struct {
+type cSize struct {
 	ChunkSize uint32
 }
 
 func (rd *Reader) parseRiffChunk() error {
 	// RIFF格式头检查
-	chunkid := make([]byte, 4)
-	if err := binary.Read(rd.input, binary.BigEndian, chunkid); err != nil {
+	chunkID := make([]byte, 4)
+	if err := binary.Read(rd.input, binary.BigEndian, chunkID); err != nil {
 		return err
 	}
-	if string(chunkid[:]) != riffChunkToken {
+	if string(chunkID[:]) != riffChunkToken {
 		return fmt.Errorf("file is not RIFF: %s", rd.RiffChunk.ID)
 	}
 
 	// RIFF信息块大小
-	chunkSize := &csize{}
+	chunkSize := &cSize{}
 	if err := binary.Read(rd.input, binary.LittleEndian, chunkSize); err != nil {
 		return err
 	}
@@ -175,7 +175,7 @@ func (rd *Reader) parseRiffChunk() error {
 	}
 
 	riffChunk := RiffChunk{
-		ID:         chunkid,
+		ID:         chunkID,
 		Size:       chunkSize.ChunkSize,
 		FormatType: format,
 	}
@@ -191,19 +191,19 @@ func (rd *Reader) parseFmtChunk() error {
 	}
 
 	// 是否写着‘fmt’
-	chunkid := make([]byte, 4)
-	err := binary.Read(rd.input, binary.BigEndian, chunkid)
+	chunkID := make([]byte, 4)
+	err := binary.Read(rd.input, binary.BigEndian, chunkID)
 	if err == io.EOF {
 		return fmt.Errorf("unexpected file end")
 	} else if err != nil {
 		return err
 	}
-	if string(chunkid[:]) != fmtChunkToken {
-		return fmt.Errorf("fmt chunk id must be \"%s\" but value is %s", fmtChunkToken, chunkid)
+	if string(chunkID[:]) != fmtChunkToken {
+		return fmt.Errorf("fmt chunk id must be \"%s\" but value is %s", fmtChunkToken, chunkID)
 	}
 
 	// fmt chunk size是16比特吗
-	chunkSize := &csize{}
+	chunkSize := &cSize{}
 	err = binary.Read(rd.input, binary.LittleEndian, chunkSize)
 	if err == io.EOF {
 		return fmt.Errorf("unexpected file end")
@@ -221,7 +221,7 @@ func (rd *Reader) parseFmtChunk() error {
 	}
 
 	fmtChunk := FmtChunk{
-		ID:   chunkid,
+		ID:   chunkID,
 		Size: chunkSize.ChunkSize,
 		Data: &fmtChunkData,
 	}
@@ -271,19 +271,19 @@ func (rd *Reader) parseDataChunk() error {
 	originOfDataChunk, _ := rd.input.Seek(rd.getRiffChunkSizeOffset(), io.SeekStart)
 
 	// 'data' 是否写着
-	chunkid := make([]byte, 4)
-	err := binary.Read(rd.input, binary.BigEndian, chunkid)
+	chunkID := make([]byte, 4)
+	err := binary.Read(rd.input, binary.BigEndian, chunkID)
 	if err == io.EOF {
 		return fmt.Errorf("unexpected file end")
 	} else if err != nil {
 		return err
 	}
-	if string(chunkid[:]) != dataChunkToken {
-		return fmt.Errorf("data chunk id must be \"%s\" but value is %s", dataChunkToken, chunkid)
+	if string(chunkID[:]) != dataChunkToken {
+		return fmt.Errorf("data chunk id must be \"%s\" but value is %s", dataChunkToken, chunkID)
 	}
 
 	// data_chunk_size取得（实际声音数据的容量）
-	chunkSize := &csize{}
+	chunkSize := &cSize{}
 	err = binary.Read(rd.input, binary.LittleEndian, chunkSize)
 	if err == io.EOF {
 		return fmt.Errorf("unexpected file end")
@@ -296,7 +296,7 @@ func (rd *Reader) parseDataChunk() error {
 	audioData := io.NewSectionReader(rd.input, rd.originOfAudioData, int64(chunkSize.ChunkSize))
 
 	dataChunk := DataReaderChunk{
-		ID:   chunkid,
+		ID:   chunkID,
 		Size: chunkSize.ChunkSize,
 		Data: audioData,
 	}
@@ -381,7 +381,7 @@ func bytesToInt(b []byte) int {
 	//	fmt.Printf("%08b %08b ", b[1], b[0])
 	//	fmt.Printf("%016b => %d\n", ret, ret)
 	case 3:
-		// HiReso / DVDAudio
+		// Hi-Re-so / DVDAudio
 		ret = int(b[0]) + int(b[1])<<8 + int(b[2])<<16
 	default:
 		ret = 0
