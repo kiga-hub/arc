@@ -3,7 +3,7 @@ package db
 import (
 	"context"
 
-	commonErrors "github.com/kiga-hub/arc/error"
+	arcErrors "github.com/kiga-hub/arc/error"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/jinzhu/gorm"
@@ -32,7 +32,7 @@ func (c *Config) Validate() error {
 // Add -
 func (c *Config) Add(ctx context.Context, db *gorm.DB) (int64, error) {
 	if db == nil {
-		return 0, commonErrors.ErrParams
+		return 0, arcErrors.ErrParams
 	}
 	r := db.Where(Config{Name: c.Name}).FirstOrCreate(c)
 	return r.RowsAffected, r.Error
@@ -41,7 +41,7 @@ func (c *Config) Add(ctx context.Context, db *gorm.DB) (int64, error) {
 // Update -
 func (c *Config) Update(ctx context.Context, db *gorm.DB) (int64, error) {
 	if db == nil || c.Name == "" {
-		return 0, commonErrors.ErrParams
+		return 0, arcErrors.ErrParams
 	}
 	if err := c.GetByName(ctx, db); err != nil {
 		return c.Add(ctx, db)
@@ -53,7 +53,7 @@ func (c *Config) Update(ctx context.Context, db *gorm.DB) (int64, error) {
 // GetByName -
 func (c *Config) GetByName(ctx context.Context, db *gorm.DB) error {
 	if db == nil || c.Name == "" {
-		return commonErrors.ErrParams
+		return arcErrors.ErrParams
 	}
 	r := db.Table("config").
 		Where("name = ?", c.Name).

@@ -11,7 +11,7 @@ import (
 )
 
 /*
-var ComponentTemplateKey = ComponentKey("common/micro/ComponentTemplate")
+var ComponentTemplateKey = ComponentKey("arc/micro/ComponentTemplate")
 
 type ComponentTemplate struct {
 	EmptyComponent

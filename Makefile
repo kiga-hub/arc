@@ -1,8 +1,8 @@
 .PHONY: image
 image:
-	docker build -t common:dev .
+	docker build -t arc:dev .
 
 .PHONY: run
 run:
-	docker run --rm common:dev
+	docker run --rm arc:dev
 	

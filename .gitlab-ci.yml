@@ -1,7 +1,7 @@
 image: golang:1.20.8-bullseye
 
 variables:
-  PROJECT_NAME: common
+  PROJECT_NAME: arc
   GOOS: linux
   GOARCH: amd64
 

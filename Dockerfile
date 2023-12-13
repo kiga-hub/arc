@@ -7,7 +7,7 @@ COPY . .
 EXPOSE  80
 
 SHELL ["/bin/bash","-c"]
-RUN bash build.sh common-dev /common-dev
+RUN bash build.sh arc-dev /arc-dev
 
-ENTRYPOINT [ "/common-dev" ]
-CMD ["common-dev"]
+ENTRYPOINT [ "/arc-dev" ]
+CMD ["arc-dev"]
