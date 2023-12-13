@@ -1,0 +1,29 @@
+[basic]
+zone = "default"
+service = "go-micro"
+apiPort = 777
+apiRoot = "/api/data/v1/test"
+prof = false
+inSwarm = false
+isApiRate = false
+isApiBody = false
+isApiTimeout = false
+apiRate = 5
+apiBurst = 10
+apiExpires = 10
+apiBodyLimit = "10M"
+apiTimeout = 2000
+
+[test]
+path = "/home/workspace"
+
+[pprof]
+enable = false
+
+[log]
+level = "DEBUG"
+#loki = "localhost:9096"
+
+[trace]
+jaegerCollector = "http://localhost:14268"
+tempoQuery = "localhost:9095"
