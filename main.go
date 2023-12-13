@@ -6,6 +6,8 @@ import (
 	"github.com/kiga-hub/arc/micro"
 	"github.com/kiga-hub/arc/micro/component"
 	"github.com/kiga-hub/arc/tracing"
+
+	kafkaComponent "github.com/kiga-hub/arc/kafka"
 )
 
 func main() {
@@ -20,6 +22,7 @@ func main() {
 				Port:          6666,
 				InMachineMode: false,
 			},
+			&kafkaComponent.Component{},
 		},
 	)
 	if err != nil {

@@ -6,6 +6,7 @@ require (
 	github.com/RichardKnop/machinery v1.10.6
 	github.com/apache/pulsar-client-go v0.11.1
 	github.com/bxcodec/faker/v3 v3.8.1
+	github.com/confluentinc/confluent-kafka-go v1.8.2
 	github.com/davecgh/go-spew v1.1.1
 	github.com/emirpasic/gods v1.18.1
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
