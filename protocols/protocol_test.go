@@ -7,48 +7,48 @@ import (
 )
 
 func TestProto2(t *testing.T) {
-	// 1. 准备数据段
-	audio := make([]byte, 2048)
-	for i := 0; i < 2048; i++ {
+
+	dataCount := 10
+	// 1. prepare data
+	audio := make([]byte, dataCount)
+	for i := 0; i < dataCount; i++ {
 		audio[i] = byte(i)
 	}
 
-	st := NewDefaultSegmentTemperature()
-	st.SetData(25.4)
+	st := NewDefaultSegmentArc()
+	st.SetData(audio)
 	if err := st.Validate(); err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
 
-	// 2. 添加数据段到组
+	// 2. add segment to group
 	g := NewDefaultDataGroup()
 	g.AppendSegment(st)
 	if err := g.Validate(); err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
 
-	// 3. 添加组到包
+	_, _ = g.GetArcSegment()
+
+	// 3. add group to frame
 	p := NewDefaultFrame()
-	p.SetProto(2)
 	p.SetID(15)
 	p.Timestamp = time.Now().UnixNano() / 1e3
-	p.Hardware = 0x01
-	p.Firmware[0] = 0x0F
 	p.SetDataGroup(g)
 
-	// 4. 打包二进制
-	buf := make([]byte, p.Size+9)
-	n, err := p.Encode(buf)
+	// 4. encode frame
+	buf := make([]byte, p.Size+DefaultHeadLength)
+	_, err := p.Encode(buf)
 	if err != nil {
-		fmt.Println("%w", err)
+		panic(err)
 	}
-	fmt.Println(n)
 
-	// 数据包有效判断
+	// 5. validate frame
 	if err := FrameValidate(buf); err != nil {
-		fmt.Println("%w", err)
+		panic(err)
 	}
 
-	// 解析Frame
+	// 6. decode frame
 	p2 := NewDefaultFrame()
 	if err := p2.Decode(buf); err != nil {
 		fmt.Println("%w", err)

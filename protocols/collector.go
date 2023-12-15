@@ -1,24 +1,24 @@
 package protocols
 
-// TemperatureArray is an array of TemperatureItem
-type TemperatureArray struct {
+// ArcItemArray is an array of arc item
+type ArcItemArray struct {
 	CollectorID   []byte
 	CollectorType string
-	Items         []TemperatureItem
+	Items         []ArcItem
 }
 
-// TemperatureItem is the temperature at a time point
-type TemperatureItem struct {
+// ArcItem is the ArcItem at a time point
+type ArcItem struct {
 	Ts   int64
-	Data float32
+	Data []byte
 }
 
-// TemperatureRaw include raw data of temperature value
-type TemperatureRaw struct {
+// ArcItemRaw include raw data of ArcItem value
+type ArcItemRaw struct {
 	CollectorID   []byte
 	CollectorType string
 	Ts            int64
-	Data          float32
+	Data          []byte
 }
 
 // CountItem contains count of messages from collector

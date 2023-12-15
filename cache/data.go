@@ -44,7 +44,7 @@ func (d *DataPoint) Append(data IDataPoint) {
 	d.Data = append(d.Data, dp.Data...)
 }
 
-// getPoints 获取采样点数
+// getPoints get the number of points in the data
 func (d *DataPoint) getPoints() int {
 	return len(d.Data)
 }

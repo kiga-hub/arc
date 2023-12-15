@@ -10,58 +10,6 @@ import (
 	platformConf "github.com/kiga-hub/arc/conf"
 )
 
-/*
-var ComponentTemplateKey = ComponentKey("arc/micro/ComponentTemplate")
-
-type ComponentTemplate struct {
-	EmptyComponent
-}
-
-// Name of the component
-func (c *ComponentTemplate) Name() string {
-	return "ComponentTemplate"
-}
-
-// PreInit called before Init()
-func (c *ComponentTemplate) PreInit(ctx context.Context) error {
-	// load config
-	return nil
-}
-
-// Init the component
-func (c *ComponentTemplate) Init(server *MicroServer) error {
-	// init
-	// server.Register
-	return nil
-}
-
-// OnConfigChanged called when dynamic config changed
-func (c *ComponentTemplate) OnConfigChanged(*platformConf.TopologyConfig) {}
-
-// SetupHandler of echo if the component need
-func (c *ComponentTemplate) SetupHandler(root echoswagger.ApiRoot, base string) error {
-	return nil
-}
-
-// Start the component
-func (c *ComponentTemplate) Start(ctx context.Context) error {
-	// start
-	return nil
-}
-
-// PreStop called before Stop()
-func (c *ComponentTemplate) PreStop(ctx context.Context) error {
-	// stop if possible
-	return nil
-}
-
-// Stop the component
-func (c *ComponentTemplate) Stop(ctx context.Context) error {
-	// stop
-	return nil
-}
-*/
-
 // EmptyComponent is the base implementation of IComponent
 type EmptyComponent struct {
 	IsPrint bool

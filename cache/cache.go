@@ -1,9 +1,5 @@
 package cache
 
-/*
-所有时间相关参数，统一使用us精度
-*/
-
 import (
 	"fmt"
 	"sync"
@@ -86,7 +82,7 @@ func (c *DataCache) cleanTimeout(idleTimeout int) bool {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 	now := time.Now().UnixMicro()
-	if idleTimeout > 0 && c.lastSearch > 0 && c.lastSearch < now-int64(idleTimeout) { //有过期时间，并且曾经查过的前提下（没查过一上来就会清），且最近一个过期时间内没有查询动作，则清理这个id的缓存池
+	if idleTimeout > 0 && c.lastSearch > 0 && c.lastSearch < now-int64(idleTimeout) {
 		c.data.Clear()
 		return true
 	}

@@ -86,11 +86,9 @@ func Test_test(t *testing.T) {
 					Data: test.data,
 				})
 
-				// 设置每帧数据的时间戳
 				inputT = inputT.Add(time.Duration(interval) * time.Microsecond)
 			}
 
-			// 查询所有数据，计算查询开始结束时间
 			timeFrom := startT
 			timeTo := timeFrom.Add(time.Duration(interval) * time.Microsecond)
 
@@ -129,8 +127,8 @@ func Test_test(t *testing.T) {
 
 			for _, v := range dataPoints {
 				point := v.(*DataPoint)
-				// 比较查询数据与预期数据大小，缓存读取数据大小，小于等于每帧数据大小*(包序号取模-1)
 				t.Log("Expected", len(point.Data), len(test.data))
+
 				if len(point.Data) > len(test.data) {
 					outputFunc(test.id, dataPoints)
 					t.Fatalf("dataSize %d-%d", len(point.Data), len(test.data))

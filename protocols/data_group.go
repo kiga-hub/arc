@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	// STypeTemperature 温度Type
-	STypeTemperature byte = 10
+	// STypeArc arc type
+	STypeArc byte = 10
 
 	// ItemSampleRate  -
 	ItemSampleRate = 1
@@ -23,10 +23,10 @@ type ISegment interface {
 
 // DataGroup Protocol=2   CType 1:GetCollector2Structure.Size()
 type DataGroup struct {
-	Count    byte       //1 数据类型个数
-	Sizes    []uint32   //4 每个类型数据大小
-	STypes   []byte     // 解析段类型记录
-	Segments []ISegment //n 数据
+	Count    byte       //1 segment count
+	Sizes    []uint32   //4 each segment size
+	STypes   []byte     // segment type
+	Segments []ISegment //n data
 }
 
 // NewDefaultDataGroup -
@@ -34,7 +34,7 @@ func NewDefaultDataGroup() *DataGroup {
 	return &DataGroup{}
 }
 
-// Validate - 校验
+// Validate - Validate
 func (d *DataGroup) Validate() error {
 	if d.Count <= 0 {
 		return fmt.Errorf("count out of range %d", d.Count)
@@ -50,14 +50,15 @@ func (d *DataGroup) Validate() error {
 	return nil
 }
 
-// AppendSegment - 添加数据段
+// AppendSegment - AppendSegment
 func (d *DataGroup) AppendSegment(segment ISegment) {
 	d.Count++
 	d.Sizes = append(d.Sizes, segment.Size())
+	d.STypes = append(d.STypes, segment.Type())
 	d.Segments = append(d.Segments, segment)
 }
 
-// GetSegment - 获取数据段
+// GetSegment - GetSegment
 func (d *DataGroup) GetSegment(SType byte) (ISegment, error) {
 	for _, s := range d.Segments {
 		if s.Type() == SType {
@@ -67,20 +68,20 @@ func (d *DataGroup) GetSegment(SType byte) (ISegment, error) {
 	return nil, fmt.Errorf("not find type %d", SType)
 }
 
-// GetTSegment - 获取温度数据段
-func (d *DataGroup) GetTSegment() (*SegmentTemperature, error) {
-	s, err := d.GetSegment(STypeTemperature)
+// GetArcSegment - GetArcSegment
+func (d *DataGroup) GetArcSegment() (*SegmentArc, error) {
+	s, err := d.GetSegment(STypeArc)
 	if err != nil {
-		return nil, fmt.Errorf("temperature %s", err)
+		return nil, fmt.Errorf("arc %s", err)
 	}
-	return s.(*SegmentTemperature), nil
+	return s.(*SegmentArc), nil
 }
 
-// Decode - 解码
+// Decode - Decode
 func (d *DataGroup) Decode(data []byte) error {
 	idx := 0
 
-	// 获取数据段个数
+	// get segment count
 	d.Count = data[idx]
 	idx++
 	if d.Count <= 0 {
@@ -93,27 +94,28 @@ func (d *DataGroup) Decode(data []byte) error {
 		idx += 4
 	}
 
-	// 校验
+	// validate
 	if err := d.Validate(); err != nil {
 		return err
 	}
 
-	// 解析数据段
+	// decode
 	for i := 0; i < int(d.Count); i++ {
 		if i >= len(d.STypes) {
 			d.STypes = append(d.STypes, 0)
 		}
+
 		switch data[idx] {
-		case STypeTemperature:
-			st, err := d.GetTSegment()
+		case STypeArc:
+			st, err := d.GetArcSegment()
 			if err != nil {
-				st = NewDefaultSegmentTemperature()
+				st = NewDefaultSegmentArc()
 				d.Segments = append(d.Segments, st)
 			}
 			if err := st.Decode(data[idx : idx+int(d.Sizes[i])]); err != nil {
 				return err
 			}
-			d.STypes[i] = STypeTemperature
+			d.STypes[i] = STypeArc
 		default:
 			return fmt.Errorf("no match stype")
 		}
@@ -122,9 +124,9 @@ func (d *DataGroup) Decode(data []byte) error {
 	return nil
 }
 
-// Encode - 编码
+// Encode - encode
 func (d *DataGroup) Encode(buf []byte) (int, error) {
-	// 检查缓存大小
+	// check buf size
 	minSize := 1
 	for _, size := range d.Sizes {
 		minSize += int(size)
@@ -139,11 +141,19 @@ func (d *DataGroup) Encode(buf []byte) (int, error) {
 	// count(1)
 	buf[idx] = d.Count
 	idx++
+
 	// size
 	for _, size := range d.Sizes {
 		binary.BigEndian.PutUint32(buf[idx:idx+4], size)
 		idx += 4
 	}
+
+	// //type 1
+	for _, tp := range d.STypes {
+		buf[idx] = tp
+		idx++
+	}
+
 	// segments
 	for i, s := range d.Segments {
 		n, err := s.Encode(buf[idx:])
@@ -152,7 +162,7 @@ func (d *DataGroup) Encode(buf []byte) (int, error) {
 			return idx, err
 		}
 		if n != int(d.Sizes[i]) {
-			return idx, fmt.Errorf("data segment sizes do not match")
+			return idx, fmt.Errorf("data segment sizes do not match:%d != %d", n, d.Sizes[i])
 		}
 	}
 	return idx, nil
@@ -160,7 +170,6 @@ func (d *DataGroup) Encode(buf []byte) (int, error) {
 
 // Dump -
 func (d *DataGroup) Dump() {
-	fmt.Printf("DataGroup Count: %d\n", d.Count)
 	for _, tp := range d.STypes {
 		s, err := d.GetSegment(tp)
 		if err != nil {

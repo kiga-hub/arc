@@ -1,55 +1,48 @@
 package protocols
 
 import (
-	"encoding/binary"
 	"fmt"
 
 	"github.com/kiga-hub/arc/utils"
 )
 
-// SegmentTemperature  Temperature
-type SegmentTemperature struct {
-	SType byte  //1 数据类型
-	Data  int16 //2 数据
-	Bytes []byte
+// SegmentArc arc
+type SegmentArc struct {
+	SType byte //1 segment type
+	Data  []byte
 }
 
 // Validate -
-func (s *SegmentTemperature) Validate() error {
-	if s.SType != STypeTemperature {
-		return fmt.Errorf("temperature type %d", s.SType)
+func (s *SegmentArc) Validate() error {
+	if s.SType != STypeArc {
+		return fmt.Errorf("arc segment type %d", s.SType)
 	}
 	return nil
 }
 
-// NewDefaultSegmentTemperature -
-func NewDefaultSegmentTemperature() *SegmentTemperature {
-	return &SegmentTemperature{
-		SType: STypeTemperature,
+// NewDefaultSegmentArc -
+func NewDefaultSegmentArc() *SegmentArc {
+	return &SegmentArc{
+		SType: STypeArc,
 	}
 }
 
-// TemperatureValidate - 解码
-func TemperatureValidate(srcData []byte) error {
+// ArcSegmentValidate - 校验
+func ArcSegmentValidate(srcData []byte) error {
 	data := make([]byte, len(srcData))
 	copy(data, srcData)
 
 	idx := 0
 
-	if data[idx] != STypeTemperature {
-		return fmt.Errorf("temperature segment stype invalid(%d)", data[idx])
-	}
-
-	// data(2)
-	if len(data) != 3 {
-		return fmt.Errorf("temperature segment data invalid(%d)", len(data)-1)
+	if data[idx] != STypeArc {
+		return fmt.Errorf("arc segment stype invalid(%d)", data[idx])
 	}
 
 	return nil
 }
 
 // Decode - 解码
-func (s *SegmentTemperature) Decode(srcData []byte) error {
+func (s *SegmentArc) Decode(srcData []byte) error {
 
 	data := make([]byte, len(srcData))
 	copy(data, srcData)
@@ -58,57 +51,53 @@ func (s *SegmentTemperature) Decode(srcData []byte) error {
 	// sType(1)
 	s.SType = data[idx]
 	idx++
-	// data(2)
-	s.Data = int16(binary.BigEndian.Uint16(data[idx:]))
-	s.Bytes = data[idx:]
+
+	s.Data = data[idx:]
 	return s.Validate()
 }
 
 // SetData - 获取数据
-func (s *SegmentTemperature) SetData(t float32) {
-	t = t * 16.0
-	s.Data = int16(t)
-	if len(s.Bytes) < 2 {
-		s.Bytes = make([]byte, 2)
-	}
-	binary.BigEndian.PutUint16(s.Bytes[:2], uint16(s.Data))
+func (s *SegmentArc) SetData(data []byte) {
+	s.Data = make([]byte, len(data))
+	copy(s.Data, data)
 }
 
 // GetData - 设置数据
-func (s *SegmentTemperature) GetData() float32 {
-	return float32(s.Data) / 16.0
+func (s *SegmentArc) GetData() []byte {
+	return s.Data
+}
+
+// GetData - 设置数据
+func (s *SegmentArc) GetType() byte {
+	return s.SType
 }
 
 // Encode - 编码
-func (s *SegmentTemperature) Encode(buf []byte) (int, error) {
-	if len(buf) < 3 {
-		return 0, fmt.Errorf("out of allocated memory")
-	}
+func (s *SegmentArc) Encode(buf []byte) (int, error) {
 	idx := 0
 
 	// sType(1)
 	buf[idx] = s.SType
 	idx++
 
-	// data(2)
-	copy(buf[idx:idx+2], s.Bytes[:2])
-	idx += 2
+	copy(buf[idx:], s.Data)
+	idx += len(s.Data)
 
 	return idx, nil
 }
 
 // Type - 段类型
-func (s *SegmentTemperature) Type() byte {
+func (s *SegmentArc) Type() byte {
 	return s.SType
 }
 
 // Size - 编码大小
-func (s *SegmentTemperature) Size() uint32 {
-	return 2 + 1
+func (s *SegmentArc) Size() uint32 {
+	return 1 + uint32(len(s.Data))
 }
 
 // Dump -
-func (s *SegmentTemperature) Dump() {
-	title := fmt.Sprintf("  Dump Temperature: %.3f\n  ", s.GetData())
-	utils.Hexdump(title, s.Bytes)
+func (s *SegmentArc) Dump() {
+	title := fmt.Sprintf("Dump len: %d\n  ", len(s.GetData()))
+	utils.Hexdump(title, s.Data)
 }

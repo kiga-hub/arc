@@ -14,10 +14,10 @@ const (
 var defaultConfig = Config{
 	Enable:           false,
 	BootStrapServers: "localhost:9092",
-	ClientID:         "turing",
+	ClientID:         "arc",
 	MessageMaxBytes:  67108864,
-	Topic:            "turing",
-	GroupID:          "turing",
+	Topic:            "arc",
+	GroupID:          "arc",
 }
 
 // Config struct
