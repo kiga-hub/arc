@@ -1,4 +1,4 @@
-# Arc Mircro service
+# Distributed Microservices Architecture - Arc
 
 Go language-based microservice framework
 
