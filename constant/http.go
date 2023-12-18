@@ -1,6 +1,6 @@
 package constant
 
 const (
-	// URLMetrics metrics的地址
+	// URLMetrics metrics path
 	URLMetrics string = "/metrics"
 )

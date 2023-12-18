@@ -7,10 +7,10 @@ import (
 	"github.com/kiga-hub/arc/micro"
 )
 
-// ProducerElementKey pulsar消息队列生产者模块
+// ProducerElementKey pulsar message queue producer module
 var ProducerElementKey = micro.ElementKey("PulsarProducerComponent")
 
-// ProducerComponent pulsar生产者模块
+// ProducerComponent pulsar producer module
 type ProducerComponent struct {
 	micro.EmptyComponent
 	client *Producer

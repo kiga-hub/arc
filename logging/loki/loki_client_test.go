@@ -11,7 +11,7 @@ import (
 
 func TestLokiClient_GetLogs(t *testing.T) {
 	logConfig := conf.GetLogConfig()
-	client, err := NewLokiClient(logConfig.LokiAddr) //"192.168.26.233:9096"
+	client, err := NewLokiClient(logConfig.LokiAddr) //"127.0.0.1:9096"
 	if err != nil {
 		t.Logf("%v", err)
 		return

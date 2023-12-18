@@ -38,7 +38,7 @@ func (c *MongoComponent) Init(server *micro.Server) error {
 		return err
 	}
 
-	// 通过连接获取配置文件中的数据库对象
+	// Obtain the database object in the configuration file through the connection".
 	c.db = client.Database(conf.DB)
 
 	server.RegisterElement(&ElementKey, c.db)

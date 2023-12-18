@@ -18,7 +18,7 @@ func (k *Kafka) CreateConsumer() error {
 		return err
 	}
 
-	//订阅一个主题
+	// SubscribeTopics - Subscribe to topic(s). Topics can be changed between calls to Subscribe*().
 	if err = k.consumer.SubscribeTopics([]string{k.config.Topic}, nil); err != nil {
 		return err
 	}

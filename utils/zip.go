@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-// Zip 压缩
+// Zip compress
 //
 //goland:noinspection GoUnusedExportedFunction
 func Zip(srcFile string, destZip string) error {
@@ -71,7 +71,7 @@ func Zip(srcFile string, destZip string) error {
 	return err
 }
 
-// Unzip 解压
+// Unzip Decompress
 //
 //goland:noinspection GoUnusedExportedFunction
 func Unzip(fileBuffer []byte, destDir string) error {
@@ -129,7 +129,7 @@ func Unzip(fileBuffer []byte, destDir string) error {
 	return nil
 }
 
-// UnzipBuffer 解压
+// UnzipBuffer Decompress
 //
 //goland:noinspection GoUnusedExportedFunction
 func UnzipBuffer(fileBuffer []byte, fileMap map[string][]byte) error {

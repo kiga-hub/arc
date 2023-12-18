@@ -3,12 +3,12 @@ package mongodb
 import (
 	"context"
 
-	_ "github.com/go-sql-driver/mysql" //_ 导入所需要的驱动
+	_ "github.com/go-sql-driver/mysql" //_ Import the required drivers
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// CreateDB 创建数据库对象
+// CreateDB create db
 func CreateDB(config Config) (*mongo.Client, error) {
 
 	var auth string

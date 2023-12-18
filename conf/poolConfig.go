@@ -14,21 +14,21 @@ var defaultPoolConfig = PoolConfig{
 	IdleTimeout: 86400,
 }
 
-//PoolConfig   连接池配置
+// PoolConfig connection pool configuration
 type PoolConfig struct {
-	MinActive   int `toml:"min"`         //连接池中拥有的最小连接数
-	MaxActive   int `toml:"max"`         //连接池中拥有的最大的连接数
-	IdleTimeout int `toml:"idleTimeout"` //连接最大空闲时间，超过该事件则将失效
+	MinActive   int `toml:"min"`         // The minimum number of connections in the connection pool
+	MaxActive   int `toml:"max"`         // The maximum number of connections in the connection pool
+	IdleTimeout int `toml:"idleTimeout"` // Maximum idle time of connection.it will become invalid after this time.
 }
 
-//SetDefaultPoolConfig 设置默认连接池配置
+// SetDefaultPoolConfig set default connection pool configuration
 func SetDefaultPoolConfig() {
 	viper.SetDefault(poolMin, defaultPoolConfig.MinActive)
 	viper.SetDefault(poolMax, defaultPoolConfig.MaxActive)
 	viper.SetDefault(poolIdleTimeout, defaultPoolConfig.IdleTimeout)
 }
 
-//GetPoolConfig 获取连接池配置
+// GetPoolConfig get connection pool configuration
 func GetPoolConfig() *PoolConfig {
 	return &PoolConfig{
 		MinActive:   viper.GetInt(poolMin),

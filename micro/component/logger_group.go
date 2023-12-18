@@ -91,7 +91,7 @@ func (c *LoggerGroupComponent) Init(server *micro.Server) error {
 }
 
 const (
-	urlGroupLog = "Log配置(内部使用)"
+	urlGroupLog = "log configuration(for internal use)"
 	urlLogLevel = "/log/level"
 )
 

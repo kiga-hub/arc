@@ -13,7 +13,7 @@ import (
 	microConf "github.com/kiga-hub/arc/micro/conf"
 )
 
-// ILogger log类
+// ILogger log interface
 type ILogger interface {
 	Debugw(string, ...interface{})
 	Infow(string, ...interface{})
@@ -37,10 +37,10 @@ type ILogger interface {
 	Panicf(string, ...interface{})
 }
 
-//Logger  log全局对象
+//Logger  log global object
 //var Logger ILogger
 
-// CreateLogger 创建一个 log对象
+// CreateLogger create a logger
 func CreateLogger(basicConfig *microConf.BasicConfig, logConfig *conf.LogConfig) (*zap.Logger, error) { // logger, error
 	level := zap.NewAtomicLevel()
 	err := level.UnmarshalText([]byte(logConfig.Level))

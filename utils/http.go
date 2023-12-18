@@ -6,37 +6,37 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-//ResponseStatus 返回状态
+// ResponseStatus response status
 type ResponseStatus string
 
 const (
-	//ResponseStatusOK 相应状态ok
+	//ResponseStatusOK coresponse status
 	ResponseStatusOK = "OK"
-	//ResponseStatusError 响应状态Error
+	//ResponseStatusError response status
 	ResponseStatusError = "Error"
 )
 
-//Response 响应
+// Response -
 type Response struct {
 	Status ResponseStatus `json:"status" swagger:"required"`
 	ErrStr string         `json:"err,omitempty"`
 	Data   interface{}    `json:"data,omitempty"`
 }
 
-// ResponseV2 HTTP响应, v2版本
+// ResponseV2 HTTP response , v2 version
 type ResponseV2 struct {
 	Code int         `json:"code" swagger:"required"`
 	Msg  string      `json:"msg,omitempty"`
 	Data interface{} `json:"data,omitempty"`
 }
 
-//ResponseWithoutData 响应没有数据
+// ResponseWithoutData response without data
 type ResponseWithoutData struct {
 	Status ResponseStatus `json:"status" swagger:"required"`
 	ErrStr string         `json:"err,omitempty"`
 }
 
-//GetJSONResponse 获取json响应
+// GetJSONResponse get json response
 func GetJSONResponse(c echo.Context, err error, data interface{}) error {
 	resp := Response{}
 	if err != nil {

@@ -13,10 +13,10 @@ import (
 	"github.com/kiga-hub/arc/redis"
 )
 
-// Invoke 调用
+// Invoke invoke
 type Invoke func(ctx context.Context, taskType, taskData string) (string, error)
 
-// IWorker 工作
+// IWorker work interface
 type IWorker interface {
 	Work(ctx context.Context, taskType, taskData string) (string, error)
 	GetQueueName() string
@@ -25,7 +25,7 @@ type IWorker interface {
 	Release() error
 }
 
-// InitMQInitMachineryServerWorker 初始化消息队列Machinery服务工作
+// InitMQInitMachineryServerWorker initialize the machinary message queue service work.
 func InitMQInitMachineryServerWorker(
 	queueName string, invoke Invoke, redis *redis.Config,
 	concurrencyNum int, errorsChan chan<- error,
@@ -75,14 +75,14 @@ func InitMQInitMachineryServerWorker(
 	return worker, nil
 }
 
-// genErrorHandle  健康错误
+// genErrorHandle  handle error
 func genErrorHandle(logger logging.ILogger) func(err error) {
 	return func(err error) {
 		logger.Error(err)
 	}
 }
 
-// genPreTaskHandler 前任务处理程序
+// genPreTaskHandler pre-task handler
 func genPreTaskHandler(logger logging.ILogger) func(signature *tasks.Signature) {
 	return func(signature *tasks.Signature) {
 		logger.Infow("start task", "group", signature.GroupUUID, "uuid", signature.UUID)
@@ -94,7 +94,7 @@ func genPostTaskHandler(logger logging.ILogger) func(signature *tasks.Signature)
 	}
 }
 
-// InitMachineryServer 初始化Machinery 服务
+// InitMachineryServer initialize Machinery service
 func InitMachineryServer(queueName string, redis *redis.Config) (*machinery.Server, error) {
 	queueConfig := &config.Config{
 		Broker:          fmt.Sprintf("redis://:%s@%s/0", redis.Password, redis.Address),
@@ -117,7 +117,7 @@ func InitMachineryServer(queueName string, redis *redis.Config) (*machinery.Serv
 	return machinery.NewServer(queueConfig)
 }
 
-// GetQueueName GetQueueName获取队列名称
+// GetQueueName Get Queue Name
 //
 //goland:noinspection GoUnusedExportedFunction
 func GetQueueName(workerID, taskType string, reserved int) string {

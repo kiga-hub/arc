@@ -11,13 +11,13 @@ import (
 	"go.uber.org/zap"
 )
 
-// Producer pulsar 生产者客户端
+// Producer pulsar producer
 type Producer struct {
-	ctx        context.Context // 上下文
-	cancel     func()          // 取消函数
-	logger     logging.ILogger // 日志
-	baseClient pulsar.Client   // 原始客户端
-	producer   pulsar.Producer // 生产者
+	ctx        context.Context // context
+	cancel     func()          // cancel
+	logger     logging.ILogger // logger
+	baseClient pulsar.Client   // client
+	producer   pulsar.Producer // producer
 }
 
 // Close .
@@ -28,7 +28,7 @@ func (c *Producer) Close() error {
 	return nil
 }
 
-// Send 发送消息
+// Send send message
 func (c *Producer) Send(data []byte) {
 	c.producer.SendAsync(c.ctx, &pulsar.ProducerMessage{
 		Payload: data,
@@ -41,7 +41,7 @@ func (c *Producer) Send(data []byte) {
 
 // NewProducer .
 // url pulsar://localhost:6600,localhost:6650
-// topic 主题
+// topic topic
 func NewProducer(logger logging.ILogger, url string, topic string) (*Producer, error) {
 	c, err := pulsar.NewClient(pulsar.ClientOptions{
 		URL:               url,
@@ -49,13 +49,13 @@ func NewProducer(logger logging.ILogger, url string, topic string) (*Producer, e
 		ConnectionTimeout: 30 * time.Second,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "创建pulsar连接失败")
+		return nil, errors.Wrap(err, "create pulsar connection failed")
 	}
 	cp, err := c.CreateProducer(pulsar.ProducerOptions{
 		Topic: topic,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "创建生产者失败")
+		return nil, errors.Wrap(err, "create producer failed")
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	return &Producer{

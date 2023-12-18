@@ -20,8 +20,8 @@ type WriterParam struct {
 
 // Writer -
 type Writer struct {
-	out            *os.File // 实际写出来的文件和bytes等
-	writtenSamples int      // 写入的样本数
+	out            *os.File
+	writtenSamples int
 	flushCount     int
 
 	riffChunk *RiffChunk
@@ -140,13 +140,13 @@ func (w *Writer) Write(p []byte) (int, error) {
 	if len(p) < blockSize {
 		return 0, fmt.Errorf("writing data need at least %d bytes", blockSize)
 	}
-	// 写入byte数是BlockSize的倍数
+
 	if len(p)%blockSize != 0 {
 		return 0, fmt.Errorf("writing data must be a multiple of %d bytes", blockSize)
 	}
 	num := len(p) / blockSize
 
-	// 缓存超5秒数据，写盘
+	// If the cache exceeds 5 seconds of data, write to disk
 	if w.writtenSamples > int(w.fmtChunk.Data.SamplesPerSec)*5 {
 		if err := w.flush(); err != nil {
 			return 0, err
@@ -183,7 +183,7 @@ func (w *Writer) flush() error {
 		w.riffChunk.Size = uint32(len(w.riffChunk.ID)) + (8 + w.fmtChunk.Size) + (8 + dataSize)
 		w.dataChunk.Size = dataSize
 
-		// 写wave头信息
+		// wave header info
 		hData, err := w.HeaderBytes()
 		if err != nil {
 			return err
@@ -197,7 +197,7 @@ func (w *Writer) flush() error {
 		w.dataChunk.Size += dataSize
 	}
 
-	// 写数据
+	// write
 	if _, err := w.out.Write(data); err != nil {
 		return err
 	}

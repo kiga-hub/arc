@@ -6,21 +6,21 @@ import (
 )
 
 const (
-	//NacosRegister nacos服务端字段
+	//NacosRegister nacos service field
 	NacosRegister = "nacosRegisterr"
-	//NacosRegisterServiceIP 向nacos进行服务注册的服务ip地址
+	//NacosRegisterServiceIP The ip address of the service to be registered with nacos.
 	NacosRegisterServiceIP = NacosRegister + ".ip"
-	//NacosRegisterServicePort 向nacos进行服务注册的服务端口
+	//NacosRegisterServicePort The service port for registering with nacos.
 	NacosRegisterServicePort = NacosRegister + ".port"
-	//NacosRegisterWeight 注册服务的权重
+	//NacosRegisterWeight The weight of the registered service.
 	NacosRegisterWeight = NacosRegister + ".weight"
-	//NacosRegisterClusterName 群组的名字 default:DEFAULT
+	//NacosRegisterClusterName The name of group. default:DEFAULT
 	NacosRegisterClusterName = NacosRegister + ".clusterName"
-	//NacosRegisterEnable 是否开启
+	//NacosRegisterEnable is it enabled
 	NacosRegisterEnable = NacosRegister + ".enable"
-	//NacosRegisterHealthy 是否健康
+	//NacosRegisterHealthy is it healthy
 	NacosRegisterHealthy = NacosRegister + ".healthy"
-	//NacosRegisterEphemeral Ephemeral 可选
+	//NacosRegisterEphemeral Ephemeral optioanl
 	NacosRegisterEphemeral = NacosRegister + ".ephemeral"
 )
 
@@ -34,7 +34,7 @@ var defaultNacosRegisterConfig = vo.RegisterInstanceParam{
 	Ephemeral:   true,
 }
 
-// SetDefaultNacosRegisterConfig 设置默认基本配置
+// SetDefaultNacosRegisterConfig set default basic configuration
 //
 //goland:noinspection GoUnusedExportedFunction
 func SetDefaultNacosRegisterConfig() {
@@ -48,7 +48,7 @@ func SetDefaultNacosRegisterConfig() {
 
 }
 
-// GetNacosRegisterConfig 获取基本配置
+// GetNacosRegisterConfig get basic configuration
 //
 //goland:noinspection GoUnusedExportedFunction
 func GetNacosRegisterConfig() *vo.RegisterInstanceParam {

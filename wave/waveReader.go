@@ -30,7 +30,7 @@ type Reader struct {
 	ReadSampleNum     uint32
 	SampleTime        float64
 
-	// 用于管理诸如LIST chunk之类的可变chunk长度的变量
+	// Used to manage variables of variable chunk length such as LIST chunk"
 	extChunkSize int64
 }
 
@@ -143,7 +143,7 @@ type cSize struct {
 }
 
 func (rd *Reader) parseRiffChunk() error {
-	// RIFF格式头检查
+	// RIFF format header check
 	chunkID := make([]byte, 4)
 	if err := binary.Read(rd.input, binary.BigEndian, chunkID); err != nil {
 		return err
@@ -152,7 +152,7 @@ func (rd *Reader) parseRiffChunk() error {
 		return fmt.Errorf("file is not RIFF: %s", rd.RiffChunk.ID)
 	}
 
-	// RIFF信息块大小
+	// RIFF information block size
 	chunkSize := &cSize{}
 	if err := binary.Read(rd.input, binary.LittleEndian, chunkSize); err != nil {
 		return err
@@ -165,7 +165,7 @@ func (rd *Reader) parseRiffChunk() error {
 		return fmt.Errorf("riff_chunk_size must be whole file size - 8bytes, expected(%d), actual(%d)", chunkSize.ChunkSize+8, rd.size)
 	}
 
-	// 是否写有RIFF格式数据类型检查“WAVE”
+	// Whether there is a RIFF format data type check 'WAVE
 	format := make([]byte, 4)
 	if err := binary.Read(rd.input, binary.BigEndian, format); err != nil {
 		return err
@@ -190,7 +190,7 @@ func (rd *Reader) parseFmtChunk() error {
 		return err
 	}
 
-	// 是否写着‘fmt’
+	// ‘fmt’
 	chunkID := make([]byte, 4)
 	err := binary.Read(rd.input, binary.BigEndian, chunkID)
 	if err == io.EOF {
@@ -202,7 +202,7 @@ func (rd *Reader) parseFmtChunk() error {
 		return fmt.Errorf("fmt chunk id must be \"%s\" but value is %s", fmtChunkToken, chunkID)
 	}
 
-	// fmt chunk size是16比特吗
+	// fmt chunk size i 16 bit
 	chunkSize := &cSize{}
 	err = binary.Read(rd.input, binary.LittleEndian, chunkSize)
 	if err == io.EOF {
@@ -214,7 +214,7 @@ func (rd *Reader) parseFmtChunk() error {
 		return fmt.Errorf("fmt chunk size must be %d but value is %d", fmtChunkSize, chunkSize.ChunkSize)
 	}
 
-	// 读取fmt chunk data
+	// read fmt chunk data
 	var fmtChunkData WavFmtChunkData
 	if err = binary.Read(rd.input, binary.LittleEndian, &fmtChunkData); err != nil {
 		return err
@@ -236,18 +236,17 @@ func (rd *Reader) parseListChunk() error {
 		return err
 	}
 
-	// 是否写着“LIST”
+	// “LIST”
 	chunkID := make([]byte, 4)
 	if err := binary.Read(rd.input, binary.BigEndian, chunkID); err == io.EOF {
 		return fmt.Errorf("unexpected file end")
 	} else if err != nil {
 		return err
 	} else if string(chunkID[:]) != listChunkToken {
-		// 没有LIST信息块也没什么问题
+		//
 		return nil
 	}
 
-	// ‘LIST’的尺寸是可变的，在开头的1byte中记载了尺寸
 	chunkSize := make([]byte, 1)
 	if err := binary.Read(rd.input, binary.LittleEndian, chunkSize); err == io.EOF {
 		return fmt.Errorf("unexpected file end")
@@ -255,14 +254,13 @@ func (rd *Reader) parseListChunk() error {
 		return err
 	}
 
-	// 可变header长度管理变量更新
+	// Update of variable header length management variable
 	// rd.extChunkSize += int64(chunkSize[0]) + 4 + 4
 	rd.extChunkSize = int64(chunkSize[0]) + 4 + 4
 
 	return nil
 }
 
-// 还加上可变header长度管理变量更新可变长度header尺寸的riffChunkSize Offset值
 func (rd *Reader) getRiffChunkSizeOffset() int64 {
 	return riffChunkSizeBaseOffset + rd.extChunkSize
 }
@@ -270,7 +268,6 @@ func (rd *Reader) getRiffChunkSizeOffset() int64 {
 func (rd *Reader) parseDataChunk() error {
 	originOfDataChunk, _ := rd.input.Seek(rd.getRiffChunkSizeOffset(), io.SeekStart)
 
-	// 'data' 是否写着
 	chunkID := make([]byte, 4)
 	err := binary.Read(rd.input, binary.BigEndian, chunkID)
 	if err == io.EOF {
@@ -282,7 +279,7 @@ func (rd *Reader) parseDataChunk() error {
 		return fmt.Errorf("data chunk id must be \"%s\" but value is %s", dataChunkToken, chunkID)
 	}
 
-	// data_chunk_size取得（实际声音数据的容量）
+	// data_chunk_size
 	chunkSize := &cSize{}
 	err = binary.Read(rd.input, binary.LittleEndian, chunkSize)
 	if err == io.EOF {
@@ -291,7 +288,6 @@ func (rd *Reader) parseDataChunk() error {
 		return err
 	}
 
-	// 实际的声音数据是从数据Chunk的开始位置加上ID数据（4byte）和chunkSize（4byte）数据的地方
 	rd.originOfAudioData = originOfDataChunk + 8
 	audioData := io.NewSectionReader(rd.input, rd.originOfAudioData, int64(chunkSize.ChunkSize))
 
@@ -306,7 +302,7 @@ func (rd *Reader) parseDataChunk() error {
 	return nil
 }
 
-// 只读取声音数据
+// onlu read sound data
 func (rd *Reader) Read(p []byte) (int, error) {
 	n, err := rd.DataChunk.Data.Read(p)
 	return n, err
@@ -328,7 +324,7 @@ func (rd *Reader) ReadSample() ([]float64, error) {
 	raw, err := rd.ReadRawSample()
 	channel := int(rd.FmtChunk.Data.Channel)
 	ret := make([]float64, channel)
-	length := len(raw) / channel // 每个通道的byte数
+	length := len(raw) / channel // The number of bytes per channel
 
 	if err != nil {
 		return ret, err
@@ -354,7 +350,7 @@ func (rd *Reader) ReadSampleInt() ([]int, error) {
 	raw, err := rd.ReadRawSample()
 	channels := int(rd.FmtChunk.Data.Channel)
 	ret := make([]int, channels)
-	length := len(raw) / channels // 每个通道的byte数
+	length := len(raw) / channels // The number of bytes per channel
 
 	if err != nil {
 		return ret, err

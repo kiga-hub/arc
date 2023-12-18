@@ -11,7 +11,7 @@ import (
 	"github.com/kiga-hub/arc/logging"
 )
 
-// ChannelPool 存放连接信息
+// ChannelPool store connection information
 type ChannelPool struct {
 	mu          sync.Mutex
 	conns       chan *IdleConn
@@ -26,13 +26,13 @@ var busyCount int32 = 0
 var vObjFactory func() IComputation
 var total = 0
 
-// IdleConn Idle的链接
+// IdleConn idle connection
 type IdleConn struct {
 	conn IComputation
 	t    time.Time
 }
 
-// NewPool 创建1个连接池
+// NewPool new 1 pool
 func NewPool(poolConfig *conf.PoolConfig, voiceFactory func() IComputation, logger logging.ILogger) (*ChannelPool, error) {
 	logger.Infow("NewPool init", "min", poolConfig.MinActive, "max", poolConfig.MaxActive)
 	vObjFactory = voiceFactory
@@ -61,7 +61,7 @@ func NewPool(poolConfig *conf.PoolConfig, voiceFactory func() IComputation, logg
 	return &c, nil
 }
 
-// GetConns 获取所有连接
+// GetConns get all connection
 func (c *ChannelPool) GetConns() chan *IdleConn {
 	c.mu.Lock()
 	defer c.mu.Unlock()
@@ -70,7 +70,7 @@ func (c *ChannelPool) GetConns() chan *IdleConn {
 	return conns
 }
 
-// Get 从pool中取一个连接
+// Get get a connection from pool
 func (c *ChannelPool) Get() (IComputation, error) {
 	c.logger.Debugw("start to get object", "available", c.active)
 	conns := c.GetConns()
@@ -85,10 +85,10 @@ func (c *ChannelPool) Get() (IComputation, error) {
 				c.logger.Error("start to get voice warpConn = nil")
 				return nil, error2.ErrPoolIsClosed
 			}
-			//判断是否超时，超时则丢弃
+			// determine wherther it is time out. if it is timeout, discard it.
 			if timeout := c.idleTimeout; timeout > 0 {
 				if wrapConn.t.Add(timeout).Before(time.Now()) {
-					//丢弃并关闭该连接
+					// discard and close connection.
 					err := c.Close(wrapConn.conn)
 					if err != nil {
 						c.logger.Error(" c.Close(wrapConn.conn)err:", err)
@@ -125,7 +125,7 @@ func (c *ChannelPool) Get() (IComputation, error) {
 	}
 }
 
-// Put 将连接放回pool中
+// Put put the connection back into the pool
 func (c *ChannelPool) Put(conn IComputation) error {
 	c.logger.Debug("Put")
 	if conn == nil {
@@ -149,12 +149,12 @@ func (c *ChannelPool) Put(conn IComputation) error {
 		c.active++
 		return nil
 	default:
-		//连接池已满，直接关闭该连接
+		// The Connection pool is full.close the connection directly.
 		return c.Close(conn)
 	}
 }
 
-// Close 关闭单条连接
+// Close close single connection
 func (c *ChannelPool) Close(conn IComputation) error {
 	c.logger.Debug("Close")
 	if conn == nil {
@@ -167,7 +167,7 @@ func (c *ChannelPool) Close(conn IComputation) error {
 	return conn.Release()
 }
 
-// Release 释放连接池中所有连接
+// Release releasef all connection in ther connection pool
 func (c *ChannelPool) Release() error {
 	c.logger.Debug("Release")
 	c.mu.Lock()
@@ -187,13 +187,13 @@ func (c *ChannelPool) Release() error {
 	return err
 }
 
-// Len 连接池中已有的连接
+// Len existing connections in the connection pool
 func (c *ChannelPool) Len() int {
 	c.logger.Debug("Len")
 	return len(c.GetConns())
 }
 
-// ApplyLen  能申请到的连接数
+// ApplyLen  The number of connection that can be applied for.
 func (c *ChannelPool) ApplyLen() int {
 	c.logger.Debug("ApplyLen")
 	return c.active

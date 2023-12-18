@@ -6,66 +6,66 @@ import (
 	"time"
 )
 
-// FormatError 格式化打印错误
+// FormatError FormatError
 //
 //goland:noinspection GoUnusedExportedFunction
 func FormatError(who string, err error) string {
 	return fmt.Sprintf("%s %s %s", who, time.Now().Format("2006-01-02 15:04:05.999"), err.Error())
 }
 
-// ErrNoServiceAvailable 没有可用的服务
+// ErrNoServiceAvailable ErrNoServiceAvailable
 var ErrNoServiceAvailable = errors.New("no services available")
 
-// ErrNoTaskInTaskResult 在任务结果中勿失任务
+// ErrNoTaskInTaskResult not found in task_result
 var ErrNoTaskInTaskResult = errors.New("TaskID not found in task_result")
 
-// ErrFileProperty 文件属性错误
+// ErrFileProperty file property error
 var ErrFileProperty = errors.New("file property error")
 
-// ErrUnavailableHost 不可用的主机
+// ErrUnavailableHost unavailable host
 var ErrUnavailableHost = errors.New("unavailable host")
 
-// ErrPoolIsClosed 线程池是关闭的
+// ErrPoolIsClosed pool is closed
 var ErrPoolIsClosed = errors.New("pool is closed")
 
-// ErrInvalidCapacitySettings 无效的容量设置
+// ErrInvalidCapacitySettings invalid capacity settings
 var ErrInvalidCapacitySettings = errors.New("invalid capacity settings")
 
-// ErrConnectionIsNil 连接是空。拒绝
+// ErrConnectionIsNil connection is nil. rejecting
 var ErrConnectionIsNil = errors.New("connection is nil. rejecting")
 
-// ErrConfigNotHaveConfig 配置文件err:没有配置env
+// ErrConfigNotHaveConfig config file err: don't have the config env
 var ErrConfigNotHaveConfig = errors.New("config file err: don't have the config env")
 
-// ErrRedisFail redis失败
+// ErrRedisFail redis fail
 var ErrRedisFail = errors.New("redis fail")
 
-// ErrLockFail 锁失败
+// ErrLockFail lock fail
 var ErrLockFail = errors.New("lock fail")
 
-// ErrDbConnection 数据库连接错误
+// ErrDbConnection DB Connection error
 var ErrDbConnection = errors.New("DB Connection error")
 
-// ErrTaskNotCompleted 任务没有完成
+// ErrTaskNotCompleted the task is not completed
 var ErrTaskNotCompleted = errors.New("the task is not completed")
 
-// ErrNoAdapterServer 没有适配器服务器
+// ErrNoAdapterServer no adapter server
 var ErrNoAdapterServer = errors.New("no adapter server")
 
-// ErrUnknownType 未知类型
+// ErrUnknownType unknown type
 var ErrUnknownType = errors.New("unknown type")
 
-// ErrWorkerDidNotReturn 工作没有返回
+// ErrWorkerDidNotReturn worker did not return
 var ErrWorkerDidNotReturn = errors.New("worker did not return")
 
-// ErrClientIDInvalid 客户端编号无效
+// ErrClientIDInvalid client ID Invalid
 var ErrClientIDInvalid = errors.New("client ID Invalid")
 
-// ErrTaskTypeInvalid 任务任务类型无效
+// ErrTaskTypeInvalid task Type Invalid
 var ErrTaskTypeInvalid = errors.New("task Type Invalid")
 
-// ErrParams 参数错误
+// ErrParams params error
 var ErrParams = errors.New("params error")
 
-// ErrAlreadyExists 已经退出
-var ErrAlreadyExists = errors.New("already exists")
+// ErrAlreadyExists already exit
+var ErrAlreadyExit = errors.New("already exit")

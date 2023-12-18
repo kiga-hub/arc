@@ -26,7 +26,7 @@ import (
 	microConf "github.com/kiga-hub/arc/micro/conf"
 	"github.com/kiga-hub/arc/utils"
 
-	_ "go.uber.org/automaxprocs" // 用于获取容器内实际cpu数量
+	_ "go.uber.org/automaxprocs" // Used to get the actual number of CPU's in the container.
 )
 
 // GossipKVCacheNodeMeta is meta for node, MetaMaxSize of member list is 512
@@ -39,7 +39,7 @@ type GossipKVCacheNodeMeta struct {
 	GlobalCluster  string `json:"gc,omitempty"`   //15
 	ServiceName    string `json:"sn,omitempty"`   //50
 	Port           int    `json:"p,omitempty"`    //5
-	WorkLoad       int    `json:"wl,omitempty"`   // 5byte 工作负载数量
+	WorkLoad       int    `json:"wl,omitempty"`   // 5byte work-load quantity.
 }
 
 // GossipKVCacheComponent is Component for logging
@@ -97,10 +97,10 @@ func (c *GossipKVCacheComponent) Init(server *micro.Server) error {
 
 	var workLoad int
 	if basicConf.WorkLoad > 0 {
-		// 配置文件对外公布算力
+		// The configuration file announces computing power to the public.
 		workLoad = basicConf.WorkLoad
 	} else {
-		// 获取当前容器cpu数量
+		// get the current number of cpus in the container.
 		workLoad = runtime.GOMAXPROCS(-1)
 	}
 	name := basicConf.Service + "." + server.PrivateCluster
@@ -316,11 +316,11 @@ func (c *GossipKVCacheComponent) SetupHandler(root echoswagger.ApiRoot, base str
 		AddParamQuery("", "sensorid", "sensorid", true).
 		AddParamQuery(true, "inside", "inside swarm or not", false).
 		SetOperationId("sensorid-cluster-redirect").
-		SetSummary("测试sensorid-cluster重定向能力")
+		SetSummary("test sensorid-cluster redirection capability")
 	g.GET("/demon", c.SensorIDsHandlerWrapper(basicConf.Service, c.demoHandler, nil)).
 		AddParamQuery("", "sensorids", "sensorids", true).
 		SetOperationId("sensorids-cluster").
-		SetSummary("测试sensorids-cluster重定向或聚合能力")
+		SetSummary("test sensorids-cluster redirection or aggregation capability")
 	return nil
 }
 
@@ -674,7 +674,7 @@ func (c *GossipKVCacheComponent) FindMemberIPs(cluster, service string) (string,
 	return meta.GlobalIP, meta.PrivateIP, nil
 }
 
-// FindNodeMetasByPrefix 查询符合前缀的节点列表
+// FindNodeMetasByPrefix query the list of nodes that match the prefix.
 func (c *GossipKVCacheComponent) FindNodeMetasByPrefix(cluster, servicePrefix string) []*GossipKVCacheNodeMeta {
 	c.opsLock.Lock()
 	defer c.opsLock.Unlock()
@@ -682,7 +682,7 @@ func (c *GossipKVCacheComponent) FindNodeMetasByPrefix(cluster, servicePrefix st
 	if metasLen == 0 {
 		return nil
 	}
-	// 默认切片容量为map容量一半,奇数情况+1后/2
+	// The default slice capacity is half of the map capacity, and the odd situation +1 / 2
 	nodes := make([]*GossipKVCacheNodeMeta, 0, (metasLen%2+metasLen)/2)
 	for k := range c.metas {
 		// eg key: kiga-buzz-xxx.172-217

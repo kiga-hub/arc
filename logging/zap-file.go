@@ -47,7 +47,7 @@ func openSinks(cfg zap.Config) (zapcore.WriteSyncer, zapcore.WriteSyncer, error)
 	return sink, errSink, nil
 }
 
-// 格式化时间
+// format time
 func encodeTime(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 	enc.AppendString(t.Format("2006-01-02 15:04:05.000"))
 }

@@ -12,18 +12,18 @@ const (
 
 //var defaultTraceConfig = TraceConfig{}
 
-//TraceConfig  Trace配置
+// TraceConfig  Trace
 type TraceConfig struct {
 	JaegerCollectorAddr string `toml:"jaegerCollector"`
 	JaegerQueryAddr     string `toml:"jaegerQuery"`
 	TempoQueryAddr      string `toml:"tempoQuery"`
 }
 
-//SetDefaultTraceConfig 设置默认Trace配置
+// SetDefaultTraceConfig set default Trace configuration
 func SetDefaultTraceConfig() {
 }
 
-//GetTraceConfig 获取Trace配置
+// GetTraceConfig get Trace configuration
 func GetTraceConfig() *TraceConfig {
 	return &TraceConfig{
 		JaegerCollectorAddr: viper.GetString(traceJaegerCollectorAddr),

@@ -25,9 +25,8 @@ type ZoneConfig struct {
 	Name string `json:"name,omitempty"`
 	// Nodes definition of the topology
 	Nodes map[string]NodeConfig `json:"nodes"`
-	// 网络设备
-	// 链路
-	// 采集设备
+	// Network device
+	// link
 }
 
 const (
@@ -70,7 +69,7 @@ type NodeConfig struct {
 // HardwareConfig defines the hardware configuration of the node
 type HardwareConfig struct {
 	// Model of the hardware
-	Model string `json:"model,omitempty"` //机型
+	Model string `json:"model,omitempty"`
 	// CPU type
 	CPU string `json:"cpu,omitempty"`
 	// CPUCount of the node
@@ -96,7 +95,7 @@ type VolumeConfig struct {
 	// PerDiskRealSizeGB is the space for each of the data disk
 	PerDiskRealSizeGB int `json:"per_disk_size_gb,omitempty"`
 	// RaidType of the data disks, -1 for none, 1 for raid1, 5 for raid5
-	RaidType int `json:"raid_type,omitempty"` // -1为非raid
+	RaidType int `json:"raid_type,omitempty"` // -1 is not raid
 }
 
 // APMConfig is the APM(Application Performance Managment) setting of a node
@@ -112,17 +111,17 @@ type APMConfig struct {
 // DataTransferConfig is the data transfer config of a node
 type DataTransferConfig struct {
 	// EnableDeviceControl or not
-	EnableDeviceControl bool `json:"enable_device_control,omitempty"` //是否控制设备
+	EnableDeviceControl bool `json:"enable_device_control,omitempty"` // whether to control device
 	// EnableReceive or not
-	EnableReceive bool `json:"enable_receive,omitempty"` //是否接收数据
+	EnableReceive bool `json:"enable_receive,omitempty"` // whether to receive data
 	// ReceiveConfig for receive
 	ReceiveConfig *DataTransferReceiveConfig `json:"receive_config,omitempty"`
 	// EnableReadWrite or not
-	EnableReadWrite bool `json:"enable_read_write,omitempty"` //是否存取数据
+	EnableReadWrite bool `json:"enable_read_write,omitempty"` // whether to store data
 	// ReadWriteConfig for store
 	ReadWriteConfig *DataTransferReadWriteConfig `json:"read_write_config,omitempty"`
 	// EnableSend or not
-	EnableSend bool `json:"enable_send,omitempty"` //是否外发数据
+	EnableSend bool `json:"enable_send,omitempty"` // whether to send data
 	// SendConfig for send
 	SendConfig *DataTransferSendConfig `json:"send_config,omitempty"`
 }
@@ -138,27 +137,27 @@ const (
 // DataTransferReceiveConfig is the receive part of data transfer config
 type DataTransferReceiveConfig struct {
 	// EnableCalculateTimestamp or not
-	EnableCalculateTimestamp bool `json:"enable_calculate_timestamp,omitempty"` // 是否重新计算时间戳
+	EnableCalculateTimestamp bool `json:"enable_calculate_timestamp,omitempty"` // wether to recalculate timestamp
 	// EnableCRCCheck or not
-	EnableCRCCheck bool `json:"enable_crc_check,omitempty"` // 是否校验CRC
+	EnableCRCCheck bool `json:"enable_crc_check,omitempty"` // whether to check crc
 	// Sources types and count
-	//Sources map[SourceType]int64 `json:"sources,omitempty" faker:"sourcetype_int64_map"` //收什么，收多少(测点数)
+	//Sources map[SourceType]int64 `json:"sources,omitempty" faker:"sourcetype_int64_map"`
 }
 
 // DataTransferReadWriteConfig is the store part of data transfer config
 type DataTransferReadWriteConfig struct {
 	// KeepDays keep data for N days, then may delete it when where is no space
-	//KeepDays map[SourceType]int64 `json:"keep_days,omitempty" faker:"sourcetype_int64_map"` //存多久
+	//KeepDays map[SourceType]int64 `json:"keep_days,omitempty" faker:"sourcetype_int64_map"`
 }
 
 // DataTransferSendConfig is the send part of data transfer config
 type DataTransferSendConfig struct {
 	// RemoteDeviceMgmtAddr -
-	RemoteDeviceMgmtAddr string `json:"remote_device_mgmt_addr"` // 目标device地址
+	RemoteDeviceMgmtAddr string `json:"remote_device_mgmt_addr"` // target device address.
 	// RemoteReceiverAddr -
-	RemoteReceiverAddr string `json:"remote_receiver_addr"` // 目标receiver地址
+	RemoteReceiverAddr string `json:"remote_receiver_addr"` // target receive address
 	// Targets the address and send the type of data
-	//Targets map[string]SourceType `json:"targets,omitempty" faker:"string_sourcetype_map"` //发给谁，发什么
+	//Targets map[string]SourceType `json:"targets,omitempty" faker:"string_sourcetype_map"`
 }
 
 // GenerateFakeTopology generate a fake topology

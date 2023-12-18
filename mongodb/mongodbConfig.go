@@ -10,16 +10,16 @@ const (
 	mongoOptions  = "mongo.options"
 )
 
-//Config  数据库配置
+// Config  database configuration
 type Config struct {
-	Address  string `toml:"host"`     // 服务器地址
-	DB       string `toml:"db"`       // 数据库名
-	User     string `toml:"user"`     // 用户名
-	Password string `toml:"password"` // 密码
-	Options  string `toml:"options"`  // 配置
+	Address  string `toml:"host"`     // Server address
+	DB       string `toml:"db"`       // database name
+	User     string `toml:"user"`     // user name
+	Password string `toml:"password"` // password
+	Options  string `toml:"options"`  // config
 }
 
-//GetMongoConfig 获取数据库配置
+// GetMongoConfig get database configuration
 func GetMongoConfig() *Config {
 	return &Config{
 		Address:  viper.GetString(mongoAddress),

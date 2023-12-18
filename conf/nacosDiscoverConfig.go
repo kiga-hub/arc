@@ -4,18 +4,18 @@ import "github.com/spf13/viper"
 
 const (
 
-	//NacosDiscoverNames 当前程序需要调用服务名称
+	//NacosDiscoverNames The current program needs to call the service name
 	//
 	//goland:noinspection GoUnusedExportedFunction
 	NacosDiscoverNames = "nacosdiscover.servicenames"
 )
 
-// NacosDiscoverNamesConfig nacos的配置
+// NacosDiscoverNamesConfig nacos configuration
 type NacosDiscoverNamesConfig struct {
 	ServiceNames []string `toml:"servicenames"`
 }
 
-// GetNacosDiscoverConfig 获取nacos服务发现配置
+// GetNacosDiscoverConfig get nacos service discovery configuration
 func GetNacosDiscoverConfig() *NacosDiscoverNamesConfig {
 
 	return &NacosDiscoverNamesConfig{

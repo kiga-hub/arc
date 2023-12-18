@@ -5,7 +5,7 @@ import (
 	"net"
 )
 
-// GetAllIPv4Address 获取所有IP v4地址
+// GetAllIPv4Address get all IP v4 address
 func GetAllIPv4Address() ([]net.IP, error) {
 	var result []net.IP
 	address, err := net.InterfaceAddrs()
@@ -28,7 +28,7 @@ func IsKigaOverlayIP(ip net.IP) bool {
 	return ip[l-4] == 172 && ip[l-3] == 128
 }
 
-// FindNearestIP 找到最近的ip
+// FindNearestIP find the nearest ip
 //
 //goland:noinspection GoUnusedExportedFunction
 func FindNearestIP(source []net.IP, target net.IP) net.IP {

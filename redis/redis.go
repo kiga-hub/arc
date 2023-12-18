@@ -11,16 +11,16 @@ import (
 	error2 "github.com/kiga-hub/arc/error"
 )
 
-// RXRedisCache  实现了RXCache
+// RXRedisCache  implement RXCache
 type RXRedisCache struct {
 	sync.Mutex
 	pool *redis.Pool
 }
 
-//RedisCache  redis缓存对象
+//RedisCache  redis cache object
 // var RedisCache RXRedisCache
 
-// InitRedisPool  初始化redis链接池
+// InitRedisPool  init redis connection pool
 //
 //goland:noinspection GoUnusedExportedFunction
 func InitRedisPool(config Config) (*RXRedisCache, error) {
@@ -54,7 +54,7 @@ func InitRedisPool(config Config) (*RXRedisCache, error) {
 	return &redisCache, err
 }
 
-// IncrBy redis 设置key 存储上线  超时时间
+// IncrBy redis set key storage limit and timeout.
 func (rc *RXRedisCache) IncrBy(key string, num int64, timeOut int) (interface{}, error) {
 	conn := rc.pool.Get()
 	defer func() {
@@ -78,7 +78,7 @@ func (rc *RXRedisCache) IncrBy(key string, num int64, timeOut int) (interface{},
 	return nil, err
 }
 
-// DecrBy  redis  key 所储存的值减去指定的减量值
+// DecrBy  redis  key The stored value minus the specified decrement
 func (rc *RXRedisCache) DecrBy(key string, num int64) (interface{}, error) {
 	conn := rc.pool.Get()
 	defer func() {
@@ -96,7 +96,7 @@ func (rc *RXRedisCache) DecrBy(key string, num int64) (interface{}, error) {
 
 }
 
-// Keys Redis Keys 命令用于查找所有符合给定模式 pattern 的 key 。。
+// Keys Redis Keys The command is used to find all keys that match the given pattern
 func (rc *RXRedisCache) Keys(expression string) (interface{}, error) {
 	conn := rc.pool.Get()
 	defer func() {
@@ -113,7 +113,8 @@ func (rc *RXRedisCache) Keys(expression string) (interface{}, error) {
 
 }
 
-// Get Redis Get 命令用于获取指定 key 的值。如果 key 不存在，返回 nil 。如果key 储存的值不是字符串类型，返回一个错误。
+// Get Redis Get The command is used to get the value of the specified key. If the key does not exist, return nil.
+// If the value stored in the key is not a string type, return an error.
 func (rc *RXRedisCache) Get(key string) (interface{}, error) {
 	conn := rc.pool.Get()
 
@@ -131,7 +132,7 @@ func (rc *RXRedisCache) Get(key string) (interface{}, error) {
 
 }
 
-// GetString  Get 命令用于获取指定 key 的值 并转化为字符串
+// GetString  Get The command is used to get the value of the specified key and convert it to a string
 func (rc *RXRedisCache) GetString(key string) (string, error) {
 	v, err := rc.Get(key)
 	if v != nil && err == nil {
@@ -141,7 +142,7 @@ func (rc *RXRedisCache) GetString(key string) (string, error) {
 
 }
 
-// GetObject redis获取对象
+// GetObject redis get object
 func (rc *RXRedisCache) GetObject(key string, ref interface{}) error {
 	data, err := rc.Get(key)
 	if data != nil && err == nil {
@@ -152,7 +153,7 @@ func (rc *RXRedisCache) GetObject(key string, ref interface{}) error {
 
 }
 
-// Put redis 放入数据
+// Put redis insert data
 func (rc *RXRedisCache) Put(key string, value interface{}) error {
 	conn := rc.pool.Get()
 
@@ -170,7 +171,8 @@ func (rc *RXRedisCache) Put(key string, value interface{}) error {
 	return err
 }
 
-// PutWithExpire  Redis Setex 命令为指定的 key 设置值及其过期时间。如果 key 已经存在， SETEX 命令将会替换旧的值。
+// PutWithExpire  Redis Setex The command sets the value and expiration time for the specified key.
+// If the key already exists, the SETEX command will replace the old value
 func (rc *RXRedisCache) PutWithExpire(key string, value interface{}, expire interface{}) error {
 	bytes, err := json.Marshal(value)
 	if err == nil {
@@ -188,7 +190,7 @@ func (rc *RXRedisCache) PutWithExpire(key string, value interface{}, expire inte
 
 }
 
-// PutNX Redis Setnx（SET if Not exist） 命令在指定的 key 不存在时，为 key 设置指定的值。
+// PutNX Redis Setnx（SET if Not exist）
 func (rc *RXRedisCache) PutNX(key string, value interface{}) (bool, error) {
 	bytes, err := json.Marshal(value)
 
@@ -208,7 +210,7 @@ func (rc *RXRedisCache) PutNX(key string, value interface{}) (bool, error) {
 	return false, err
 }
 
-// LPush  Redis Lpush 命令将一个或多个值插入到列表头部。
+// LPush  Redis Lpush Command to insert one or more values at the beginning of the list.
 func (rc *RXRedisCache) LPush(key string, value interface{}) error {
 	conn := rc.pool.Get()
 	defer func() {
@@ -226,7 +228,7 @@ func (rc *RXRedisCache) LPush(key string, value interface{}) error {
 
 }
 
-// LPop Redis Lpop 命令用于移除并返回列表的第一个元素。
+// LPop Redis Lpop Command to remove and return the first element of the list.
 func (rc *RXRedisCache) LPop(key string) (interface{}, error) {
 	conn := rc.pool.Get()
 	defer func() {
@@ -243,7 +245,7 @@ func (rc *RXRedisCache) LPop(key string) (interface{}, error) {
 
 }
 
-// Delete Redis DEL 命令用于删除已存在的键。不存在的 key 会被忽略。
+// Delete Redis DEL  Command to delete an existing key. Non-existent keys will be ignored.
 func (rc *RXRedisCache) Delete(key string) error {
 	conn := rc.pool.Get()
 	defer func() {
@@ -256,7 +258,7 @@ func (rc *RXRedisCache) Delete(key string) error {
 	return err
 }
 
-// IsExist Redis EXISTS 命令用于检查给定 key 是否存在。
+// IsExist Redis EXISTS Command to check if the given key exists.
 func (rc *RXRedisCache) IsExist(key string) bool {
 	conn := rc.pool.Get()
 	defer func() {
@@ -272,7 +274,7 @@ func (rc *RXRedisCache) IsExist(key string) bool {
 	return v
 }
 
-// LOCK redis 锁的回复
+// LOCK redis Lock reply. Unlock."
 func (rc *RXRedisCache) LOCK(key, requestID string, timeOut time.Duration) error {
 	conn := rc.pool.Get()
 	defer func() {
@@ -293,7 +295,7 @@ func (rc *RXRedisCache) LOCK(key, requestID string, timeOut time.Duration) error
 
 }
 
-// UNLOCK redis 取消锁
+// UNLOCK redis Unlock
 func (rc *RXRedisCache) UNLOCK(key, requestID string, timeOut time.Duration) error {
 	_ = timeOut
 	var delScript = redis.NewScript(1, `if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end`)

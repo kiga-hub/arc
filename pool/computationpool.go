@@ -7,7 +7,7 @@ import (
 	"github.com/kiga-hub/arc/logging"
 )
 
-// IComputation 计算
+// IComputation computation interface
 type IComputation interface {
 	InitWorker(id uint32) error
 	GetID() uint32
@@ -16,7 +16,7 @@ type IComputation interface {
 	Release() error
 }
 
-// ComputationPool  定义接口
+// ComputationPool  define computation pool
 type ComputationPool struct {
 	logger     logging.ILogger
 	ObjectPool *ChannelPool
@@ -26,7 +26,7 @@ type ComputationPool struct {
 // TODO move this
 var getVoiceLock = new(sync.Mutex)
 
-// InitComputationPool 初始化计算连接池
+// InitComputationPool init computation pool
 //
 //goland:noinspection GoUnusedExportedFunction
 func InitComputationPool(poolConfig *conf.PoolConfig, computationFactory func() IComputation, initFunc func() error, logger logging.ILogger) (*ComputationPool, error) {
@@ -48,7 +48,7 @@ func InitComputationPool(poolConfig *conf.PoolConfig, computationFactory func() 
 	}, nil
 }
 
-// Get 获取
+// Get -
 func (p *ComputationPool) Get() (IComputation, error) {
 	p.logger.Debug("Get")
 	getVoiceLock.Lock()
@@ -63,20 +63,20 @@ func (p *ComputationPool) Get() (IComputation, error) {
 	return v, err
 }
 
-// Process  工作
+// Process  -
 func (p *ComputationPool) Process(taskType, taskData string) (string, error) {
 	p.logger.Debug("Process")
 	return p.WorkerTask(taskType, taskData)
 }
 
-// Release 释放
+// Release -
 func (p *ComputationPool) Release(computation IComputation) error {
 	p.logger.Debug("Release")
-	//归还队列
+	// return queue
 	return p.ObjectPool.Put(computation)
 }
 
-// Destroy 销毁
+// Destroy -
 func (p *ComputationPool) Destroy() error {
 	return p.ObjectPool.Release()
 }

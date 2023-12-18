@@ -3,13 +3,13 @@ package mysql
 import (
 	"fmt"
 
-	_ "github.com/go-sql-driver/mysql" //_ 导入所需要的驱动
+	_ "github.com/go-sql-driver/mysql" //_ Import the required drivers
 	"github.com/jinzhu/gorm"
 
 	error2 "github.com/kiga-hub/arc/error"
 )
 
-// CreateDB 创建数据库对象
+// CreateDB create db
 func CreateDB(config Config) (*gorm.DB, error) {
 	connection := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=true&loc=%s&timeout=10s", config.User, //&readTimeout=30s
 		config.Password, config.Host, config.Port, config.DB, config.TimeZone)
@@ -22,11 +22,11 @@ func CreateDB(config Config) (*gorm.DB, error) {
 	db.LogMode(config.LogMode)
 	db.DB().SetMaxIdleConns(config.MaxIdleConns)
 	db.DB().SetMaxOpenConns(config.MaxOpenConns)
-	db.SingularTable(true) // 全局设置表名不可以为复数形式
+	db.SingularTable(true) // globally set that table names cannot be in plural form
 	return db, nil
 }
 
-// CheckDB 检查数据库链接
+// CheckDB check db
 //
 //goland:noinspection GoUnusedExportedFunction
 func CheckDB(db *gorm.DB, config Config) error {
@@ -39,7 +39,7 @@ func CheckDB(db *gorm.DB, config Config) error {
 	return db.DB().Ping()
 }
 
-// DropDatabase 删除数据库
+// DropDatabase drop db
 //
 //goland:noinspection GoUnusedExportedFunction
 func DropDatabase(config Config) error {
@@ -69,7 +69,7 @@ func DropDatabase(config Config) error {
 	return nil
 }
 
-// CreateDatabase 创建数据库
+// CreateDatabase create db
 //
 //goland:noinspection GoUnusedExportedFunction
 func CreateDatabase(config Config) error {

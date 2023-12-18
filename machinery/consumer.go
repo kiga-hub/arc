@@ -11,7 +11,7 @@ import (
 	"github.com/kiga-hub/arc/redis"
 )
 
-// ConsumerUnit  消费者组件
+// ConsumerUnit  consumer unit
 type ConsumerUnit struct {
 	logicWorker   IWorker
 	redis         *redis.Config
@@ -22,7 +22,7 @@ type ConsumerUnit struct {
 	mqWorker      *machinery.Worker
 }
 
-// NewConsumerUnit  创建一个消费者单元
+// NewConsumerUnit  create a new consumer unit
 func NewConsumerUnit(
 	logicWorker IWorker, redis *redis.Config, concurrentNum int,
 	errorsChan chan<- error, tracer opentracing.Tracer, logger logging.ILogger,
@@ -38,7 +38,7 @@ func NewConsumerUnit(
 	return unit, nil
 }
 
-// Start 启动
+// Start startup
 func (unit *ConsumerUnit) Start() error {
 	unit.logicWorker.Start()
 	mqWorker, err := InitMQInitMachineryServerWorker(
@@ -57,7 +57,7 @@ func (unit *ConsumerUnit) Start() error {
 	return err
 }
 
-// Stop 停止
+// Stop stop
 func (unit *ConsumerUnit) Stop() {
 	defer func() {
 		if r := recover(); r != nil {
@@ -69,17 +69,17 @@ func (unit *ConsumerUnit) Stop() {
 	unit.logicWorker.Stop()
 }
 
-// Resume 重新开始
+// Resume resume
 func (unit *ConsumerUnit) Resume(errorsChan chan<- error) {
 	unit.mqWorker.LaunchAsync(errorsChan)
 }
 
-// Release  释放
+// Release  release
 func (unit *ConsumerUnit) Release() error {
 	return unit.logicWorker.Release()
 }
 
-// Consumer 类
+// Consumer consumer
 type Consumer struct {
 	units       []*ConsumerUnit
 	redisConfig *redis.Config
@@ -89,7 +89,7 @@ type Consumer struct {
 	running     bool
 }
 
-// NewConsumer 创建消费者对象
+// NewConsumer create new consumer object
 //
 //goland:noinspection GoUnusedExportedFunction
 func NewConsumer(redis *redis.Config, errorsChan chan<- error, tracer opentracing.Tracer, logger logging.ILogger) *Consumer {
@@ -102,7 +102,7 @@ func NewConsumer(redis *redis.Config, errorsChan chan<- error, tracer opentracin
 	}
 }
 
-// Register 注册
+// Register register
 func (c *Consumer) Register(logicWorker IWorker, concurrentNum int) error {
 	unit, err := NewConsumerUnit(logicWorker, c.redisConfig, concurrentNum, c.errorsChan, c.tracer, c.logger)
 	if err == nil {
@@ -111,7 +111,7 @@ func (c *Consumer) Register(logicWorker IWorker, concurrentNum int) error {
 	return err
 }
 
-// Start 启动
+// Start start
 func (c *Consumer) Start() error {
 	if c.running {
 		return nil
@@ -127,7 +127,7 @@ func (c *Consumer) Start() error {
 	return nil
 }
 
-// Stop 停止
+// Stop stop
 func (c *Consumer) Stop() {
 	if !c.running {
 		return
@@ -139,7 +139,7 @@ func (c *Consumer) Stop() {
 	}
 }
 
-// Release 释放
+// Release release
 func (c *Consumer) Release() {
 	for _, unit := range c.units {
 		err := unit.Release()

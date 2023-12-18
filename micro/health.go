@@ -8,12 +8,12 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-// Health 结构体
+// Health haelth
 type Health struct {
 	IsHealth bool `json:"health"`
 }
 
-// GetHealth 获取Health
+// GetHealth get Health
 //
 //goland:noinspection GoUnusedExportedFunction
 func GetHealth(address string) (*Health, error) {
@@ -33,7 +33,7 @@ func GetHealth(address string) (*Health, error) {
 	return health, nil
 }
 
-// GetStatus 获取Status
+// GetStatus get Status
 //
 //goland:noinspection GoUnusedExportedFunction
 func GetStatus(address string) (*Status, error) {

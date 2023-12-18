@@ -20,7 +20,7 @@ var defaultLogConfig = LogConfig{
 	Fields:  "zone,node,machine,instance,service,appName,appVersion",
 }
 
-// LogConfig  日志配置
+// LogConfig  log configuration
 type LogConfig struct {
 	Level       string `toml:"level"`
 	Path        string `toml:"path"`
@@ -30,7 +30,7 @@ type LogConfig struct {
 	Fields      string `toml:"fields"`
 }
 
-// SetDefaultLogConfig 获取默认日志配置
+// SetDefaultLogConfig set default log configuration
 func SetDefaultLogConfig() {
 	viper.SetDefault(logLevel, defaultLogConfig.Level)
 	viper.SetDefault(logPath, defaultLogConfig.Path)
@@ -38,7 +38,7 @@ func SetDefaultLogConfig() {
 	viper.SetDefault(logFields, defaultLogConfig.Fields)
 }
 
-// GetLogConfig  获取日志配置
+// GetLogConfig  get log configuration
 func GetLogConfig() *LogConfig {
 	return &LogConfig{
 		Level:       viper.GetString(logLevel),

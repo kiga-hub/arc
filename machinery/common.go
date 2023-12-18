@@ -16,11 +16,11 @@ import (
 )
 
 const (
-	// PoolCount 连接池数量
+	// PoolCount pool count
 	PoolCount int = 2
-	// PoolTypeName 连接池类型昵称
+	// PoolTypeName pool type name
 	PoolTypeName = 0
-	// PoolTypeHealth 连接池类型健康状态
+	// PoolTypeHealth pool type health
 	PoolTypeHealth = 1
 )
 
@@ -41,7 +41,7 @@ func filter(ctx context.Context, fullMethodName string) bool {
 }
 */
 
-// GetPool 获取连接池
+// GetPool get pool
 //
 //goland:noinspection GoUnusedExportedFunction
 func GetPool(target string, min, max int) (pool.Pool, error) {
@@ -52,7 +52,7 @@ func GetPool(target string, min, max int) (pool.Pool, error) {
 		grpc.WithStreamInterceptor(grpcPrometheus.StreamClientInterceptor),
 	}
 
-	//factory 创建连接的方法
+	//factory create new connection
 	// factory := func() (interface{}, error) { return net.Dial("tcp", addr) }
 	factory := func() (interface{}, error) { //*grpc.ClientConn
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
@@ -60,7 +60,7 @@ func GetPool(target string, min, max int) (pool.Pool, error) {
 		return grpc.DialContext(ctx, target, opts...)
 	}
 
-	//close 关闭连接的方法
+	//close close connection
 	// close := func() error { return v.(net.Conn).Close() }
 	clientConnClose := func(v interface{}) error { return v.(*grpc.ClientConn).Close() }
 
@@ -76,7 +76,7 @@ func GetPool(target string, min, max int) (pool.Pool, error) {
 	return pool.NewChannelPool(poolConfig)
 }
 
-// GetConn 获取链接
+// GetConn get connection
 //
 //goland:noinspection GoUnusedExportedFunction
 func GetConn(p pool.Pool, timeout int) (*grpc.ClientConn, error) {
@@ -102,7 +102,7 @@ func GetConn(p pool.Pool, timeout int) (*grpc.ClientConn, error) {
 	}
 }
 
-// ReturnConn 返回链接
+// ReturnConn return connection
 //
 //goland:noinspection GoUnusedExportedFunction
 func ReturnConn(p pool.Pool, conn *grpc.ClientConn, err error) error {
@@ -118,7 +118,7 @@ func ReturnConn(p pool.Pool, conn *grpc.ClientConn, err error) error {
 
 }
 
-// SetLoggerLevel 设置日志级别
+// SetLoggerLevel set logger level
 /* e.g.
 if level.Level() > zapCore.DebugLevel {
 	machinery.SetLoggerLevel(false)

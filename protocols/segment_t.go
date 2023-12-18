@@ -27,7 +27,7 @@ func NewDefaultSegmentArc() *SegmentArc {
 	}
 }
 
-// ArcSegmentValidate - 校验
+// ArcSegmentValidate - validation
 func ArcSegmentValidate(srcData []byte) error {
 	data := make([]byte, len(srcData))
 	copy(data, srcData)
@@ -41,7 +41,7 @@ func ArcSegmentValidate(srcData []byte) error {
 	return nil
 }
 
-// Decode - 解码
+// Decode - decode
 func (s *SegmentArc) Decode(srcData []byte) error {
 
 	data := make([]byte, len(srcData))
@@ -56,23 +56,23 @@ func (s *SegmentArc) Decode(srcData []byte) error {
 	return s.Validate()
 }
 
-// SetData - 获取数据
+// SetData - set data
 func (s *SegmentArc) SetData(data []byte) {
 	s.Data = make([]byte, len(data))
 	copy(s.Data, data)
 }
 
-// GetData - 设置数据
+// GetData - get data
 func (s *SegmentArc) GetData() []byte {
 	return s.Data
 }
 
-// GetData - 设置数据
+// GetType - get type
 func (s *SegmentArc) GetType() byte {
 	return s.SType
 }
 
-// Encode - 编码
+// Encode - encode
 func (s *SegmentArc) Encode(buf []byte) (int, error) {
 	idx := 0
 
@@ -86,12 +86,12 @@ func (s *SegmentArc) Encode(buf []byte) (int, error) {
 	return idx, nil
 }
 
-// Type - 段类型
+// Type - segment type
 func (s *SegmentArc) Type() byte {
 	return s.SType
 }
 
-// Size - 编码大小
+// Size - encode size
 func (s *SegmentArc) Size() uint32 {
 	return 1 + uint32(len(s.Data))
 }

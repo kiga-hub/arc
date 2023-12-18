@@ -9,13 +9,13 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Consumer pulsar消费者客户端
+// Consumer pulsar consumer client
 type Consumer struct {
-	ctx            context.Context             // 上下文
-	cancel         func()                      // 取消函数
-	baseClient     pulsar.Client               // 原始client
-	consumer       pulsar.Consumer             // 消费者
-	messageChannel chan pulsar.ConsumerMessage // 存放消息通道
+	ctx            context.Context             // context
+	cancel         func()                      // cancel
+	baseClient     pulsar.Client               // base client
+	consumer       pulsar.Consumer             // consumer
+	messageChannel chan pulsar.ConsumerMessage // store message channel
 }
 
 // Close .
@@ -26,7 +26,7 @@ func (c *Consumer) Close() error {
 	return nil
 }
 
-// ReceiverChannel 接收通道内数据
+// ReceiverChannel receive data within the channel
 func (c *Consumer) ReceiverChannel(out chan<- []byte) {
 	go func() {
 		for {
@@ -42,7 +42,7 @@ func (c *Consumer) ReceiverChannel(out chan<- []byte) {
 
 // NewConsumer .
 // url pulsar://localhost:6600,localhost:6650
-// topic 主题
+// topic topic
 func NewConsumer(url string, topic string) (*Consumer, error) {
 	c, err := pulsar.NewClient(pulsar.ClientOptions{
 		URL:               url,
@@ -50,11 +50,11 @@ func NewConsumer(url string, topic string) (*Consumer, error) {
 		ConnectionTimeout: 30 * time.Second,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "创建pulsar连接失败")
+		return nil, errors.Wrap(err, "create pulsar connection failed")
 	}
 	hostname, err := os.Hostname()
 	if err != nil {
-		return nil, errors.Wrap(err, "获取主机名失败")
+		return nil, errors.Wrap(err, "get machine name failed")
 	}
 	mc := make(chan pulsar.ConsumerMessage, 1)
 	cs, err := c.Subscribe(pulsar.ConsumerOptions{
@@ -64,7 +64,7 @@ func NewConsumer(url string, topic string) (*Consumer, error) {
 		MessageChannel:   mc,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "创建消费者失败")
+		return nil, errors.Wrap(err, "create consumer failed")
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	return &Consumer{

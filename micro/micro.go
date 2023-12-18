@@ -136,11 +136,11 @@ type Server struct {
 	stopSignal     chan os.Signal
 
 	GzipSkipper func(uri string) bool
-	// APIRateSkipper 定义限流器Skipper
+	// APIRateSkipper defime rate limiter skipper
 	APIRateSkipper func(uri string) bool
-	// APIBodySkipper 定义request Body Content-length限制的Skipper
+	// APIBodySkipper define request Body Content-length limit Skipper
 	APIBodySkipper func(uri string) bool
-	// APITimeOutSkipper 定义超时Skipper
+	// APITimeOutSkipper define timeout Skipper
 	APITimeOutSkipper func(uri string) bool
 
 	loggerMicroFunc   func() logging.ILogger
@@ -483,7 +483,7 @@ func (m *Server) preStart() error {
 		}
 	})
 
-	// 启用请求Body限制中间件
+	// enable request body limit middleware
 	if basicConf.IsAPIBody {
 		m.e.Use(middleware.BodyLimitWithConfig(middleware.BodyLimitConfig{
 			Limit: basicConf.APIBodyLimit,
@@ -497,9 +497,9 @@ func (m *Server) preStart() error {
 		}))
 	}
 
-	// 启用超时
+	// enable timeout
 	if basicConf.IsAPITimeout {
-		// 超时信息
+		// timeout infortation
 		msgTimeOut, err := json.Marshal(utils.ResponseV2{
 			Code: http.StatusRequestTimeout,
 			Msg:  http.StatusText(http.StatusRequestTimeout),
@@ -507,10 +507,10 @@ func (m *Server) preStart() error {
 		if err != nil {
 			return err
 		}
-		// 注册超时中间件
+		// register timeout middleware
 		m.e.Use(middleware.TimeoutWithConfig(middleware.TimeoutConfig{
 			Skipper: func(ctx echo.Context) bool {
-				// 忽略对websocket校验
+				// ignore the verification of websocket
 				if ctx.IsWebSocket() {
 					return true
 				}
@@ -526,7 +526,7 @@ func (m *Server) preStart() error {
 		}))
 	}
 
-	// 启用限流器核心配置
+	// enable the core configuration if the rate limiter
 	if basicConf.IsAPIRate {
 		var identifier string
 		rateLimit := middleware.RateLimiterConfig{
@@ -538,21 +538,22 @@ func (m *Server) preStart() error {
 				return false
 			},
 			Store: middleware.NewRateLimiterMemoryStoreWithConfig(middleware.RateLimiterMemoryStoreConfig{
-				Rate:      rate.Limit(basicConf.APIRate), //请求数/秒
+				Rate:      rate.Limit(basicConf.APIRate), // request times / second
 				Burst:     basicConf.APIBurst,
 				ExpiresIn: time.Duration(basicConf.APIExpiresIn) * time.Second,
 			}),
-			// 使用请求参数sensorID,限制读取访问频率
+			// use the request parameter sensorid. to limit the read access frequency
 			IdentifierExtractor: func(ctx echo.Context) (string, error) {
 				if identifier = ctx.QueryParam("sensorid"); identifier != "" {
 					return identifier, nil
 				}
-				// sensorID为空，则使用客户端的IP
+				// if sensorid is empty.then use the client's ip
 				identifier = ctx.RealIP()
 				return identifier, nil
 			},
 			ErrorHandler: func(context echo.Context, err error) error {
-				// 访问标识符返回值为定义nil,此处直接返回nil即可
+				// The return value of the access identifier is defined as nil.
+				// here you can directly return nil
 				return nil
 			},
 			DenyHandler: func(context echo.Context, identifier string, err error) error {
@@ -562,16 +563,16 @@ func (m *Server) preStart() error {
 				})
 			},
 		}
-		// 注册请求限速中间件
+		// register request rate limiting middleware
 		m.e.Use(middleware.RateLimiterWithConfig(rateLimit))
 	}
 
 	m.e.Use(middleware.Recover())
 	m.e.Use(middleware.GzipWithConfig(middleware.GzipConfig{
 		Skipper: func(c echo.Context) bool {
-			// proxy 模式(防止多次压缩损坏数据)
+			// Proxy mode (to prevent data corruption from multiple compressions)".
 			xf := c.Request().Header.Get("X-Forwarded-For")
-			// 转发者不压缩，接收请求节点压缩
+			// The forwarder does not compress, the request receiving node compresses".
 			if xf != "" && !strings.Contains(xf, ",") {
 				return true
 			}
@@ -611,7 +612,7 @@ func (m *Server) preStart() error {
 	}
 	m.e.GET(urlStatus, sf)
 
-	// pprof - 存储性能分析
+	// pprof - pprof
 	if basicConf.IsProf {
 		pprof.Register(m.e, basicConf.APIRoot+"/debug/pprof")
 	}
@@ -637,12 +638,12 @@ func (m *Server) preStart() error {
 	g.GET("/status", sf).
 		AddResponse(http.StatusOK, "", Status{}, nil).
 		SetOperationId("getStatus").
-		SetSummary("获取服务状态")
+		SetSummary("get service status")
 
 	g.GET("/health", hf).
 		AddResponse(http.StatusOK, "", Health{}, nil).
 		SetOperationId("getHealth").
-		SetSummary("获取服务健康")
+		SetSummary("get service health")
 
 	for _, v := range m.components {
 		err := v.SetupHandler(m.apiRoot, basicConf.APIRoot)

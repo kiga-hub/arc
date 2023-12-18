@@ -1,33 +1,33 @@
 package logging
 
-//NoopLogger  日志记录器
+// NoopLogger logger
 type NoopLogger struct{}
 
-//Print 打印
+// Print print
 func (l *NoopLogger) Print(...interface{}) {}
 
-//Printf 格式化打印
+// Printf print
 func (l *NoopLogger) Printf(string, ...interface{}) {}
 
-//Println 换行打印
+// Println print
 func (l *NoopLogger) Println(...interface{}) {}
 
-//Fatal 打印
+// Fatal print
 func (l *NoopLogger) Fatal(...interface{}) {}
 
-//Fatalf 打印
+// Fatalf print
 func (l *NoopLogger) Fatalf(string, ...interface{}) {}
 
-//Fatalln 打印
+// Fatalln print
 func (l *NoopLogger) Fatalln(...interface{}) {}
 
-//Panic 打印
+// Panic print
 func (l *NoopLogger) Panic(...interface{}) {}
 
-//Panicf 打印
+// Panicf print
 func (l *NoopLogger) Panicf(string, ...interface{}) {}
 
-//Panicln 打印
+// Panicln print
 func (l *NoopLogger) Panicln(...interface{}) {}
 
 // Debugw -

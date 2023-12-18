@@ -12,7 +12,7 @@ import (
 // TraceIDKey is a constant value for trace id
 const TraceIDKey = "traceID"
 
-// LoggerWithSpan  日志与测量
+// LoggerWithSpan  logger
 type LoggerWithSpan struct {
 	Span           opentracing.Span
 	OriginalLogger logging.ILogger
@@ -54,7 +54,7 @@ func (l *LoggerWithSpan) patchArgsBySpan(args []interface{}) []interface{} {
 	return newArgs
 }
 
-// Debugw  Debug级别写入
+// Debugw  Debug
 func (l *LoggerWithSpan) Debugw(msg string, keysAndValues ...interface{}) {
 	if l.Span != nil {
 		keysAndValues = append(keysAndValues, "level", "debug", "msg", msg)
@@ -65,7 +65,7 @@ func (l *LoggerWithSpan) Debugw(msg string, keysAndValues ...interface{}) {
 	}
 }
 
-// Infow info级别写入
+// Infow info
 func (l *LoggerWithSpan) Infow(msg string, keysAndValues ...interface{}) {
 	if l.Span != nil {
 		keysAndValues = append(keysAndValues, "level", "info", "msg", msg)
@@ -76,7 +76,7 @@ func (l *LoggerWithSpan) Infow(msg string, keysAndValues ...interface{}) {
 	}
 }
 
-// Warnw warn级别写入
+// Warnw warn
 func (l *LoggerWithSpan) Warnw(msg string, keysAndValues ...interface{}) {
 	if l.Span != nil {
 		keysAndValues = append(keysAndValues, "level", "warn", "msg", msg)
@@ -87,7 +87,7 @@ func (l *LoggerWithSpan) Warnw(msg string, keysAndValues ...interface{}) {
 	}
 }
 
-// Errorw  wrong error级别写入
+// Errorw  wrong error
 func (l *LoggerWithSpan) Errorw(msg string, keysAndValues ...interface{}) {
 	if l.Span != nil {
 		ext.Error.Set(l.Span, true)
@@ -99,7 +99,7 @@ func (l *LoggerWithSpan) Errorw(msg string, keysAndValues ...interface{}) {
 	}
 }
 
-// Panicw Panic级别写入
+// Panicw Panic
 func (l *LoggerWithSpan) Panicw(msg string, keysAndValues ...interface{}) {
 	if l.Span != nil {
 		ext.Error.Set(l.Span, true)
@@ -111,7 +111,7 @@ func (l *LoggerWithSpan) Panicw(msg string, keysAndValues ...interface{}) {
 	}
 }
 
-// Fatalw Fatal级别写入
+// Fatalw Fatal
 func (l *LoggerWithSpan) Fatalw(msg string, keysAndValues ...interface{}) {
 	if l.Span != nil {
 		ext.Error.Set(l.Span, true)
@@ -123,7 +123,7 @@ func (l *LoggerWithSpan) Fatalw(msg string, keysAndValues ...interface{}) {
 	}
 }
 
-// Panic  Panic级别
+// Panic  Panic
 func (l *LoggerWithSpan) Panic(args ...interface{}) {
 	if l.Span != nil {
 		ext.Error.Set(l.Span, true)
@@ -145,7 +145,7 @@ func (l *LoggerWithSpan) Fatal(args ...interface{}) {
 	}
 }
 
-// Error  Error级别
+// Error  Error
 func (l *LoggerWithSpan) Error(args ...interface{}) {
 	if l.Span != nil {
 		ext.Error.Set(l.Span, true)

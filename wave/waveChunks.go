@@ -37,15 +37,15 @@ type FmtChunk struct {
 
 // WavFmtChunkData - 6byte
 type WavFmtChunkData struct {
-	WaveFormatType uint16 // PCM 为 1
-	Channel        uint16 // 声道
-	SamplesPerSec  uint32 // 采样频率 44100
-	BytesPerSec    uint32 // 1秒所需要的byte数
-	BlockSize      uint16 // 量子化精度 * 通道数
-	BitsPerSamples uint16 // 量子化精度
+	WaveFormatType uint16 // PCM  1
+	Channel        uint16 // channel
+	SamplesPerSec  uint32
+	BytesPerSec    uint32 // The number of bytes required per second
+	BlockSize      uint16 // Quantization accuracy * number of channels
+	BitsPerSamples uint16 // Quantization accuracy
 }
 
-// DataReader - 装入
+// DataReader - load
 type DataReader interface {
 	io.Reader
 	io.ReaderAt
@@ -54,8 +54,8 @@ type DataReader interface {
 // DataReaderChunk -
 type DataReaderChunk struct {
 	ID   []byte     // 'data'
-	Size uint32     // 声音数据长度 * channel
-	Data DataReader // 实际数据
+	Size uint32     // data size * channel
+	Data DataReader // actual data
 }
 
 // DataWriterChunk -

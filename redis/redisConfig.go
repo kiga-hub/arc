@@ -25,7 +25,7 @@ var defaultRedisConfig = Config{
 	MaxConnLifetime: 3600,
 }
 
-// Config redis配置信息
+// Config redis configuration
 type Config struct {
 	Address         string `toml:"address"`
 	DB              int    `toml:"db"`
@@ -38,7 +38,7 @@ type Config struct {
 	MaxConnLifetime int    `toml:"maxConnLifetime"`
 }
 
-// SetDefaultRedisConfig  设置redis非关系型缓存数据库默认配置信息
+// SetDefaultRedisConfig  Set the default configuration information for the Redis non-relational cache database
 func SetDefaultRedisConfig() {
 	viper.SetDefault(redisAddress, defaultRedisConfig.Address)
 	viper.SetDefault(redisDB, defaultRedisConfig.DB)
@@ -51,7 +51,7 @@ func SetDefaultRedisConfig() {
 	viper.SetDefault(redisMaxConnLifetime, defaultRedisConfig.MaxConnLifetime)
 }
 
-// GetRedisConfig 获取redis非关系型缓存数据库配置信息
+// GetRedisConfig Get the configuration information of the Redis non-relational cache database
 func GetRedisConfig() *Config {
 	return &Config{
 		Address:         viper.GetString(redisAddress),

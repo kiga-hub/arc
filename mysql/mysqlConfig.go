@@ -14,7 +14,7 @@ const (
 	mysqlMaxIdleConns = "mysql.maxidleconns"
 )
 
-// defaultMysqlConfig 默认mysql数据库配置
+// defaultMysqlConfig  mysql default configuration
 var defaultMysqlConfig = Config{
 	Host:         "localhost",
 	Port:         3306,
@@ -25,20 +25,20 @@ var defaultMysqlConfig = Config{
 	MaxIdleConns: 4,
 }
 
-// Config  mysql数据库配置
+// Config  mysql configuration
 type Config struct {
-	Host         string `toml:"host"`     // 服务器地址
-	Port         int    `toml:"port"`     // 端口, 例如3306
-	DB           string `toml:"db"`       // 数据库名
-	User         string `toml:"user"`     // 用户名
-	Password     string `toml:"password"` // 密码
-	TimeZone     string `toml:"timeZone"` // 时区
+	Host         string `toml:"host"`
+	Port         int    `toml:"port"`
+	DB           string `toml:"db"`
+	User         string `toml:"user"`
+	Password     string `toml:"password"`
+	TimeZone     string `toml:"timeZone"`
 	LogMode      bool   `toml:"logmode"`
-	MaxOpenConns int    `toml:"maxOpenConns"` // 连接池信息
+	MaxOpenConns int    `toml:"maxOpenConns"`
 	MaxIdleConns int    `toml:"maxIdleConns"`
 }
 
-// SetDefaultMysqlConfig 设置mysql数据库默认配置
+// SetDefaultMysqlConfig set default mysql configuration
 func SetDefaultMysqlConfig() {
 	viper.SetDefault(mysqlHost, defaultMysqlConfig.Host)
 	viper.SetDefault(mysqlPort, defaultMysqlConfig.Port)
@@ -49,7 +49,7 @@ func SetDefaultMysqlConfig() {
 	viper.SetDefault(mysqlMaxIdleConns, defaultMysqlConfig.MaxIdleConns)
 }
 
-// GetMysqlConfig 获取mysql数据库配置
+// GetMysqlConfig get mysql configuration
 func GetMysqlConfig() *Config {
 	return &Config{
 		Host:         viper.GetString(mysqlHost),

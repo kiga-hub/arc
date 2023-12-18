@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	//初始化nacos http://xxxxxxx:8848/nacos/
+	// init nacos http://xxxxxxx:8848/nacos/
 	clientConfig := constant.ClientConfig{
 		NamespaceId:         "e525eafa-f7d7-4029-83d9-008937f9d468", //the namespaceId of Nacos.When namespace is public, fill in the blank string here.
 		TimeoutMs:           3000,                                   //timeout for requesting Nacos server, default value is 10000ms
@@ -33,11 +33,11 @@ func main() {
 
 	nacosClient, newNacosErr := configuration.NewNacos(clientConfig, serviceConfigs)
 	if newNacosErr != nil {
-		log.Println("初始化nacos失败: ", newNacosErr)
+		log.Println("nacos initialization failed: ", newNacosErr)
 		return
 	}
 
-	//2.服务注册 将需要接入的服务注册到nacos
+	//2.service register. register the serivice that needs to be accessed to nacos.
 	err := nacosClient.Register(vo.RegisterInstanceParam{
 		Ip:          "127.0.0.1",                          //required
 		Port:        10081,                                //required
@@ -50,50 +50,50 @@ func main() {
 		ServiceName: "demo.go",                            //required
 		GroupName:   "group-a",                            //optional,default:DEFAULT_GROUP
 	})
-	//判断是否成功
+	// determine if it is successful.
 	if err != nil {
-		log.Println("注册服务失败:", err)
+		log.Println("service registered failed:", err)
 		return
 	}
 
-	//获取初始配置 示例配置信息为`{{"AppName":"nacos-demo","IP":"192.168.8.230","Port":"8099"}}`
+	// get initialconfiguration. The example configuration information is {{"AppName":"nacos-demo","IP":"192.168.8.230","Port":"8099"}}`
 	config, err := nacosClient.Get("test-dataID", "test-group")
 	if err != nil {
-		log.Println("获取配置失败:", err)
+		log.Println("get configuration failed:", err)
 		return
 	}
 	log.Println("configuration: ", config)
-	//解析配置
+	// decode configuiration
 	var i interface{}
 	var configMap map[string]interface{}
 	jsonErr := json.Unmarshal([]byte(config), &i)
 	if jsonErr != nil {
-		log.Println("解析配置失败:", jsonErr)
+		log.Println("Parse failed:", jsonErr)
 		return
 	}
 	configMap = i.(map[string]interface{})
 	log.Println("configMap: ", configMap)
 
-	//监听配置 可在匿名函数中处理监听到变化之后的业务逻辑
+	// Listen to the configuration. you can handle the business logic after listening to the change in the anonymous function.
 	listenErr := nacosClient.Listen("test-dataID", "test-group", func(namespace, group, dataId, data string) {
-		log.Println("监听到修改配置:", data)
-		//发现配置更改后解析
+		log.Println("listen:", data)
+		// Parse after discovering configuration changes
 		var i interface{}
 		var configMapNew map[string]interface{}
 		jsonErr := json.Unmarshal([]byte(config), &i)
 		if jsonErr != nil {
-			log.Println("解析配置失败:", jsonErr)
+			log.Println("Parse failed:", jsonErr)
 			return
 		}
 		configMapNew = i.(map[string]interface{})
 		log.Println("new configMap: ", configMapNew)
 	})
 	if listenErr != nil {
-		log.Println("监听配置失败:", err)
+		log.Println("Failed to listenf to the configuration:", err)
 		return
 	}
 
-	//3.启动一个http服务 (可忽略)
+	//3.start a http service(can be ignored)
 	ht := http.HandlerFunc(helloHandler)
 	if ht != nil {
 		http.Handle("/", ht)
@@ -109,7 +109,7 @@ func helloHandler(w http.ResponseWriter, _ *http.Request) {
 	str := "Hello world ! "
 	_, err := io.WriteString(w, str)
 	if err != nil {
-		fmt.Println("io.WriteString错误:", err)
+		fmt.Println("io.WriteString failed:", err)
 	}
 	fmt.Println(str)
 }

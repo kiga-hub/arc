@@ -27,7 +27,7 @@ const (
 	skipSpanType = "opentracing.noopSpan"
 )
 
-// SetupGlobalTracer 设置这个整体示踪剂
+// SetupGlobalTracer Set this overall tracer
 //
 //goland:noinspection GoUnusedExportedFunction
 func SetupGlobalTracer(basic microConf.BasicConfig, trace TraceConfig, zlog *zap.Logger) (opentracing.Tracer, io.Closer, error) {
@@ -38,7 +38,7 @@ func SetupGlobalTracer(basic microConf.BasicConfig, trace TraceConfig, zlog *zap
 	return tracer, closer, err
 }
 
-// CreateTracer 创建 tracer
+// CreateTracer create tracer
 func CreateTracer(basic microConf.BasicConfig, trace TraceConfig, zlog *zap.Logger) (opentracing.Tracer, io.Closer, error) {
 	// tracing
 	traceCfg := jaegerConfig.Configuration{
@@ -68,7 +68,7 @@ func CreateTracer(basic microConf.BasicConfig, trace TraceConfig, zlog *zap.Logg
 	return traceCfg.NewTracer(opts...)
 }
 
-// MarshalSpanToJSON  解码span 到json
+// MarshalSpanToJSON  parse span to json
 //
 //goland:noinspection GoUnusedExportedFunction
 func MarshalSpanToJSON(span opentracing.Span) (string, error) {
@@ -94,7 +94,7 @@ func UnmarshalJSONToCarrier(marshaled string) (opentracing.TextMapCarrier, error
 	return tc, err
 }
 
-// StartChildSpanFromJSON   开启子任务 Span 来自 json
+// StartChildSpanFromJSON   Start a subtask Span from json
 //
 //goland:noinspection GoUnusedExportedFunction
 func StartChildSpanFromJSON(tracer opentracing.Tracer, operatorName, marshaled string) (opentracing.Span, error) {
@@ -216,27 +216,27 @@ var (
 	TraceKeyComponent = "component"
 	//grpcTag
 	grpcTag = opentracing.Tag{Key: TraceKeyComponent, Value: "gRPC"}
-	//SpanKindClient  客户端
+	//SpanKindClient  client
 	_ = opentracing.Tag{Key: SpanKind, Value: "client"}
-	//SpanKindServer 服务端
+	//SpanKindServer server
 	_ = opentracing.Tag{Key: SpanKind, Value: "server"}
-	//SpanKindPortal  接口
+	//SpanKindPortal  port
 	_ = opentracing.Tag{Key: SpanKind, Value: "portal"}
-	//SpanKindProducer 生产者
+	//SpanKindProducer producer
 	_ = opentracing.Tag{Key: SpanKind, Value: "producer"}
-	//SpanKindConsumer 消费者
+	//SpanKindConsumer consumer
 	_ = opentracing.Tag{Key: SpanKind, Value: "consumer"}
-	//SpanKindWorker 工作
+	//SpanKindWorker worker
 	_ = opentracing.Tag{Key: SpanKind, Value: "worker"}
-	//SpanKindComputation 计算
+	//SpanKindComputation computation
 	_ = opentracing.Tag{Key: SpanKind, Value: "computation"}
-	//SpanKindDB 数据库
+	//SpanKindDB database
 	_ = opentracing.Tag{Key: SpanKind, Value: "database"}
 )
 
 type clientSpanTagKey struct{}
 
-// GetGRPCClientSpan 获取grpc客户端span
+// GetGRPCClientSpan get grpc client span
 //
 //goland:noinspection GoUnusedExportedFunction
 func GetGRPCClientSpan(

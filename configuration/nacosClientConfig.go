@@ -6,19 +6,19 @@ import (
 )
 
 const (
-	//nacosClientPrefix nacos客户端字段
+	//nacosClientPrefix nacos client field
 	nacosClientPrefix = "nacosClient"
-	//nacosClientNamespaceID   nacos命名空间的id 可以为空
+	//nacosClientNamespaceID   nacos namespace id
 	nacosClientNamespaceID = nacosClientPrefix + ".namespaceID"
-	//nacosClientTimeoutMs     nacos超时时间(毫秒)
+	//nacosClientTimeoutMs     nacos client timeout
 	nacosClientTimeoutMs = nacosClientPrefix + ".timeoutMs"
-	//nacosClientNotLoadCacheAtStart  在开始时不加载缓存
+	//nacosClientNotLoadCacheAtStart do not load cache at start
 	nacosClientNotLoadCacheAtStart = nacosClientPrefix + ".notLoadCacheAtStart"
-	//nacosClientLogDir nacos服务日志存放目录
+	//nacosClientLogDir nacos service log storage directory
 	nacosClientLogDir = nacosClientPrefix + ".logDir"
-	//nacosClientCacheDir nacos服务缓存存放目录
+	//nacosClientCacheDir nacos service cache storage directory
 	nacosClientCacheDir = nacosClientPrefix + ".cacheDir"
-	//nacosClientLogLevel 日志默认级别，值必须是：debug,info,warn,error，默认值是info
+	//nacosClientLogLevel The default log level is info.The value must be in [debug,info,warn,error]
 	nacosClientLogLevel = nacosClientPrefix + ".loglevel"
 )
 
@@ -31,7 +31,7 @@ var defaultNacosClientConfig = constant.ClientConfig{
 	LogLevel:            "warn",
 }
 
-// SetDefaultNacosClientConfig 设置默认基本配置
+// SetDefaultNacosClientConfig set default basic configuration
 func SetDefaultNacosClientConfig() {
 	viper.SetDefault(nacosClientNamespaceID, defaultNacosClientConfig.NamespaceId)
 	viper.SetDefault(nacosClientTimeoutMs, defaultNacosClientConfig.TimeoutMs)
@@ -41,7 +41,7 @@ func SetDefaultNacosClientConfig() {
 	viper.SetDefault(nacosClientLogLevel, defaultNacosClientConfig.LogLevel)
 }
 
-// GetNacosClientConfig 获取基本配置
+// GetNacosClientConfig get basic configuration
 func GetNacosClientConfig() *constant.ClientConfig {
 
 	return &constant.ClientConfig{

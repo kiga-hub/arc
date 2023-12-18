@@ -6,10 +6,10 @@ import (
 	"github.com/kiga-hub/arc/micro"
 )
 
-// ConsumerElementKey pulsar消息队列消费者模块
+// ConsumerElementKey pulsar message queue consumer module
 var ConsumerElementKey = micro.ElementKey("PulsarConsumerComponent")
 
-// ConsumerComponent pulsar消费者模块
+// ConsumerComponent pulsar consumer module
 type ConsumerComponent struct {
 	micro.EmptyComponent
 	client *Consumer

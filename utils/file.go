@@ -9,13 +9,13 @@ import (
 	"time"
 )
 
-// GetStoreDir  获存储文件夹
+// GetStoreDir  get store dir
 func GetStoreDir(rootDir string) (string, error) {
 	subStoreDir := time.Now().Local().Format("2006-01-02/15")
 
 	fullDir := fmt.Sprintf("%s/%s", rootDir, subStoreDir)
 	if _, err := os.Stat(fullDir); os.IsNotExist(err) {
-		// 必须分成两步：先创建文件夹、再修改权限
+		// Must be divided into two steps: first create the folder, then modify the permissions
 		if err := os.MkdirAll(fullDir, os.ModePerm); err != nil {
 			return "", err
 		}
@@ -26,7 +26,7 @@ func GetStoreDir(rootDir string) (string, error) {
 	return fullDir, nil
 }
 
-// CopyFile 复制文件
+// CopyFile copy file
 func CopyFile(dstName, srcName string) (int64, error) {
 	src, err := os.Open(srcName)
 	if err != nil {
@@ -52,7 +52,7 @@ func CopyFile(dstName, srcName string) (int64, error) {
 	return io.Copy(dst, src)
 }
 
-// MoveFile 删除文件
+// MoveFile move file
 //
 //goland:noinspection GoUnusedExportedFunction
 func MoveFile(fileName string, rootDir string) (string, error) {
@@ -90,7 +90,7 @@ func MoveFile(fileName string, rootDir string) (string, error) {
 	return storePath[len(rootDir)+1:], nil
 }
 
-// StoreFile 存储文件
+// StoreFile store file
 //
 //goland:noinspection GoUnusedExportedFunction
 func StoreFile(srcFile multipart.File, rootDir string, fileName string) (string, error) {

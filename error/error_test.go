@@ -20,6 +20,6 @@ func TestNewError(t *testing.T) {
 	t.Log(ErrWorkerDidNotReturn)
 	t.Log(ErrClientIDInvalid)
 	t.Log(ErrTaskTypeInvalid)
-	t.Log(ErrAlreadyExists)
+	t.Log(ErrAlreadyExit)
 
 }

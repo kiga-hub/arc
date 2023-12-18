@@ -6,7 +6,7 @@ import (
 	"go.uber.org/atomic"
 )
 
-// ErrCodeTimedOut - 超时错误码
+// ErrCodeTimedOut - kafka timeout error
 var ErrCodeTimedOut = confluentincKafka.ErrTimedOut
 
 // Kafka -

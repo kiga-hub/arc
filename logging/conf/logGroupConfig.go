@@ -13,19 +13,19 @@ var defaultLogGroupConfig = LogGroupConfig{
 	LogConfig: defaultLogConfig,
 }
 
-//LogGroupConfig  日志配置
+// LogGroupConfig log group configuration
 type LogGroupConfig struct {
 	LogConfig
 	Levels map[string][]string `toml:"levels"` // level-[]module
 }
 
-//SetDefaultLogGroupConfig 获取默认日志配置
+// SetDefaultLogGroupConfig set default log configuration
 func SetDefaultLogGroupConfig() {
 	SetDefaultLogConfig()
 	viper.SetDefault(logLevels, defaultLogGroupConfig.Levels)
 }
 
-//GetLogGroupConfig  获取日志配置
+// GetLogGroupConfig  get log configuration
 func GetLogGroupConfig() (*LogGroupConfig, error) {
 	config := &LogGroupConfig{
 		LogConfig: *GetLogConfig(),
