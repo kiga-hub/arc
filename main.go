@@ -98,7 +98,7 @@ func (m *MyWebhookHandler) RegisterWebhookHandler(w http.ResponseWriter, r *http
 
 }
 
-// WsConnect - 创建socket连接，指定生产线和频道
+// WsConnect - 
 func (m *MyWebhookHandler) WsConnect(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodGet {
@@ -135,7 +135,6 @@ var (
 
 // HandleWebhook - TODO
 func HandleWebhook(notice alertmanager.Notification) error {
-	// 解析notice 格式化输出
 	version := notice.Version
 	groupKey := notice.GroupKey
 	status := notice.Status
@@ -147,7 +146,6 @@ func HandleWebhook(notice alertmanager.Notification) error {
 	alerts := notice.Alerts
 
 	fmt.Println("++++++++++++++++++++++++++++++++++++++++")
-	// 格式化输出
 	formattedOutput := fmt.Sprintf("Notification received:\nVersion: %s\nGroupKey: %s\nStatus: %s\nReceiver: %s\nGroupLabels: %v\nCommonLabels: %v\nCommonAnnotations: %v\nExternalURL: %s\nAlerts: %v",
 		version, groupKey, status, receiver, groupLabels, commonLabels, commonAnnotations, externalURL, alerts)
 	fmt.Println(formattedOutput)
