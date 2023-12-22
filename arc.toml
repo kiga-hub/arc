@@ -27,3 +27,9 @@ level = "DEBUG"
 [trace]
 jaegerCollector = "http://localhost:14268"
 tempoQuery = "localhost:9095"
+
+[alertmanager]
+enable = true
+serveraddress= "ip"
+serverport=7777
+url="alertmanager/webhook"

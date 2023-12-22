@@ -31,6 +31,7 @@ require (
 	github.com/pangpanglabs/echoswagger/v2 v2.4.1
 	github.com/panjf2000/gnet v1.6.7
 	github.com/pkg/errors v0.9.1
+	github.com/prometheus/client_golang v1.14.0
 	github.com/prometheus/common v0.40.0
 	github.com/silenceper/pool v1.0.0
 	github.com/snovichkov/zap-gelf v1.3.0
@@ -127,7 +128,6 @@ require (
 	github.com/pelletier/go-toml v1.8.1 // indirect
 	github.com/pierrec/lz4 v2.6.0+incompatible // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/prometheus/client_golang v1.14.0 // indirect
 	github.com/prometheus/client_model v0.3.0 // indirect
 	github.com/prometheus/procfs v0.9.0 // indirect
 	github.com/prometheus/prometheus v1.8.2-0.20210720123808-b1ed4a0a663d // indirect
