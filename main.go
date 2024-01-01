@@ -8,11 +8,11 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gorilla/websocket"
 	"github.com/kiga-hub/arc/alertmanager"
 	"github.com/kiga-hub/arc/alertmanager/ws"
 	"github.com/kiga-hub/arc/micro"
 	"github.com/kiga-hub/arc/micro/component"
-	"github.com/gorilla/websocket"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -43,23 +43,29 @@ type MyWebhookHandler struct {
 }
 
 // RegisterWebhookHandler -
-func (m *MyWebhookHandler) RegisterWebhookHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-		return
-	}
+func (m *MyWebhookHandler) RegisterWebhookHandler(c echo.Contex) error {
+	// if r.Method != http.MethodPost {
+	// 	http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+	// 	return
+	// }
 
-	body, err := io.ReadAll(r.Body)
+	// body, err := io.ReadAll(r.Body)
+	// if err != nil {
+	// 	http.Error(w, "can't read body", http.StatusBadRequest)
+	// 	return
+	// }
+	// get the data
+	body, err := io.ReadAll(c.Request().Body())
 	if err != nil {
 		http.Error(w, "can't read body", http.StatusBadRequest)
-		return
+		return err
 	}
 
 	var notice alertmanager.Notification
 	err = json.Unmarshal(body, &notice)
 	if err != nil {
 		http.Error(w, "can't unmarshal JSON", http.StatusBadRequest)
-		return
+		return err
 	}
 
 	// Handle the webhook
@@ -90,15 +96,15 @@ func (m *MyWebhookHandler) RegisterWebhookHandler(w http.ResponseWriter, r *http
 		byteData, err := json.Marshal(pushData)
 		if err != nil {
 			http.Error(w, "can't unmarshal JSON", http.StatusBadRequest)
-			return
+			return err
 		}
 		m.wsServer.Broadcast(byteData)
 
 	}
-
+	return nil
 }
 
-// WsConnect - 
+// WsConnect -
 func (m *MyWebhookHandler) WsConnect(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodGet {
