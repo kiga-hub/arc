@@ -8,135 +8,49 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gorilla/websocket"
 	"github.com/kiga-hub/arc/alertmanager"
-	"github.com/kiga-hub/arc/alertmanager/ws"
 	"github.com/kiga-hub/arc/micro"
 	"github.com/kiga-hub/arc/micro/component"
+	"github.com/labstack/echo/v4"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-type wsMessageDataLabels struct {
-	Job       string `json:"job"`
-	Alertname string `json:"alertname"`
-	Level     string `json:"level"`
-	Instance  string `json:"instance"`
-}
-type wsMessageDataAnnotations struct {
-	Summary     string `json:"summary"`
-	Description string `json:"description"`
-	Value       string `json:"value"`
-}
-type wsMessageData struct {
-	Labels      wsMessageDataLabels      `json:"labels"`
-	Annotations wsMessageDataAnnotations `json:"annotations"`
-	T           int64                    `json:"t"`
-}
-type wsMessage struct {
-	Type string        `json:"type"`
-	Data wsMessageData `json:"data"`
-}
-
 // MyWebhookHandler -
 type MyWebhookHandler struct {
-	wsServer *ws.Server
 }
 
 // RegisterWebhookHandler -
-func (m *MyWebhookHandler) RegisterWebhookHandler(c echo.Contex) error {
-	// if r.Method != http.MethodPost {
-	// 	http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-	// 	return
-	// }
+func (m *MyWebhookHandler) RegisterWebhookHandler(c echo.Context) error {
 
-	// body, err := io.ReadAll(r.Body)
-	// if err != nil {
-	// 	http.Error(w, "can't read body", http.StatusBadRequest)
-	// 	return
-	// }
-	// get the data
-	body, err := io.ReadAll(c.Request().Body())
+	req := c.Request()
+	if req.Method != http.MethodPost {
+		return c.String(http.StatusMethodNotAllowed, "Invalid request method")
+	}
+	body, err := io.ReadAll(req.Body)
 	if err != nil {
-		http.Error(w, "can't read body", http.StatusBadRequest)
 		return err
 	}
 
 	var notice alertmanager.Notification
 	err = json.Unmarshal(body, &notice)
 	if err != nil {
-		http.Error(w, "can't unmarshal JSON", http.StatusBadRequest)
 		return err
 	}
 
 	// Handle the webhook
 	err = HandleWebhook(notice)
 	if err != nil {
-		http.Error(w, "can't handle webhook", http.StatusInternalServerError)
-		return
+		return err
 	}
 
 	for _, v := range notice.Alerts {
-		pushData := &wsMessage{
-			Type: "alert",
-			Data: wsMessageData{
-				Labels: wsMessageDataLabels{
-					Job:       v.Labels["job"],
-					Alertname: v.Labels["alertname"],
-					Level:     v.Labels["level"],
-					Instance:  v.Labels["instance"],
-				},
-				Annotations: wsMessageDataAnnotations{
-					Summary:     v.Annotations["summary"],
-					Description: v.Annotations["description"],
-					Value:       v.Annotations["value"],
-				},
-				T: v.StartsAt.Unix(),
-			},
-		}
-		byteData, err := json.Marshal(pushData)
-		if err != nil {
-			http.Error(w, "can't unmarshal JSON", http.StatusBadRequest)
-			return err
-		}
-		m.wsServer.Broadcast(byteData)
-
+		fmt.Printf("v: %+v\n", v)
 	}
 	return nil
 }
 
-// WsConnect -
-func (m *MyWebhookHandler) WsConnect(w http.ResponseWriter, r *http.Request) {
-
-	if r.Method != http.MethodGet {
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-		return
-	}
-
-	var socketUpgrader = &websocket.Upgrader{
-		ReadBufferSize:  1024,
-		WriteBufferSize: 1024,
-		CheckOrigin: func(r *http.Request) bool {
-			return true
-		},
-	}
-	conn, err := socketUpgrader.Upgrade(w, r, nil)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	client := ws.NewClient(conn.RemoteAddr().String(), conn, m.wsServer)
-
-	m.wsServer.AddClient(client)
-
-	go client.Read()
-
-}
-
 var (
-	handleFunc = &MyWebhookHandler{
-		wsServer: ws.NewServer(),
-	}
+	handleFunc = &MyWebhookHandler{}
 )
 
 // HandleWebhook - TODO

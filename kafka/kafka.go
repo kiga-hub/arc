@@ -1,13 +1,13 @@
 package kafka
 
 import (
-	confluentincKafka "github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/kiga-hub/arc/logging"
 	"go.uber.org/atomic"
 )
 
 // ErrCodeTimedOut - kafka timeout error
-var ErrCodeTimedOut = confluentincKafka.ErrTimedOut
+var ErrCodeTimedOut = kafka.ErrTimedOut
 
 // Kafka -
 type Kafka struct {
@@ -15,8 +15,8 @@ type Kafka struct {
 	config  *Config
 	logger  logging.ILogger
 
-	producer *confluentincKafka.Producer
-	consumer *confluentincKafka.Consumer
+	producer *kafka.Producer
+	consumer *kafka.Consumer
 }
 
 // New -

@@ -6,7 +6,6 @@ require (
 	github.com/RichardKnop/machinery v1.10.6
 	github.com/apache/pulsar-client-go v0.11.1
 	github.com/bxcodec/faker/v3 v3.8.1
-	github.com/confluentinc/confluent-kafka-go v1.8.2
 	github.com/davecgh/go-spew v1.1.1
 	github.com/emirpasic/gods v1.18.1
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
@@ -50,6 +49,8 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 )
 
+require github.com/confluentinc/confluent-kafka-go/v2 v2.3.0
+
 require (
 	cloud.google.com/go v0.110.0 // indirect
 	cloud.google.com/go/compute v1.19.0 // indirect
@@ -80,6 +81,7 @@ require (
 	github.com/danieljoos/wincred v1.1.2 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dvsekhvalnov/jose2go v1.5.0 // indirect
+	github.com/frankban/quicktest v1.14.0 // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/go-errors/errors v1.0.1 // indirect
 	github.com/go-redis/redis/v8 v8.9.0 // indirect
