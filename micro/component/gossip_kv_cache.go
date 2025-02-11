@@ -922,6 +922,27 @@ func (c *GossipKVCacheComponent) wrapperHTTP(selfServiceName string, ctx echo.Co
 	return utils.GetJSONResponse(ctx, nil, data)
 }
 
+func isValidWebSocketURL(wsURL string) bool {
+    parsedURL, err := url.Parse(wsURL)
+    if err != nil {
+        return false
+    }
+
+    // 只允许特定的协议（ws 或 wss）
+    if parsedURL.Scheme != "ws" && parsedURL.Scheme != "wss" {
+        return false
+    }
+
+    // 只允许特定的域名或 IP 地址
+    allowedDomains := []string{"example.com", "trusted-domain.com"}
+    for _, domain := range allowedDomains {
+        if strings.HasSuffix(parsedURL.Host, domain) {
+            return true
+        }
+    }
+
+    return false
+}
 // just forward result from every sub websockets w/o modification
 func (c *GossipKVCacheComponent) wrapperWebsocket(selfServiceName string, ctx echo.Context, fws func(*websocket.Conn, int, []byte) error) error {
 	msgInChan := make(chan wsmsg, 1024)
@@ -1089,7 +1110,13 @@ func (c *GossipKVCacheComponent) wrapperWebsocket(selfServiceName string, ctx ec
 
 					// Validate URL
 					wsURL := u.String()
-					if _, err := url.ParseRequestURI(wsURL); err != nil {
+					// if _, err := url.ParseRequestURI(wsURL); err != nil {
+					// 	c.l().Error(fmt.Errorf("invalid URL: %s", wsURL))
+					// 	cancelFunc()
+					// 	return
+					// }
+
+					if !isValidWebSocketURL(wsURL) {
 						c.l().Error(fmt.Errorf("invalid URL: %s", wsURL))
 						cancelFunc()
 						return
