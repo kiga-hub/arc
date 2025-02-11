@@ -1064,7 +1064,12 @@ func (c *GossipKVCacheComponent) wrapperWebsocket(selfServiceName string, ctx ec
 			for ip, ids := range targets {
 				_, ok := conns[ip]
 				if !ok {
-					u, _ := url.Parse(ctx.Request().URL.String())
+					u, err := url.Parse(ctx.Request().URL.String())
+					if err != nil {
+						c.l().Error(err)
+						cancelFunc()
+						return
+					}
 					u.Scheme = "ws"
 					u.Host = ip
 					subconn, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
