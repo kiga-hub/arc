@@ -1064,7 +1064,15 @@ func (c *GossipKVCacheComponent) wrapperWebsocket(selfServiceName string, ctx ec
 			for ip, ids := range targets {
 				_, ok := conns[ip]
 				if !ok {
-					u, err := url.Parse(ctx.Request().URL.String())
+					// Validate URL
+					reqURL := ctx.Request().URL.String()
+					if _, err := url.ParseRequestURI(reqURL); err != nil {
+						c.l().Error(fmt.Errorf("invalid URL: %s", reqURL))
+						cancelFunc()
+						return
+					}
+
+					u, err := url.Parse(reqURL)
 					if err != nil {
 						c.l().Error(err)
 						cancelFunc()
