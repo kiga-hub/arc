@@ -890,6 +890,12 @@ func (c *GossipKVCacheComponent) wrapperHTTP(selfServiceName string, ctx echo.Co
 	for _, u := range addresses {
 		u.Scheme = "http"
 		addr := u.String()
+		// Validate URL
+		if _, err := url.ParseRequestURI(addr); err != nil {
+			c.l().Error(fmt.Errorf("invalid URL: %s", addr))
+			return utils.GetJSONResponse(ctx, err, "")
+		}
+		
 		c.l().Debugf("request %s", addr)
 		resp, err := http.Get(addr)
 		if err != nil {
