@@ -895,7 +895,7 @@ func (c *GossipKVCacheComponent) wrapperHTTP(selfServiceName string, ctx echo.Co
 			c.l().Error(fmt.Errorf("invalid URL: %s", addr))
 			return utils.GetJSONResponse(ctx, err, "")
 		}
-		
+
 		c.l().Debugf("request %s", addr)
 		resp, err := http.Get(addr)
 		if err != nil {
@@ -1086,7 +1086,16 @@ func (c *GossipKVCacheComponent) wrapperWebsocket(selfServiceName string, ctx ec
 					}
 					u.Scheme = "ws"
 					u.Host = ip
-					subconn, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
+
+					// Validate URL
+					wsURL := u.String()
+					if _, err := url.ParseRequestURI(wsURL); err != nil {
+						c.l().Error(fmt.Errorf("invalid URL: %s", wsURL))
+						cancelFunc()
+						return
+					}
+
+					subconn, _, err := websocket.DefaultDialer.Dial(wsURL, nil)
 					if err != nil {
 						c.l().Error(err)
 						cancelFunc()
