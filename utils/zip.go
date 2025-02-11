@@ -84,6 +84,11 @@ func Unzip(fileBuffer []byte, destDir string) error {
 	for _, f := range zipReader.File {
 		err := func() error {
 			fPath := filepath.Join(destDir, f.Name)
+			// Sanitize the file path to prevent directory traversal
+			if !strings.HasPrefix(filepath.Clean(fPath), filepath.Clean(destDir)+string(os.PathSeparator)) {
+				return fmt.Errorf("invalid file path: %s", fPath)
+			}
+
 			if f.FileInfo().IsDir() {
 				err = os.MkdirAll(fPath, os.ModePerm)
 				if err != nil {
@@ -142,7 +147,12 @@ func UnzipBuffer(fileBuffer []byte, fileMap map[string][]byte) error {
 	for _, f := range zipReader.File {
 		err := func() error {
 			if !f.FileInfo().IsDir() {
-
+				// Sanitize the file path to prevent directory traversal
+				fPath := filepath.Join("/", f.Name)
+				if strings.Contains(fPath, "..") {
+					return fmt.Errorf("invalid file path: %s", fPath)
+				}
+				
 				inFile, err := f.Open()
 				if err != nil {
 					return err
