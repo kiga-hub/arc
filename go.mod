@@ -1,6 +1,8 @@
 module github.com/kiga-hub/arc
 
-go 1.20
+go 1.21
+
+toolchain go1.23.4
 
 require (
 	github.com/RichardKnop/machinery v1.10.6
@@ -172,7 +174,7 @@ require (
 	google.golang.org/api v0.114.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20230410155749-daa745c078e1 // indirect
-	google.golang.org/protobuf v1.30.0 // indirect
+	google.golang.org/protobuf v1.36.2 // indirect
 	gopkg.in/ini.v1 v1.57.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
